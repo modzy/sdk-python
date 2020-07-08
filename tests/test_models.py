@@ -4,10 +4,12 @@
 """Test for Models & Model classes."""
 
 import os
+import dotenv
 import pytest
 from modzy import ApiClient, error
 import logging
 
+dotenv.load_dotenv()
 
 BASE_URL = os.getenv('MODZY_BASE_URL')
 API_KEY = os.getenv('MODZY_API_KEY')
@@ -52,6 +54,15 @@ def test_get_single_model(client, logger):
 
     model_copy = client.models.get(model)  # from object
     assert model.modelId == model_copy.modelId
+
+def test_get_model_by_name(client, logger):
+    model = client.models.get_by_name("Sentiment Analysis")  # by name
+    logger.debug("model_modelId: %s", model.modelId)
+    assert model.modelId
+    logger.debug("model_latestVersion: %s", model.latestVersion)
+    assert model.latestVersion
+    logger.debug("model_versions: %s", model.versions)
+    assert len(model.versions) >= 0
 
 
 def test_get_single_model_invalid(client, logger):

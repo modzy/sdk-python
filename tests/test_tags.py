@@ -3,10 +3,12 @@
 
 import logging
 import os
-
+import dotenv
 import pytest
 
 from modzy import ApiClient
+
+dotenv.load_dotenv()
 
 BASE_URL = os.getenv('MODZY_BASE_URL')
 API_KEY = os.getenv('MODZY_API_KEY')

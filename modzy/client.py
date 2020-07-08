@@ -37,6 +37,10 @@ class ApiClient:
             base_url (str): The base url for the API.
             api_key (str): The API key to use for authentication.
         """
+        if base_url is None or base_url == "":
+            raise ValueError("Cannot initialize the modzy client: the base_url param should be a valid not empty string")
+        if api_key is None or api_key == "":
+            raise ValueError("Cannot initialize the modzy client: the api_key param should be a valid not empty string")
         self.base_url = base_url
         self.api_key = api_key
 
