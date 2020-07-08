@@ -1,0 +1,268 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>modzy.http &#8212; Modzy Python SDK 0.3.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Modzy Python SDK 0.3.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">modzy.http</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for modzy.http</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;The HTTP client implementation.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">urlparse</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="kn">from</span> <span class="nn">._api_object</span> <span class="kn">import</span> <span class="n">ApiObject</span>
+<span class="kn">from</span> <span class="nn">.error</span> <span class="kn">import</span> <span class="n">NetworkError</span><span class="p">,</span> <span class="n">_create_response_error</span>
+
+
+<span class="k">def</span> <span class="nf">_url_is_absolute</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">urlparse</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">netloc</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_urlappend</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">_url_is_absolute</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">url</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">base</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">base</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+    <span class="k">return</span> <span class="n">base</span> <span class="o">+</span> <span class="n">url</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="HttpClient"><a class="viewcode-back" href="../../modzy.html#modzy.http.HttpClient">[docs]</a><span class="k">class</span> <span class="nc">HttpClient</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;The HTTP Client object.</span>
+
+<span class="sd">    This object is responsible for making the actual HTTP requests to the API. User code</span>
+<span class="sd">    should generally not need to directly access this object.</span>
+
+<span class="sd">    This class should not be instantiated directly but rather accessed through the `http`</span>
+<span class="sd">    attribute of an `ApiClient` instance.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        session (requests.Session): The requests `Session` used to make HTTP requests.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_client</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates an `HttpClient` instance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            api_client (ApiClient): An `ApiClient` instance.</span>
+<span class="sd">            session (Optional[requests.Session]): A requests `Session` used to make HTTP requests.</span>
+<span class="sd">                If None is specified one will be created. Defaults to None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_api_client</span> <span class="o">=</span> <span class="n">api_client</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">session</span> <span class="k">if</span> <span class="n">session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HttpClient.request"><a class="viewcode-back" href="../../modzy.html#modzy.http.HttpClient.request">[docs]</a>    <span class="k">def</span> <span class="nf">request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">json_data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sends an HTTP request.</span>
+
+<span class="sd">        The client&#39;s API key will automatically be used for authentication.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            method (str): The HTTP method for the request.</span>
+<span class="sd">            url (str): URL to request.</span>
+<span class="sd">            json_data (Optional[Any]): JSON serializeable object to include in the request body.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: JSON object deserialized from the response body.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ApiError: A subclass of ApiError will be raised if the API returns an error status,</span>
+<span class="sd">                or the client is unable to connect.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="n">_urlappend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_api_client</span><span class="o">.</span><span class="n">base_url</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">json_data</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">json_data</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Accept&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api_client</span><span class="o">.</span><span class="n">api_key</span><span class="p">:</span>  <span class="c1"># will there be any endpoints that don&#39;t need an api key?</span>
+            <span class="n">headers</span><span class="p">[</span><span class="s1">&#39;Authorization&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;ApiKey </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_api_client</span><span class="o">.</span><span class="n">api_key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">json_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">headers</span><span class="p">[</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;application/json&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;response </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">&#39;unable to make network request&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">NetworkError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">),</span> <span class="n">url</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">ex</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">json_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span> <span class="n">object_hook</span><span class="o">=</span><span class="n">ApiObject</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">json_data</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">200</span> <span class="o">&lt;=</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">&lt;</span> <span class="mi">300</span><span class="p">):</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">json_data</span><span class="p">,</span> <span class="s1">&#39;get&#39;</span><span class="p">):</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="n">json_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">message</span><span class="p">:</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;HTTP Error </span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">reason</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">_create_response_error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">message</span><span class="p">),</span> <span class="n">url</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">json_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># will our API *always* return JSON? may change in future</span>
+            <span class="c1"># do we need a different Exception class for malformed body?</span>
+            <span class="k">raise</span> <span class="n">_create_response_error</span><span class="p">(</span><span class="s1">&#39;API did not return valid JSON.&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">json_data</span></div>
+
+<div class="viewcode-block" id="HttpClient.get"><a class="viewcode-back" href="../../modzy.html#modzy.http.HttpClient.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sends a GET request.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url (str): URL to request.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: JSON object.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ApiError: A subclass of ApiError will be raised if the API returns an error status,</span>
+<span class="sd">                or the client is unable to connect.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HttpClient.post"><a class="viewcode-back" href="../../modzy.html#modzy.http.HttpClient.post">[docs]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">json_data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sends a POST request.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url (str): URL to request.</span>
+<span class="sd">            json_data (Optional[dict]): JSON to include in the request body.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: JSON object.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ApiError: A subclass of ApiError will be raised if the API returns an error status,</span>
+<span class="sd">                or the client is unable to connect.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s1">&#39;POST&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">json_data</span><span class="o">=</span><span class="n">json_data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HttpClient.patch"><a class="viewcode-back" href="../../modzy.html#modzy.http.HttpClient.patch">[docs]</a>    <span class="k">def</span> <span class="nf">patch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">json_data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sends a PATCH request.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url (str): URL to request.</span>
+<span class="sd">            json_data (Optional[dict]): JSON to include in the request body.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: JSON object.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ApiError: A subclass of ApiError will be raised if the API returns an error status,</span>
+<span class="sd">                or the client is unable to connect.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s1">&#39;PATCH&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">json_data</span><span class="o">=</span><span class="n">json_data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HttpClient.put"><a class="viewcode-back" href="../../modzy.html#modzy.http.HttpClient.put">[docs]</a>    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">json_data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sends a PUT request.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url (str): URL to request.</span>
+<span class="sd">            json_data (Optional[dict]): JSON to include in the request body.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: JSON object.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ApiError: A subclass of ApiError will be raised if the API returns an error status,</span>
+<span class="sd">                or the client is unable to connect.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s1">&#39;PUT&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">json_data</span><span class="o">=</span><span class="n">json_data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HttpClient.delete"><a class="viewcode-back" href="../../modzy.html#modzy.http.HttpClient.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">json_data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sends a DELETE request.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url (str): URL to request.</span>
+<span class="sd">            json_data (Optional[dict]): JSON to include in the request body.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: JSON object.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ApiError: A subclass of ApiError will be raised if the API returns an error status,</span>
+<span class="sd">                or the client is unable to connect.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s1">&#39;DELETE&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">json_data</span><span class="o">=</span><span class="n">json_data</span><span class="p">)</span></div></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Modzy Python SDK 0.3.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">modzy.http</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Modzy.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.1.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,2011 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>modzy package &#8212; Modzy Python SDK 0.3.1 documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="History" href="history.html" />
+    <link rel="prev" title="modzy" href="modules.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="history.html" title="History"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="modules.html" title="modzy"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Modzy Python SDK 0.3.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="modules.html" accesskey="U">modzy</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">modzy package</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="modzy-package">
+<h1>modzy package<a class="headerlink" href="#modzy-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-modzy.client">
+<span id="modzy-client-module"></span><h2>modzy.client module<a class="headerlink" href="#module-modzy.client" title="Permalink to this headline">¶</a></h2>
+<p>The API client implementation.</p>
+<dl class="py class">
+<dt id="modzy.client.ApiClient">
+<em class="property">class </em><code class="sig-prename descclassname">modzy.client.</code><code class="sig-name descname">ApiClient</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base_url</span></em>, <em class="sig-param"><span class="n">api_key</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/client.html#ApiClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.client.ApiClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The API client object.</p>
+<p>This class is used to interact with the Modzy API.</p>
+<p>The API models, jobs, and results can be accessed using the <a class="reference internal" href="#modzy.client.ApiClient.models" title="modzy.client.ApiClient.models"><code class="xref py py-attr docutils literal notranslate"><span class="pre">models</span></code></a>,
+<a class="reference internal" href="#modzy.client.ApiClient.jobs" title="modzy.client.ApiClient.jobs"><code class="xref py py-attr docutils literal notranslate"><span class="pre">jobs</span></code></a> and <a class="reference internal" href="#modzy.client.ApiClient.results" title="modzy.client.ApiClient.results"><code class="xref py py-attr docutils literal notranslate"><span class="pre">results</span></code></a> attributes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">ApiClient</span><span class="p">(</span><span class="n">base_url</span><span class="o">=</span><span class="s1">&#39;https://path/to/api&#39;</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="s1">&#39;my-api-key&#39;</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;my-model&#39;</span><span class="p">)</span>
+<span class="n">job</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">submit_files</span><span class="p">(</span><span class="s1">&#39;my-model&#39;</span><span class="p">,</span> <span class="s1">&#39;1.0.0&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;input&#39;</span><span class="p">:</span> <span class="s1">&#39;./my-file.dat&#39;</span><span class="p">})</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">block_until_complete</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt id="modzy.client.ApiClient.base_url">
+<code class="sig-name descname">base_url</code><a class="headerlink" href="#modzy.client.ApiClient.base_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>The base url for the API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="modzy.client.ApiClient.api_key">
+<code class="sig-name descname">api_key</code><a class="headerlink" href="#modzy.client.ApiClient.api_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>The API key used for authentication.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="modzy.client.ApiClient.http">
+<code class="sig-name descname">http</code><a class="headerlink" href="#modzy.client.ApiClient.http" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>HttpClient</cite> object used for making direct HTTP calls.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.http.HttpClient" title="modzy.http.HttpClient">HttpClient</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="modzy.client.ApiClient.models">
+<code class="sig-name descname">models</code><a class="headerlink" href="#modzy.client.ApiClient.models" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>Models</cite> object used to interact with models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.models.Models" title="modzy.models.Models">Models</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="modzy.client.ApiClient.jobs">
+<code class="sig-name descname">jobs</code><a class="headerlink" href="#modzy.client.ApiClient.jobs" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>Jobs</cite> object used to interact with jobs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.jobs.Jobs" title="modzy.jobs.Jobs">Jobs</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="modzy.client.ApiClient.results">
+<code class="sig-name descname">results</code><a class="headerlink" href="#modzy.client.ApiClient.results" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>Results</cite> object used to interact with results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.results.Results" title="modzy.results.Results">Results</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Creates an <cite>ApiClient</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_url</strong> (<em>str</em>) – The base url for the API.</p></li>
+<li><p><strong>api_key</strong> (<em>str</em>) – The API key to use for authentication.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-modzy.error">
+<span id="modzy-error-module"></span><h2>modzy.error module<a class="headerlink" href="#module-modzy.error" title="Permalink to this headline">¶</a></h2>
+<p>Package specific exceptions.</p>
+<dl class="py exception">
+<dt id="modzy.error.ApiError">
+<em class="property">exception </em><code class="sig-prename descclassname">modzy.error.</code><code class="sig-name descname">ApiError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">reason</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/error.html#ApiError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.error.ApiError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#modzy.error.Error" title="modzy.error.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">modzy.error.Error</span></code></a></p>
+<p>Base class for errors related to communication with the API.</p>
+<dl class="py attribute">
+<dt id="modzy.error.ApiError.message">
+<code class="sig-name descname">message</code><a class="headerlink" href="#modzy.error.ApiError.message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Human readable error description.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="modzy.error.ApiError.url">
+<code class="sig-name descname">url</code><a class="headerlink" href="#modzy.error.ApiError.url" title="Permalink to this definition">¶</a></dt>
+<dd><p>The API URL.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="modzy.error.ApiError.reason">
+<code class="sig-name descname">reason</code><a class="headerlink" href="#modzy.error.ApiError.reason" title="Permalink to this definition">¶</a></dt>
+<dd><p>The source exception. May be None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Optional[Exception]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Creates an <cite>ApiError</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>) – Human readable error description.</p></li>
+<li><p><strong>url</strong> (<em>str</em>) – The API URL.</p></li>
+<li><p><strong>reason</strong> (<em>Optional</em><em>[</em><em>Exception</em><em>]</em>) – The source exception. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="modzy.error.BadRequestError">
+<em class="property">exception </em><code class="sig-prename descclassname">modzy.error.</code><code class="sig-name descname">BadRequestError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">response</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/error.html#BadRequestError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.error.BadRequestError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#modzy.error.ClientError" title="modzy.error.ClientError"><code class="xref py py-class docutils literal notranslate"><span class="pre">modzy.error.ClientError</span></code></a></p>
+<p>HTTP 400 Bad Request Error.</p>
+<p>Raised if the client sends something that the API cannot or will not handle.</p>
+<p>Creates a <cite>ResponseError</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>) – Human readable error description.</p></li>
+<li><p><strong>url</strong> (<em>str</em>) – The API URL.</p></li>
+<li><p><strong>response</strong> (<em>requests.Response</em>) – The requests <cite>Response</cite> object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="modzy.error.ClientError">
+<em class="property">exception </em><code class="sig-prename descclassname">modzy.error.</code><code class="sig-name descname">ClientError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">response</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/error.html#ClientError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.error.ClientError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#modzy.error.ResponseError" title="modzy.error.ResponseError"><code class="xref py py-class docutils literal notranslate"><span class="pre">modzy.error.ResponseError</span></code></a></p>
+<p>Base class for all HTTP 4xx Client Errors.</p>
+<p>Creates a <cite>ResponseError</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>) – Human readable error description.</p></li>
+<li><p><strong>url</strong> (<em>str</em>) – The API URL.</p></li>
+<li><p><strong>response</strong> (<em>requests.Response</em>) – The requests <cite>Response</cite> object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="modzy.error.ConflictError">
+<em class="property">exception </em><code class="sig-prename descclassname">modzy.error.</code><code class="sig-name descname">ConflictError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">response</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/error.html#ConflictError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.error.ConflictError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#modzy.error.ClientError" title="modzy.error.ClientError"><code class="xref py py-class docutils literal notranslate"><span class="pre">modzy.error.ClientError</span></code></a></p>
+<p>HTTP 409 Conflict Error.</p>
+<p>Raised to signal that a request cannot be completed because it conflicts
+with the current API state.</p>
+<p>Creates a <cite>ResponseError</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>) – Human readable error description.</p></li>
+<li><p><strong>url</strong> (<em>str</em>) – The API URL.</p></li>
+<li><p><strong>response</strong> (<em>requests.Response</em>) – The requests <cite>Response</cite> object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="modzy.error.Error">
+<em class="property">exception </em><code class="sig-prename descclassname">modzy.error.</code><code class="sig-name descname">Error</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/error.html#Error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.error.Error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Base class for all Modzy exceptions.</p>
+<dl class="py attribute">
+<dt id="modzy.error.Error.message">
+<code class="sig-name descname">message</code><a class="headerlink" href="#modzy.error.Error.message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Human readable error description.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Creates an <cite>Error</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>message</strong> (<em>str</em>) – Human readable error description.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="modzy.error.ForbiddenError">
+<em class="property">exception </em><code class="sig-prename descclassname">modzy.error.</code><code class="sig-name descname">ForbiddenError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">response</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/error.html#ForbiddenError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.error.ForbiddenError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#modzy.error.ClientError" title="modzy.error.ClientError"><code class="xref py py-class docutils literal notranslate"><span class="pre">modzy.error.ClientError</span></code></a></p>
+<p>HTTP 403 Forbidden Error.</p>
+<p>Raised if the access key doesn’t have the permission for the requested action
+but was authenticated.</p>
+<p>Creates a <cite>ResponseError</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>) – Human readable error description.</p></li>
+<li><p><strong>url</strong> (<em>str</em>) – The API URL.</p></li>
+<li><p><strong>response</strong> (<em>requests.Response</em>) – The requests <cite>Response</cite> object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="modzy.error.InternalServerError">
+<em class="property">exception </em><code class="sig-prename descclassname">modzy.error.</code><code class="sig-name descname">InternalServerError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">response</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/error.html#InternalServerError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.error.InternalServerError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#modzy.error.ServerError" title="modzy.error.ServerError"><code class="xref py py-class docutils literal notranslate"><span class="pre">modzy.error.ServerError</span></code></a></p>
+<p>HTTP 500 Internal Server Error.</p>
+<p>Creates a <cite>ResponseError</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>) – Human readable error description.</p></li>
+<li><p><strong>url</strong> (<em>str</em>) – The API URL.</p></li>
+<li><p><strong>response</strong> (<em>requests.Response</em>) – The requests <cite>Response</cite> object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="modzy.error.MethodNotAllowedError">
+<em class="property">exception </em><code class="sig-prename descclassname">modzy.error.</code><code class="sig-name descname">MethodNotAllowedError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">response</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/error.html#MethodNotAllowedError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.error.MethodNotAllowedError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#modzy.error.ClientError" title="modzy.error.ClientError"><code class="xref py py-class docutils literal notranslate"><span class="pre">modzy.error.ClientError</span></code></a></p>
+<p>HTTP 405 Method Not Allowed Error.</p>
+<p>Raised if the client used a method the API does not handle. For
+example <cite>POST</cite> if the resource is view only.</p>
+<p>Creates a <cite>ResponseError</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>) – Human readable error description.</p></li>
+<li><p><strong>url</strong> (<em>str</em>) – The API URL.</p></li>
+<li><p><strong>response</strong> (<em>requests.Response</em>) – The requests <cite>Response</cite> object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="modzy.error.NetworkError">
+<em class="property">exception </em><code class="sig-prename descclassname">modzy.error.</code><code class="sig-name descname">NetworkError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">reason</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/error.html#NetworkError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.error.NetworkError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><code class="xref py py-class docutils literal notranslate"><span class="pre">modzy.error.ApiError</span></code></a></p>
+<p>Error connecting to the API over the network.</p>
+<p>Creates an <cite>ApiError</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>) – Human readable error description.</p></li>
+<li><p><strong>url</strong> (<em>str</em>) – The API URL.</p></li>
+<li><p><strong>reason</strong> (<em>Optional</em><em>[</em><em>Exception</em><em>]</em>) – The source exception. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="modzy.error.NotAcceptableError">
+<em class="property">exception </em><code class="sig-prename descclassname">modzy.error.</code><code class="sig-name descname">NotAcceptableError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">response</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/error.html#NotAcceptableError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.error.NotAcceptableError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#modzy.error.ClientError" title="modzy.error.ClientError"><code class="xref py py-class docutils literal notranslate"><span class="pre">modzy.error.ClientError</span></code></a></p>
+<p>HTTP 406 Not Acceptable Error.</p>
+<p>Raised if the API can’t return any content conforming to the
+<cite>Accept</cite> headers of the client.</p>
+<p>Creates a <cite>ResponseError</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>) – Human readable error description.</p></li>
+<li><p><strong>url</strong> (<em>str</em>) – The API URL.</p></li>
+<li><p><strong>response</strong> (<em>requests.Response</em>) – The requests <cite>Response</cite> object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="modzy.error.NotFoundError">
+<em class="property">exception </em><code class="sig-prename descclassname">modzy.error.</code><code class="sig-name descname">NotFoundError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">response</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/error.html#NotFoundError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.error.NotFoundError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#modzy.error.ClientError" title="modzy.error.ClientError"><code class="xref py py-class docutils literal notranslate"><span class="pre">modzy.error.ClientError</span></code></a></p>
+<p>HTTP 404 Not Found Error.</p>
+<p>Raised if a resource does not exist.</p>
+<p>Creates a <cite>ResponseError</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>) – Human readable error description.</p></li>
+<li><p><strong>url</strong> (<em>str</em>) – The API URL.</p></li>
+<li><p><strong>response</strong> (<em>requests.Response</em>) – The requests <cite>Response</cite> object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="modzy.error.RequestEntityTooLargeError">
+<em class="property">exception </em><code class="sig-prename descclassname">modzy.error.</code><code class="sig-name descname">RequestEntityTooLargeError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">response</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/error.html#RequestEntityTooLargeError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.error.RequestEntityTooLargeError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#modzy.error.ClientError" title="modzy.error.ClientError"><code class="xref py py-class docutils literal notranslate"><span class="pre">modzy.error.ClientError</span></code></a></p>
+<p>HTTP 413 Request Entity Too Large Error.</p>
+<p>Raised if the data submitted exceeded the limit.</p>
+<p>Creates a <cite>ResponseError</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>) – Human readable error description.</p></li>
+<li><p><strong>url</strong> (<em>str</em>) – The API URL.</p></li>
+<li><p><strong>response</strong> (<em>requests.Response</em>) – The requests <cite>Response</cite> object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="modzy.error.ResponseError">
+<em class="property">exception </em><code class="sig-prename descclassname">modzy.error.</code><code class="sig-name descname">ResponseError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">response</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/error.html#ResponseError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.error.ResponseError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><code class="xref py py-class docutils literal notranslate"><span class="pre">modzy.error.ApiError</span></code></a></p>
+<p>Base class for HTTP error responses.</p>
+<dl class="py attribute">
+<dt id="modzy.error.ResponseError.message">
+<code class="sig-name descname">message</code><a class="headerlink" href="#modzy.error.ResponseError.message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Human readable error description.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="modzy.error.ResponseError.url">
+<code class="sig-name descname">url</code><a class="headerlink" href="#modzy.error.ResponseError.url" title="Permalink to this definition">¶</a></dt>
+<dd><p>The API URL.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="modzy.error.ResponseError.response">
+<code class="sig-name descname">response</code><a class="headerlink" href="#modzy.error.ResponseError.response" title="Permalink to this definition">¶</a></dt>
+<dd><p>The requests <cite>Response</cite> object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>requests.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Creates a <cite>ResponseError</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>) – Human readable error description.</p></li>
+<li><p><strong>url</strong> (<em>str</em>) – The API URL.</p></li>
+<li><p><strong>response</strong> (<em>requests.Response</em>) – The requests <cite>Response</cite> object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="modzy.error.ResultsError">
+<em class="property">exception </em><code class="sig-prename descclassname">modzy.error.</code><code class="sig-name descname">ResultsError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/error.html#ResultsError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.error.ResultsError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#modzy.error.Error" title="modzy.error.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">modzy.error.Error</span></code></a></p>
+<p>Model run failed for a given input source.</p>
+<p>Creates an <cite>Error</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>message</strong> (<em>str</em>) – Human readable error description.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="modzy.error.ServerError">
+<em class="property">exception </em><code class="sig-prename descclassname">modzy.error.</code><code class="sig-name descname">ServerError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">response</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/error.html#ServerError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.error.ServerError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#modzy.error.ResponseError" title="modzy.error.ResponseError"><code class="xref py py-class docutils literal notranslate"><span class="pre">modzy.error.ResponseError</span></code></a></p>
+<p>Base class for all HTTP 5xx Client Errors.</p>
+<p>Creates a <cite>ResponseError</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>) – Human readable error description.</p></li>
+<li><p><strong>url</strong> (<em>str</em>) – The API URL.</p></li>
+<li><p><strong>response</strong> (<em>requests.Response</em>) – The requests <cite>Response</cite> object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="modzy.error.Timeout">
+<em class="property">exception </em><code class="sig-prename descclassname">modzy.error.</code><code class="sig-name descname">Timeout</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/error.html#Timeout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.error.Timeout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#modzy.error.Error" title="modzy.error.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">modzy.error.Error</span></code></a></p>
+<p>A blocking function timed out.</p>
+<p>Creates an <cite>Error</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>message</strong> (<em>str</em>) – Human readable error description.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="modzy.error.UnauthorizedError">
+<em class="property">exception </em><code class="sig-prename descclassname">modzy.error.</code><code class="sig-name descname">UnauthorizedError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">response</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/error.html#UnauthorizedError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.error.UnauthorizedError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#modzy.error.ClientError" title="modzy.error.ClientError"><code class="xref py py-class docutils literal notranslate"><span class="pre">modzy.error.ClientError</span></code></a></p>
+<p>HTTP 401 Unauthorized Error.</p>
+<p>Raised if the access key is not authorized to access the API.</p>
+<p>Creates a <cite>ResponseError</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>) – Human readable error description.</p></li>
+<li><p><strong>url</strong> (<em>str</em>) – The API URL.</p></li>
+<li><p><strong>response</strong> (<em>requests.Response</em>) – The requests <cite>Response</cite> object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="modzy.error.UnprocessableEntityError">
+<em class="property">exception </em><code class="sig-prename descclassname">modzy.error.</code><code class="sig-name descname">UnprocessableEntityError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em>, <em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">response</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/error.html#UnprocessableEntityError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.error.UnprocessableEntityError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#modzy.error.ClientError" title="modzy.error.ClientError"><code class="xref py py-class docutils literal notranslate"><span class="pre">modzy.error.ClientError</span></code></a></p>
+<p>HTTP 422 Unprocessable Entity Error.</p>
+<p>Raised if the API was able to understand the request but was unable
+to process the request.</p>
+<p>Creates a <cite>ResponseError</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>) – Human readable error description.</p></li>
+<li><p><strong>url</strong> (<em>str</em>) – The API URL.</p></li>
+<li><p><strong>response</strong> (<em>requests.Response</em>) – The requests <cite>Response</cite> object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-modzy.http">
+<span id="modzy-http-module"></span><h2>modzy.http module<a class="headerlink" href="#module-modzy.http" title="Permalink to this headline">¶</a></h2>
+<p>The HTTP client implementation.</p>
+<dl class="py class">
+<dt id="modzy.http.HttpClient">
+<em class="property">class </em><code class="sig-prename descclassname">modzy.http.</code><code class="sig-name descname">HttpClient</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">api_client</span></em>, <em class="sig-param"><span class="n">session</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/http.html#HttpClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.http.HttpClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The HTTP Client object.</p>
+<p>This object is responsible for making the actual HTTP requests to the API. User code
+should generally not need to directly access this object.</p>
+<p>This class should not be instantiated directly but rather accessed through the <cite>http</cite>
+attribute of an <cite>ApiClient</cite> instance.</p>
+<dl class="py attribute">
+<dt id="modzy.http.HttpClient.session">
+<code class="sig-name descname">session</code><a class="headerlink" href="#modzy.http.HttpClient.session" title="Permalink to this definition">¶</a></dt>
+<dd><p>The requests <cite>Session</cite> used to make HTTP requests.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>requests.Session</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Creates an <cite>HttpClient</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_client</strong> (<a class="reference internal" href="#modzy.client.ApiClient" title="modzy.client.ApiClient"><em>ApiClient</em></a>) – An <cite>ApiClient</cite> instance.</p></li>
+<li><p><strong>session</strong> (<em>Optional</em><em>[</em><em>requests.Session</em><em>]</em>) – A requests <cite>Session</cite> used to make HTTP requests.
+If None is specified one will be created. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="modzy.http.HttpClient.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">json_data</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/http.html#HttpClient.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.http.HttpClient.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a DELETE request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> (<em>str</em>) – URL to request.</p></li>
+<li><p><strong>json_data</strong> (<em>Optional</em><em>[</em><em>dict</em><em>]</em>) – JSON to include in the request body.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>JSON object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.http.HttpClient.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/http.html#HttpClient.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.http.HttpClient.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a GET request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>url</strong> (<em>str</em>) – URL to request.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>JSON object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.http.HttpClient.patch">
+<code class="sig-name descname">patch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">json_data</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/http.html#HttpClient.patch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.http.HttpClient.patch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a PATCH request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> (<em>str</em>) – URL to request.</p></li>
+<li><p><strong>json_data</strong> (<em>Optional</em><em>[</em><em>dict</em><em>]</em>) – JSON to include in the request body.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>JSON object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.http.HttpClient.post">
+<code class="sig-name descname">post</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">json_data</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/http.html#HttpClient.post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.http.HttpClient.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a POST request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> (<em>str</em>) – URL to request.</p></li>
+<li><p><strong>json_data</strong> (<em>Optional</em><em>[</em><em>dict</em><em>]</em>) – JSON to include in the request body.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>JSON object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.http.HttpClient.put">
+<code class="sig-name descname">put</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">json_data</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/http.html#HttpClient.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.http.HttpClient.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a PUT request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> (<em>str</em>) – URL to request.</p></li>
+<li><p><strong>json_data</strong> (<em>Optional</em><em>[</em><em>dict</em><em>]</em>) – JSON to include in the request body.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>JSON object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.http.HttpClient.request">
+<code class="sig-name descname">request</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">method</span></em>, <em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">json_data</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/http.html#HttpClient.request"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.http.HttpClient.request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends an HTTP request.</p>
+<p>The client’s API key will automatically be used for authentication.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<em>str</em>) – The HTTP method for the request.</p></li>
+<li><p><strong>url</strong> (<em>str</em>) – URL to request.</p></li>
+<li><p><strong>json_data</strong> (<em>Optional</em><em>[</em><em>Any</em><em>]</em>) – JSON serializeable object to include in the request body.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>JSON object deserialized from the response body.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-modzy.jobs">
+<span id="modzy-jobs-module"></span><h2>modzy.jobs module<a class="headerlink" href="#module-modzy.jobs" title="Permalink to this headline">¶</a></h2>
+<p>Classes for interacting with jobs.</p>
+<dl class="py class">
+<dt id="modzy.jobs.Job">
+<em class="property">class </em><code class="sig-prename descclassname">modzy.jobs.</code><code class="sig-name descname">Job</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">json_obj</span></em>, <em class="sig-param"><span class="n">api_client</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/jobs.html#Job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.jobs.Job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">modzy._api_object.ApiObject</span></code></p>
+<p>A job object.</p>
+<p>This object contains a parsed copy of the information returned from the server about a certain job.</p>
+<dl class="py attribute">
+<dt id="modzy.jobs.Job.job_identifier">
+<code class="sig-name descname">job_identifier</code><a class="headerlink" href="#modzy.jobs.Job.job_identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>The job identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This class should not be instantiated directly. Instead, it is returned by various package
+functions.</p>
+<p>This object is a <cite>dict</cite> subclass that also supports attribute access. Information can be
+accessed through dotted attribute notation using “snake_case” or the original “camelCase” JSON
+key name (<code class="docutils literal notranslate"><span class="pre">job.job_identifier</span></code> or <code class="docutils literal notranslate"><span class="pre">job.jobIdentifier</span></code>). Alternatively, the original
+“camelCase” JSON key can be used with bracketed key access notation (<code class="docutils literal notranslate"><span class="pre">job['jobIdentifier']</span></code>).</p>
+</div>
+<dl class="py method">
+<dt id="modzy.jobs.Job.block_until_complete">
+<code class="sig-name descname">block_until_complete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">60</span></em>, <em class="sig-param"><span class="n">poll_interval</span><span class="o">=</span><span class="default_value">5</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/jobs.html#Job.block_until_complete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.jobs.Job.block_until_complete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Blocks until the <cite>Job</cite> completes or a timeout is reached.</p>
+<p>This is accomplished by polling the API until the <cite>Job</cite> status is set to <cite>COMPLETED</cite>
+or <cite>CANCELED</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) – Seconds to wait until timeout. <cite>None</cite> indicates wait forever.
+Defaults to 60.</p></li>
+<li><p><strong>poll_interval</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) – Seconds between polls. Defaults to 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The <cite>Job</cite> instance (self).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.jobs.Job" title="modzy.jobs.Job">Job</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#modzy.error.Timeout" title="modzy.error.Timeout"><strong>Timeout</strong></a> – The <cite>Job</cite> did not complete before the timeout was reached.</p></li>
+<li><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.jobs.Job.cancel">
+<code class="sig-name descname">cancel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/jobs.html#Job.cancel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.jobs.Job.cancel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempts to cancel the <cite>Job</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The <cite>Job</cite> instance (self).</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#modzy.jobs.Job" title="modzy.jobs.Job">Job</a></p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.jobs.Job.get_result">
+<code class="sig-name descname">get_result</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/jobs.html#Job.get_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.jobs.Job.get_result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the <cite>Result</cite> instance for this <cite>Job</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The <cite>Result</cite> instance.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#modzy.results.Result" title="modzy.results.Result">Result</a></p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.jobs.Job.sync">
+<code class="sig-name descname">sync</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/jobs.html#Job.sync"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.jobs.Job.sync" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the <cite>Job</cite> instance’s data in-place with new data from the API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The <cite>Job</cite> instance (self).</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#modzy.jobs.Job" title="modzy.jobs.Job">Job</a></p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="modzy.jobs.Jobs">
+<em class="property">class </em><code class="sig-prename descclassname">modzy.jobs.</code><code class="sig-name descname">Jobs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">api_client</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/jobs.html#Jobs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.jobs.Jobs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The <cite>Jobs</cite> object.</p>
+<p>This object is used to retreive information about jobs from the API.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This class should not be instantiated directly but rather accessed through the <cite>jobs</cite>
+attribute of an <cite>ApiClient</cite> instance.</p>
+</div>
+<p>Creates a <cite>Jobs</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>api_client</strong> (<a class="reference internal" href="#modzy.client.ApiClient" title="modzy.client.ApiClient"><em>ApiClient</em></a>) – An <cite>ApiClient</cite> instance.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="modzy.jobs.Jobs.block_until_complete">
+<code class="sig-name descname">block_until_complete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">job</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">60</span></em>, <em class="sig-param"><span class="n">poll_interval</span><span class="o">=</span><span class="default_value">5</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/jobs.html#Jobs.block_until_complete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.jobs.Jobs.block_until_complete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Blocks until the <cite>Job</cite> completes or a timeout is reached.</p>
+<p>This is accomplished by polling the API until the <cite>Job</cite> status is set to <cite>COMPLETED</cite>
+or <cite>CANCELED</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>job</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#modzy.jobs.Job" title="modzy.jobs.Job"><em>Job</em></a><em>, </em><a class="reference internal" href="#modzy.results.Result" title="modzy.results.Result"><em>Result</em></a><em>]</em>) – The job identifier or a <cite>Job</cite> or <cite>Result</cite> instance.</p></li>
+<li><p><strong>timeout</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) – Seconds to wait until timeout. <cite>None</cite> indicates wait forever.
+Defaults to 60.</p></li>
+<li><p><strong>poll_interval</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) – Seconds between polls. Defaults to 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The <cite>Job</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.jobs.Job" title="modzy.jobs.Job">Job</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#modzy.error.Timeout" title="modzy.error.Timeout"><strong>Timeout</strong></a> – The <cite>Job</cite> did not complete before the timeout was reached.</p></li>
+<li><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.jobs.Jobs.cancel">
+<code class="sig-name descname">cancel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">job</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/jobs.html#Jobs.cancel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.jobs.Jobs.cancel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempts to cancel a <cite>Job</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>job</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#modzy.jobs.Job" title="modzy.jobs.Job"><em>Job</em></a><em>, </em><a class="reference internal" href="#modzy.results.Result" title="modzy.results.Result"><em>Result</em></a><em>]</em>) – The job identifier or a <cite>Job</cite> or <cite>Result</cite> instance.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The <cite>Job</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.jobs.Job" title="modzy.jobs.Job">Job</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.jobs.Jobs.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">job</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/jobs.html#Jobs.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.jobs.Jobs.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a <cite>Job</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>job</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#modzy.jobs.Job" title="modzy.jobs.Job"><em>Job</em></a><em>, </em><a class="reference internal" href="#modzy.results.Result" title="modzy.results.Result"><em>Result</em></a><em>]</em>) – The job identifier or a <cite>Job</cite> or <cite>Result</cite> instance.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The <cite>Job</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.jobs.Job" title="modzy.jobs.Job">Job</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.jobs.Jobs.get_history">
+<code class="sig-name descname">get_history</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">user</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">access_key</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">end_date</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">job_identifiers</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">status</span><span class="o">=</span><span class="default_value">'all'</span></em>, <em class="sig-param"><span class="n">sort_by</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">direction</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">page</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">per_page</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/jobs.html#Jobs.get_history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.jobs.Jobs.get_history" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a list of <cite>Job</cite> instances within a set of parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Name of the job submitter</p></li>
+<li><p><strong>access_key</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Identifier of the access key to be assigned to the user</p></li>
+<li><p><strong>start_date</strong> (<em>Optional</em><em>[</em><em>datetime</em><em>, </em><em>str</em><em>]</em>) – initial date to filter recods</p></li>
+<li><p><strong>end_date</strong> (<em>Optional</em><em>[</em><em>datetime</em><em>, </em><em>str</em><em>]</em>) – final date to filter recods</p></li>
+<li><p><strong>job_identifiers</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>Tuple</em><em>[</em><em>str</em><em>]</em><em>]</em><em>]</em>) – Array of unique job identifiers</p></li>
+<li><p><strong>status</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Status of the jobs (all, pending, terminated)</p></li>
+<li><p><strong>sort_by</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – attribute name to sort results</p></li>
+<li><p><strong>direction</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Direction of the sorting algorithm (asc, desc)</p></li>
+<li><p><strong>page</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) – The page number for which results are being returned</p></li>
+<li><p><strong>per_page</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) – The number of job identifiers returned by page</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of <cite>Job</cite> instances.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="#modzy.jobs.Job" title="modzy.jobs.Job">Job</a>]</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="modzy.jobs.Jobs.status">
+<code class="sig-name descname">status</code><em class="property"> = namespace(CANCELED='CANCELED', COMPLETED='COMPLETED', IN_PROGRESS='IN_PROGRESS', SUBMITTED='SUBMITTED')</em><a class="headerlink" href="#modzy.jobs.Jobs.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Possible job statuses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.jobs.Jobs.submit_aws_s3">
+<code class="sig-name descname">submit_aws_s3</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">version</span></em>, <em class="sig-param"><span class="n">source</span></em>, <em class="sig-param"><span class="n">access_key_id</span></em>, <em class="sig-param"><span class="n">secret_access_key</span></em>, <em class="sig-param"><span class="n">region</span></em>, <em class="sig-param"><span class="n">source_name</span><span class="o">=</span><span class="default_value">'job'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/jobs.html#Jobs.submit_aws_s3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.jobs.Jobs.submit_aws_s3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submits AwS S3 hosted data for a single source <cite>Job</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#modzy.models.Model" title="modzy.models.Model"><em>Model</em></a><em>]</em>) – The model identifier or a <cite>Model</cite> instance.</p></li>
+<li><p><strong>version</strong> (<em>str</em>) – The model version string.</p></li>
+<li><p><strong>source</strong> (<em>dict</em>) – A mapping of model input filename to S3 bucket and key.</p></li>
+<li><p><strong>access_key_id</strong> (<em>str</em>) – The AWS Access Key ID.</p></li>
+<li><p><strong>secret_access_key</strong> (<em>str</em>) – The AWS Secret Access Key.</p></li>
+<li><p><strong>region</strong> (<em>str</em>) – The AWS Region.</p></li>
+<li><p><strong>source_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The source name. Defaults to ‘job’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The submitted <cite>Job</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.jobs.Job" title="modzy.jobs.Job">Job</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">job</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">submit_aws_s3</span><span class="p">(</span><span class="s1">&#39;model-identifier&#39;</span><span class="p">,</span> <span class="s1">&#39;1.2.3&#39;</span><span class="p">,</span>
+<span class="p">{</span>
+    <span class="s1">&#39;model-input-name-1&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;bucket&#39;</span><span class="p">:</span> <span class="s1">&#39;my-bucket&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;/my/data/file-1.dat&#39;</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;model-input-name-2&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;bucket&#39;</span><span class="p">:</span> <span class="s1">&#39;my-bucket&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;/my/data/file-2.dat&#39;</span>
+    <span class="p">}</span>
+<span class="p">},</span>
+    <span class="n">access_key_id</span><span class="o">=</span><span class="s1">&#39;AWS_ACCESS_KEY_ID&#39;</span><span class="p">,</span>
+    <span class="n">secret_access_key</span><span class="o">=</span><span class="s1">&#39;AWS_SECRET_ACCESS_KEY&#39;</span><span class="p">,</span>
+    <span class="n">region</span><span class="o">=</span><span class="s1">&#39;us-east-1&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.jobs.Jobs.submit_aws_s3_bulk">
+<code class="sig-name descname">submit_aws_s3_bulk</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">version</span></em>, <em class="sig-param"><span class="n">sources</span></em>, <em class="sig-param"><span class="n">access_key_id</span></em>, <em class="sig-param"><span class="n">secret_access_key</span></em>, <em class="sig-param"><span class="n">region</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/jobs.html#Jobs.submit_aws_s3_bulk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.jobs.Jobs.submit_aws_s3_bulk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submits AwS S3 hosted data for a multiple source <cite>Job</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#modzy.models.Model" title="modzy.models.Model"><em>Model</em></a><em>]</em>) – The model identifier or a <cite>Model</cite> instance.</p></li>
+<li><p><strong>version</strong> (<em>str</em>) – The model version string.</p></li>
+<li><p><strong>sources</strong> (<em>dict</em>) – A mapping of source names to text sources. Each source should be a
+mapping of model input filename to S3 bucket and key.</p></li>
+<li><p><strong>access_key_id</strong> (<em>str</em>) – The AWS Access Key ID.</p></li>
+<li><p><strong>secret_access_key</strong> (<em>str</em>) – The AWS Secret Access Key.</p></li>
+<li><p><strong>region</strong> (<em>str</em>) – The AWS Region.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The submitted <cite>Job</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.jobs.Job" title="modzy.jobs.Job">Job</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p></li>
+<li><p><strong>Example</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.jobs.Jobs.submit_bytes">
+<code class="sig-name descname">submit_bytes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">version</span></em>, <em class="sig-param"><span class="n">source</span></em>, <em class="sig-param"><span class="n">source_name</span><span class="o">=</span><span class="default_value">'job'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/jobs.html#Jobs.submit_bytes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.jobs.Jobs.submit_bytes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submits bytes-like data for a single source <cite>Job</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#modzy.models.Model" title="modzy.models.Model"><em>Model</em></a><em>]</em>) – The model identifier or a <cite>Model</cite> instance.</p></li>
+<li><p><strong>version</strong> (<em>str</em>) – The model version string.</p></li>
+<li><p><strong>source</strong> (<em>dict</em>) – A mapping of model input filename to bytes-like object.</p></li>
+<li><p><strong>source_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The source name. Defaults to ‘job’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The submitted <cite>Job</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.jobs.Job" title="modzy.jobs.Job">Job</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">job</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">submit_bytes</span><span class="p">(</span><span class="s1">&#39;model-identifier&#39;</span><span class="p">,</span> <span class="s1">&#39;1.2.3&#39;</span><span class="p">,</span>
+<span class="p">{</span>
+    <span class="s1">&#39;model-input-name-1&#39;</span><span class="p">:</span> <span class="sa">b</span><span class="s1">&#39;some bytes&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;model-input-name-2&#39;</span><span class="p">:</span> <span class="nb">bytearray</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]),</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.jobs.Jobs.submit_bytes_bulk">
+<code class="sig-name descname">submit_bytes_bulk</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">version</span></em>, <em class="sig-param"><span class="n">sources</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/jobs.html#Jobs.submit_bytes_bulk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.jobs.Jobs.submit_bytes_bulk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submits bytes-like data for a multiple source <cite>Job</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#modzy.models.Model" title="modzy.models.Model"><em>Model</em></a><em>]</em>) – The model identifier or a <cite>Model</cite> instance.</p></li>
+<li><p><strong>version</strong> (<em>str</em>) – The model version string.</p></li>
+<li><p><strong>sources</strong> (<em>dict</em>) – A mapping of source names to text sources. Each source should be a
+mapping of model input filename to bytes-like object.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The submitted <cite>Job</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.jobs.Job" title="modzy.jobs.Job">Job</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p></li>
+<li><p><strong>Example</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.jobs.Jobs.submit_files">
+<code class="sig-name descname">submit_files</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">version</span></em>, <em class="sig-param"><span class="n">source</span></em>, <em class="sig-param"><span class="n">source_name</span><span class="o">=</span><span class="default_value">'job'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/jobs.html#Jobs.submit_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.jobs.Jobs.submit_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submits filepath or file-like data for a single source <cite>Job</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#modzy.models.Model" title="modzy.models.Model"><em>Model</em></a><em>]</em>) – The model identifier or a <cite>Model</cite> instance.</p></li>
+<li><p><strong>version</strong> (<em>str</em>) – The model version string.</p></li>
+<li><p><strong>source</strong> (<em>dict</em>) – A mapping of model input filename to filepath or file-like object.</p></li>
+<li><p><strong>source_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The source name. Defaults to ‘job’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The submitted <cite>Job</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.jobs.Job" title="modzy.jobs.Job">Job</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">job</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">submit_files</span><span class="p">(</span><span class="s1">&#39;model-identifier&#39;</span><span class="p">,</span> <span class="s1">&#39;1.2.3&#39;</span><span class="p">,</span>
+<span class="p">{</span>
+    <span class="s1">&#39;model-input-name-1&#39;</span><span class="p">:</span> <span class="s1">&#39;/path/to/file.dat&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;model-input-name-2&#39;</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s1">&#39;./path/to/file.dat&#39;</span><span class="p">),</span>
+    <span class="s1">&#39;model-input-name-3&#39;</span><span class="p">:</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/path/to/file.dat&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">),</span>
+    <span class="s1">&#39;model-input-name-4&#39;</span><span class="p">:</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;file-like object&#39;</span><span class="p">),</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.jobs.Jobs.submit_files_bulk">
+<code class="sig-name descname">submit_files_bulk</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">version</span></em>, <em class="sig-param"><span class="n">sources</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/jobs.html#Jobs.submit_files_bulk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.jobs.Jobs.submit_files_bulk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submits filepath or file-like data data for a multiple source <cite>Job</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#modzy.models.Model" title="modzy.models.Model"><em>Model</em></a><em>]</em>) – The model identifier or a <cite>Model</cite> instance.</p></li>
+<li><p><strong>version</strong> (<em>str</em>) – The model version string.</p></li>
+<li><p><strong>sources</strong> (<em>dict</em>) – A mapping of source names to text sources. Each source should be a
+mapping of model input filename to filepath or file-like object.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The submitted <cite>Job</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.jobs.Job" title="modzy.jobs.Job">Job</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p></li>
+<li><p><strong>Example</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.jobs.Jobs.submit_jdbc">
+<code class="sig-name descname">submit_jdbc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">version</span></em>, <em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">username</span></em>, <em class="sig-param"><span class="n">password</span></em>, <em class="sig-param"><span class="n">driver</span></em>, <em class="sig-param"><span class="n">query</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/jobs.html#Jobs.submit_jdbc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.jobs.Jobs.submit_jdbc" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Submits jdbc query as input for a <cite>Job</cite>, each row is interpreted as a input.</dt><dd><p>Modzy will create a data source with the parameters provided and will execute
+the query provided, then will match the inputs defined of the model with the columns
+of the resultset.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#modzy.models.Model" title="modzy.models.Model"><em>Model</em></a><em>]</em>) – The model identifier or a <cite>Model</cite> instance.</p></li>
+<li><p><strong>version</strong> (<em>str</em>) – The model version string.</p></li>
+<li><p><strong>url</strong> (<em>str</em>) – URL to connect to the database</p></li>
+<li><p><strong>username</strong> (<em>str</em>) – the username to access the database</p></li>
+<li><p><strong>password</strong> (<em>str</em>) – the password to access the database</p></li>
+<li><p><strong>driver</strong> (<em>str</em>) – full driver class name</p></li>
+<li><p><strong>query</strong> (<em>str</em>) – the query to execute</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The submitted <cite>Job</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.jobs.Job" title="modzy.jobs.Job">Job</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p></li>
+<li><p><strong>Example</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.jobs.Jobs.submit_text">
+<code class="sig-name descname">submit_text</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">version</span></em>, <em class="sig-param"><span class="n">source</span></em>, <em class="sig-param"><span class="n">source_name</span><span class="o">=</span><span class="default_value">'job'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/jobs.html#Jobs.submit_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.jobs.Jobs.submit_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submits text data for a single source <cite>Job</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#modzy.models.Model" title="modzy.models.Model"><em>Model</em></a><em>]</em>) – The model identifier or a <cite>Model</cite> instance.</p></li>
+<li><p><strong>version</strong> (<em>str</em>) – The model version string.</p></li>
+<li><p><strong>source</strong> (<em>dict</em>) – A mapping of model input filename to text string.</p></li>
+<li><p><strong>source_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The source name. Defaults to ‘job’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The submitted <cite>Job</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.jobs.Job" title="modzy.jobs.Job">Job</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p></li>
+<li><p><strong>Example</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.jobs.Jobs.submit_text_bulk">
+<code class="sig-name descname">submit_text_bulk</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">version</span></em>, <em class="sig-param"><span class="n">sources</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/jobs.html#Jobs.submit_text_bulk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.jobs.Jobs.submit_text_bulk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submits text data for a multiple source <cite>Job</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#modzy.models.Model" title="modzy.models.Model"><em>Model</em></a><em>]</em>) – The model identifier or a <cite>Model</cite> instance.</p></li>
+<li><p><strong>version</strong> (<em>str</em>) – The model version string.</p></li>
+<li><p><strong>sources</strong> (<em>dict</em>) – A mapping of source names to text sources. Each source should be a
+mapping of model input filename to text string.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The submitted <cite>Job</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.jobs.Job" title="modzy.jobs.Job">Job</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p></li>
+<li><p><strong>Example</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-modzy.models">
+<span id="modzy-models-module"></span><h2>modzy.models module<a class="headerlink" href="#module-modzy.models" title="Permalink to this headline">¶</a></h2>
+<p>Classes for interacting with models.</p>
+<dl class="py class">
+<dt id="modzy.models.Model">
+<em class="property">class </em><code class="sig-prename descclassname">modzy.models.</code><code class="sig-name descname">Model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">json_obj</span></em>, <em class="sig-param"><span class="n">api_client</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/models.html#Model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.models.Model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">modzy._api_object.ApiObject</span></code></p>
+<p>A model object.</p>
+<p>This object contains a parsed copy of the information returned from the server about a certain model.</p>
+<dl class="py attribute">
+<dt id="modzy.models.Model.identifier">
+<code class="sig-name descname">identifier</code><a class="headerlink" href="#modzy.models.Model.identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>The model identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This class should not be instantiated directly. Instead, it is returned by various package
+functions.
+This object is a <cite>dict</cite> subclass that also supports attribute access. Information can be
+accessed through dotted attribute notation using “snake_case” or the original “camelCase” JSON
+key name (<code class="docutils literal notranslate"><span class="pre">model.long_description</span></code> or <code class="docutils literal notranslate"><span class="pre">model.longDescription</span></code>). Alternatively, the original
+“camelCase” JSON key can be used with bracketed key access notation (<code class="docutils literal notranslate"><span class="pre">model['longDescription']</span></code>).</p>
+</div>
+<dl class="py method">
+<dt id="modzy.models.Model.get_related">
+<code class="sig-name descname">get_related</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/models.html#Model.get_related"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.models.Model.get_related" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a list of all the models associated with this model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list of <cite>Model</cite> instances.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="#modzy.models.Model" title="modzy.models.Model">Model</a>]</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.models.Model.get_versions">
+<code class="sig-name descname">get_versions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/models.html#Model.get_versions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.models.Model.get_versions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a list of all the versions associated with this model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list of <cite>Version</cite> instances.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[Version]</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.models.Model.submit_aws_s3">
+<code class="sig-name descname">submit_aws_s3</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">version</span></em>, <em class="sig-param"><span class="n">source</span></em>, <em class="sig-param"><span class="n">access_key_id</span></em>, <em class="sig-param"><span class="n">secret_access_key</span></em>, <em class="sig-param"><span class="n">region</span></em>, <em class="sig-param"><span class="n">source_name</span><span class="o">=</span><span class="default_value">'job'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/models.html#Model.submit_aws_s3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.models.Model.submit_aws_s3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submits AwS S3 hosted data for a single source <cite>Job</cite>.</p>
+<dl class="simple">
+<dt>See:</dt><dd><p><a class="reference internal" href="#modzy.jobs.Jobs.submit_aws_s3" title="modzy.jobs.Jobs.submit_aws_s3"><code class="xref py py-meth docutils literal notranslate"><span class="pre">modzy.jobs.Jobs.submit_aws_s3()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.models.Model.submit_aws_s3_bulk">
+<code class="sig-name descname">submit_aws_s3_bulk</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">version</span></em>, <em class="sig-param"><span class="n">sources</span></em>, <em class="sig-param"><span class="n">access_key_id</span></em>, <em class="sig-param"><span class="n">secret_access_key</span></em>, <em class="sig-param"><span class="n">region</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/models.html#Model.submit_aws_s3_bulk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.models.Model.submit_aws_s3_bulk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submits AwS S3 hosted data for a multiple source <cite>Job</cite>.</p>
+<dl class="simple">
+<dt>See:</dt><dd><p><a class="reference internal" href="#modzy.jobs.Jobs.submit_aws_s3_bulk" title="modzy.jobs.Jobs.submit_aws_s3_bulk"><code class="xref py py-meth docutils literal notranslate"><span class="pre">modzy.jobs.Jobs.submit_aws_s3_bulk()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.models.Model.submit_bytes">
+<code class="sig-name descname">submit_bytes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">version</span></em>, <em class="sig-param"><span class="n">source</span></em>, <em class="sig-param"><span class="n">source_name</span><span class="o">=</span><span class="default_value">'job'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/models.html#Model.submit_bytes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.models.Model.submit_bytes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submits bytes-like data for a single source <cite>Job</cite>.</p>
+<dl class="simple">
+<dt>See:</dt><dd><p><a class="reference internal" href="#modzy.jobs.Jobs.submit_bytes" title="modzy.jobs.Jobs.submit_bytes"><code class="xref py py-meth docutils literal notranslate"><span class="pre">modzy.jobs.Jobs.submit_bytes()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.models.Model.submit_bytes_bulk">
+<code class="sig-name descname">submit_bytes_bulk</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">version</span></em>, <em class="sig-param"><span class="n">sources</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/models.html#Model.submit_bytes_bulk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.models.Model.submit_bytes_bulk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submits bytes-like data for a multiple source <cite>Job</cite>.</p>
+<dl class="simple">
+<dt>See:</dt><dd><p><a class="reference internal" href="#modzy.jobs.Jobs.submit_bytes_bulk" title="modzy.jobs.Jobs.submit_bytes_bulk"><code class="xref py py-meth docutils literal notranslate"><span class="pre">modzy.jobs.Jobs.submit_bytes_bulk()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.models.Model.submit_files">
+<code class="sig-name descname">submit_files</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">version</span></em>, <em class="sig-param"><span class="n">source</span></em>, <em class="sig-param"><span class="n">source_name</span><span class="o">=</span><span class="default_value">'job'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/models.html#Model.submit_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.models.Model.submit_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submits a filepath or file-like data for a single source <cite>Job</cite>.</p>
+<dl class="simple">
+<dt>See:</dt><dd><p><a class="reference internal" href="#modzy.jobs.Jobs.submit_files" title="modzy.jobs.Jobs.submit_files"><code class="xref py py-meth docutils literal notranslate"><span class="pre">modzy.jobs.Jobs.submit_files()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.models.Model.submit_files_bulk">
+<code class="sig-name descname">submit_files_bulk</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">version</span></em>, <em class="sig-param"><span class="n">sources</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/models.html#Model.submit_files_bulk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.models.Model.submit_files_bulk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submits a filepath or file-like data for a multiple source <cite>Job</cite>.</p>
+<dl class="simple">
+<dt>See:</dt><dd><p><a class="reference internal" href="#modzy.jobs.Jobs.submit_files_bulk" title="modzy.jobs.Jobs.submit_files_bulk"><code class="xref py py-meth docutils literal notranslate"><span class="pre">modzy.jobs.Jobs.submit_files_bulk()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.models.Model.submit_jdbc">
+<code class="sig-name descname">submit_jdbc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">version</span></em>, <em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">username</span></em>, <em class="sig-param"><span class="n">password</span></em>, <em class="sig-param"><span class="n">driver</span></em>, <em class="sig-param"><span class="n">query</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/models.html#Model.submit_jdbc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.models.Model.submit_jdbc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submits jdbc query as input for a <cite>Job</cite>, each row is interpreted as a input.</p>
+<dl class="simple">
+<dt>See:</dt><dd><p><a class="reference internal" href="#modzy.jobs.Jobs.submit_jdbc" title="modzy.jobs.Jobs.submit_jdbc"><code class="xref py py-meth docutils literal notranslate"><span class="pre">modzy.jobs.Jobs.submit_jdbc()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.models.Model.submit_text">
+<code class="sig-name descname">submit_text</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">version</span></em>, <em class="sig-param"><span class="n">source</span></em>, <em class="sig-param"><span class="n">source_name</span><span class="o">=</span><span class="default_value">'job'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/models.html#Model.submit_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.models.Model.submit_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submits text data for a single source <cite>Job</cite>.</p>
+<dl class="simple">
+<dt>See:</dt><dd><p><a class="reference internal" href="#modzy.jobs.Jobs.submit_text" title="modzy.jobs.Jobs.submit_text"><code class="xref py py-meth docutils literal notranslate"><span class="pre">modzy.jobs.Jobs.submit_text()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.models.Model.submit_text_bulk">
+<code class="sig-name descname">submit_text_bulk</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">version</span></em>, <em class="sig-param"><span class="n">sources</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/models.html#Model.submit_text_bulk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.models.Model.submit_text_bulk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submits text data for a multiple source <cite>Job</cite>.</p>
+<dl class="simple">
+<dt>See:</dt><dd><p><a class="reference internal" href="#modzy.jobs.Jobs.submit_text_bulk" title="modzy.jobs.Jobs.submit_text_bulk"><code class="xref py py-meth docutils literal notranslate"><span class="pre">modzy.jobs.Jobs.submit_text_bulk()</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.models.Model.sync">
+<code class="sig-name descname">sync</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/models.html#Model.sync"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.models.Model.sync" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the <cite>Model</cite> instance’s data in-place with new data from the API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The <cite>Model</cite> instance (self).</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#modzy.models.Model" title="modzy.models.Model">Model</a></p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="modzy.models.ModelVersion">
+<em class="property">class </em><code class="sig-prename descclassname">modzy.models.</code><code class="sig-name descname">ModelVersion</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">json_obj</span></em>, <em class="sig-param"><span class="n">api_client</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/models.html#ModelVersion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.models.ModelVersion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">modzy._api_object.ApiObject</span></code></p>
+<p>A model version object.</p>
+<p>This object contains a parsed copy of the information returned from the server about a certain model version.</p>
+<dl class="py attribute">
+<dt id="modzy.models.ModelVersion.version">
+<code class="sig-name descname">version</code><a class="headerlink" href="#modzy.models.ModelVersion.version" title="Permalink to this definition">¶</a></dt>
+<dd><p>The model version identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This class should not be instantiated directly. Instead, it is returned by various package
+functions.
+This object is a <cite>dict</cite> subclass that also supports attribute access. Information can be
+accessed through dotted attribute notation using “snake_case” or the original “camelCase” JSON
+key name (<code class="docutils literal notranslate"><span class="pre">model.long_description</span></code> or <code class="docutils literal notranslate"><span class="pre">model.longDescription</span></code>). Alternatively, the original
+“camelCase” JSON key can be used with bracketed key access notation (<code class="docutils literal notranslate"><span class="pre">model['longDescription']</span></code>).</p>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt id="modzy.models.Models">
+<em class="property">class </em><code class="sig-prename descclassname">modzy.models.</code><code class="sig-name descname">Models</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">api_client</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/models.html#Models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.models.Models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The <cite>Models</cite> object.</p>
+<p>This object is used to retreive information about models from the API.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This class should not be instantiated directly but rather accessed through the <cite>models</cite>
+attribute of an <cite>ApiClient</cite> instance.</p>
+</div>
+<p>Creates a <cite>Models</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>api_client</strong> (<a class="reference internal" href="#modzy.client.ApiClient" title="modzy.client.ApiClient"><em>ApiClient</em></a>) – An <cite>ApiClient</cite> instance.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="modzy.models.Models.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/models.html#Models.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.models.Models.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a <cite>Model</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>model</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#modzy.models.Model" title="modzy.models.Model"><em>Model</em></a><em>]</em>) – The model identifier or a <cite>Model</cite> instance.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The <cite>Model</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.models.Model" title="modzy.models.Model">Model</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.models.Models.get_all">
+<code class="sig-name descname">get_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/models.html#Models.get_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.models.Models.get_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a list of all <cite>Model</cite> instances.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list of <cite>Model</cite> instances.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="#modzy.models.Model" title="modzy.models.Model">Model</a>]</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.models.Models.get_by_name">
+<code class="sig-name descname">get_by_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/models.html#Models.get_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.models.Models.get_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a <cite>Model</cite> instance by name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – The model name.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The <cite>Model</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.models.Model" title="modzy.models.Model">Model</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.models.Models.get_models">
+<code class="sig-name descname">get_models</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model_id</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">author</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">created_by_email</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">description</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">is_active</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">is_expired</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">is_recommended</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">last_active_date_time</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">expiration_date_time</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sort_by</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">direction</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">page</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">per_page</span><span class="o">=</span><span class="default_value">1000</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/models.html#Models.get_models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.models.Models.get_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a list of <cite>Model</cite> instances within a set of parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Identifier of the model</p></li>
+<li><p><strong>author</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – authoring company</p></li>
+<li><p><strong>created_by_email</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – creator email</p></li>
+<li><p><strong>name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – name of the model</p></li>
+<li><p><strong>description</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – description of the model</p></li>
+<li><p><strong>is_active</strong> (<em>Optional</em><em>[</em><em>boolean</em><em>, </em><em>str</em><em>]</em>) – availability of the model in the marketplace</p></li>
+<li><p><strong>is_expired</strong> (<em>Optional</em><em>[</em><em>boolean</em><em>, </em><em>str</em><em>]</em>) – expiration status</p></li>
+<li><p><strong>is_recommended</strong> (<em>Optional</em><em>[</em><em>boolean</em><em>, </em><em>str</em><em>]</em>) – recommended status</p></li>
+<li><p><strong>last_active_date_time</strong> (<em>Optional</em><em>[</em><em>datetime</em><em>, </em><em>str</em><em>]</em>) – latest use date</p></li>
+<li><p><strong>expiration_date_time</strong> (<em>Optional</em><em>[</em><em>datetime</em><em>, </em><em>str</em><em>]</em>) – expiration date</p></li>
+<li><p><strong>sort_by</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – attribute name to sort results</p></li>
+<li><p><strong>direction</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Direction of the sorting algorithm (asc, desc)</p></li>
+<li><p><strong>page</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) – The page number for which results are being returned</p></li>
+<li><p><strong>per_page</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) – The number of job identifiers returned by page</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of <cite>Model</cite> instances.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="#modzy.models.Model" title="modzy.models.Model">Model</a>]</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.models.Models.get_related">
+<code class="sig-name descname">get_related</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/models.html#Models.get_related"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.models.Models.get_related" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a list of all the models associated with the model provided, together with the model’s details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list of <cite>Model</cite> instances.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="#modzy.models.Model" title="modzy.models.Model">Model</a>]</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.models.Models.get_version">
+<code class="sig-name descname">get_version</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">version</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/models.html#Models.get_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.models.Models.get_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a versions associated with the model provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A instance of <cite>ModelVersion</cite> instances.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#modzy.models.ModelVersion" title="modzy.models.ModelVersion">ModelVersion</a></p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.models.Models.get_versions">
+<code class="sig-name descname">get_versions</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/models.html#Models.get_versions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.models.Models.get_versions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a list of all the versions associated with the model provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list of <cite>Version</cite> instances.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="#modzy.models.ModelVersion" title="modzy.models.ModelVersion">ModelVersion</a>]</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-modzy.tags">
+<span id="modzy-tags-module"></span><h2>modzy.tags module<a class="headerlink" href="#module-modzy.tags" title="Permalink to this headline">¶</a></h2>
+<p>Classes for interacting with tags.</p>
+<dl class="py class">
+<dt id="modzy.tags.Tag">
+<em class="property">class </em><code class="sig-prename descclassname">modzy.tags.</code><code class="sig-name descname">Tag</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">json_obj</span></em>, <em class="sig-param"><span class="n">api_client</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/tags.html#Tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.tags.Tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">modzy._api_object.ApiObject</span></code></p>
+<p>A tag object.</p>
+<p>This object contains a parsed copy of the information returned from the server about a certain tag.</p>
+<dl class="py attribute">
+<dt id="modzy.tags.Tag.identifier">
+<code class="sig-name descname">identifier</code><a class="headerlink" href="#modzy.tags.Tag.identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>The tag identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This class should not be instantiated directly. Instead, it is returned by various package
+functions.</p>
+<p>This object is a <cite>dict</cite> subclass that also supports attribute access. Information can be
+accessed through dotted attribute notation using “snake_case” or the original “camelCase” JSON
+key name (<code class="docutils literal notranslate"><span class="pre">tag.data_type</span></code> or <code class="docutils literal notranslate"><span class="pre">tag.dataType</span></code>). Alternatively, the original
+“camelCase” JSON key can be used with bracketed key access notation (<code class="docutils literal notranslate"><span class="pre">tag['dataType']</span></code>).</p>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt id="modzy.tags.Tags">
+<em class="property">class </em><code class="sig-prename descclassname">modzy.tags.</code><code class="sig-name descname">Tags</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">api_client</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/tags.html#Tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.tags.Tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The <cite>Tags</cite> object.</p>
+<p>This object is used to retreive information about tags from the API.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This class should not be instantiated directly but rather accessed through the <cite>tags</cite>
+attribute of an <cite>ApiClient</cite> instance.</p>
+</div>
+<p>Creates a <cite>Tags</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>api_client</strong> (<a class="reference internal" href="#modzy.client.ApiClient" title="modzy.client.ApiClient"><em>ApiClient</em></a>) – An <cite>ApiClient</cite> instance.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="modzy.tags.Tags.get_all">
+<code class="sig-name descname">get_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/tags.html#Tags.get_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.tags.Tags.get_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a list of all <cite>Tag</cite> instances.
+:returns: A list of <cite>Tag</cite> instances.
+:rtype: List[Tag]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.tags.Tags.get_tags_and_models">
+<code class="sig-name descname">get_tags_and_models</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tag_identifiers</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/tags.html#Tags.get_tags_and_models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.tags.Tags.get_tags_and_models" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Get a list of all <cite>Tag</cite> instances provided in the <cite>tag_identifiers</cite> argument,</dt><dd><p>with all the models that are related to those tags.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tag_identifiers</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#modzy.tags.Tag" title="modzy.tags.Tag"><em>Tag</em></a><em>, </em><em>Sequence</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#modzy.tags.Tag" title="modzy.tags.Tag"><em>Tag</em></a><em>]</em><em>] </em><em>]</em>) – the tags identifiers</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A tuple containing the list of <cite>Tag</cite> and <cite>Model</cite> instances</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[List[<a class="reference internal" href="#modzy.tags.Tag" title="modzy.tags.Tag">Tag</a>], List[<a class="reference internal" href="#modzy.models.Model" title="modzy.models.Model">Model</a>]]</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-modzy.results">
+<span id="modzy-results-module"></span><h2>modzy.results module<a class="headerlink" href="#module-modzy.results" title="Permalink to this headline">¶</a></h2>
+<p>Classes for interacting with results.</p>
+<dl class="py class">
+<dt id="modzy.results.Result">
+<em class="property">class </em><code class="sig-prename descclassname">modzy.results.</code><code class="sig-name descname">Result</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">json_obj</span></em>, <em class="sig-param"><span class="n">api_client</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/results.html#Result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.results.Result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">modzy._api_object.ApiObject</span></code></p>
+<p>A result object.</p>
+<p>This object contains a parsed copy of the information returned from the server about a certain result.</p>
+<dl class="py attribute">
+<dt id="modzy.results.Result.job_identifier">
+<code class="sig-name descname">job_identifier</code><a class="headerlink" href="#modzy.results.Result.job_identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>The job identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This class should not be instantiated directly. Instead, it is returned by various package
+functions.</p>
+<p>This object is a <cite>dict</cite> subclass that also supports attribute access. Information can be
+accessed through dotted attribute notation using “snake_case” or the original “camelCase” JSON
+key name (<code class="docutils literal notranslate"><span class="pre">result.job_identifier</span></code> or <code class="docutils literal notranslate"><span class="pre">result.jobIdentifier</span></code>). Alternatively, the original
+“camelCase” JSON key can be used with bracketed key access notation (<code class="docutils literal notranslate"><span class="pre">result['jobIdentifier']</span></code>).</p>
+</div>
+<dl class="py method">
+<dt id="modzy.results.Result.block_until_complete">
+<code class="sig-name descname">block_until_complete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">60</span></em>, <em class="sig-param"><span class="n">poll_interval</span><span class="o">=</span><span class="default_value">5</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/results.html#Result.block_until_complete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.results.Result.block_until_complete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Block until the <cite>Result</cite> completes or a timeout is reached.</p>
+<p>This is accomplished by polling the API until the <cite>Result</cite> is marked finished. This may mean
+that the underlying <cite>Job</cite> was completed or canceled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) – Seconds to wait until timeout. <cite>None</cite> indicates wait forever.
+Defaults to 60.</p></li>
+<li><p><strong>poll_interval</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) – Seconds between polls. Defaults to 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The <cite>Result</cite> instance (self).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.results.Result" title="modzy.results.Result">Result</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#modzy.error.Timeout" title="modzy.error.Timeout"><strong>Timeout</strong></a> – The <cite>Result</cite> did not complete before the timeout was reached.</p></li>
+<li><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.results.Result.get_first_outputs">
+<code class="sig-name descname">get_first_outputs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/results.html#Result.get_first_outputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.results.Result.get_first_outputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the first or only outputs found in this result.</p>
+<p>This is useful for retrieving the outputs after submitting a job with only a single
+input source where you do not know or care about the source name. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">job</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">submit_files</span><span class="p">(</span><span class="s1">&#39;my-model&#39;</span><span class="p">,</span> <span class="s1">&#39;1.0.0&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;input&#39;</span><span class="p">:</span> <span class="s1">&#39;./my-file.dat&#39;</span><span class="p">})</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">block_until_complete</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
+<span class="n">outputs</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_first_outputs</span><span class="p">()</span>
+<span class="n">output_data</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="s1">&#39;output-file.dat&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>source_name</strong> (<em>str</em>) – The source name.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A <cite>dict</cite> mapping the output’s filenames to JSON parsed data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#modzy.error.ResultsError" title="modzy.error.ResultsError"><strong>ResultsError</strong></a> – The results for this source indicate a model failure.</p></li>
+<li><p><strong>KeyError</strong> – No sources have completed.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.results.Result.get_source_outputs">
+<code class="sig-name descname">get_source_outputs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/results.html#Result.get_source_outputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.results.Result.get_source_outputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the model outputs for a given source.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>source_name</strong> (<em>str</em>) – The source name.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A <cite>dict</cite> mapping the output’s filenames to JSON parsed data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#modzy.error.ResultsError" title="modzy.error.ResultsError"><strong>ResultsError</strong></a> – The results for this source indicate a model failure.</p></li>
+<li><p><strong>KeyError</strong> – The source name was not found.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.results.Result.sync">
+<code class="sig-name descname">sync</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/results.html#Result.sync"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.results.Result.sync" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the <cite>Result</cite> instance’s data in-place with new data from the API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The <cite>Result</cite> instance (self).</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#modzy.results.Result" title="modzy.results.Result">Result</a></p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="modzy.results.Results">
+<em class="property">class </em><code class="sig-prename descclassname">modzy.results.</code><code class="sig-name descname">Results</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">api_client</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/results.html#Results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.results.Results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The <cite>Results</cite> object.</p>
+<p>This object is used to retreive information about results from the API.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This class should not be instantiated directly but rather accessed through the <cite>results</cite>
+attribute of an <cite>ApiClient</cite> instance.</p>
+</div>
+<p>Creates a <cite>Results</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>api_client</strong> (<a class="reference internal" href="#modzy.client.ApiClient" title="modzy.client.ApiClient"><em>ApiClient</em></a>) – An <cite>ApiClient</cite> instance.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="modzy.results.Results.block_until_complete">
+<code class="sig-name descname">block_until_complete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">result</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">60</span></em>, <em class="sig-param"><span class="n">poll_interval</span><span class="o">=</span><span class="default_value">5</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/results.html#Results.block_until_complete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.results.Results.block_until_complete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Blocks until the <cite>Result</cite> completes or a timeout is reached.</p>
+<p>This is accomplished by polling the API until the <cite>Result</cite> is marked finished. This may mean
+that the underlying <cite>Job</cite> was completed or canceled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>job</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#modzy.jobs.Job" title="modzy.jobs.Job"><em>Job</em></a><em>, </em><a class="reference internal" href="#modzy.results.Result" title="modzy.results.Result"><em>Result</em></a><em>]</em>) – The job identifier or a <cite>Job</cite> or a <cite>Job</cite> or <cite>Result</cite> instance.</p></li>
+<li><p><strong>timeout</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) – Seconds to wait until timeout. <cite>None</cite> indicates wait forever.
+Defaults to 60.</p></li>
+<li><p><strong>poll_interval</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) – Seconds between polls. Defaults to 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The <cite>Result</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.results.Result" title="modzy.results.Result">Result</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#modzy.error.Timeout" title="modzy.error.Timeout"><strong>Timeout</strong></a> – The <cite>Result</cite> did not complete before the timeout was reached.</p></li>
+<li><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="modzy.results.Results.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">result</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/modzy/results.html#Results.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modzy.results.Results.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a <cite>Result</cite> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>job</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="#modzy.jobs.Job" title="modzy.jobs.Job"><em>Job</em></a><em>, </em><a class="reference internal" href="#modzy.results.Result" title="modzy.results.Result"><em>Result</em></a><em>]</em>) – The job identifier or a <cite>Job</cite> or a <cite>Job</cite> or <cite>Result</cite> instance.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The <cite>Result</cite> instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#modzy.results.Result" title="modzy.results.Result">Result</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#modzy.error.ApiError" title="modzy.error.ApiError"><strong>ApiError</strong></a> – A subclass of ApiError will be raised if the API returns an error status,
+    or the client is unable to connect.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-modzy">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-modzy" title="Permalink to this headline">¶</a></h2>
+<p>Modzy Python API Client.</p>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">modzy package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-modzy.client">modzy.client module</a></li>
+<li><a class="reference internal" href="#module-modzy.error">modzy.error module</a></li>
+<li><a class="reference internal" href="#module-modzy.http">modzy.http module</a></li>
+<li><a class="reference internal" href="#module-modzy.jobs">modzy.jobs module</a></li>
+<li><a class="reference internal" href="#module-modzy.models">modzy.models module</a></li>
+<li><a class="reference internal" href="#module-modzy.tags">modzy.tags module</a></li>
+<li><a class="reference internal" href="#module-modzy.results">modzy.results module</a></li>
+<li><a class="reference internal" href="#module-modzy">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="modules.html"
+                        title="previous chapter">modzy</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="history.html"
+                        title="next chapter">History</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/modzy.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="history.html" title="History"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="modules.html" title="modzy"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Modzy Python SDK 0.3.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="modules.html" >modzy</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">modzy package</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Modzy.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.1.
+    </div>
+  </body>
+</html>

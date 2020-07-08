@@ -1,0 +1,175 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>modzy.tags &#8212; Modzy Python SDK 0.3.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Modzy Python SDK 0.3.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">modzy.tags</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for modzy.tags</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Classes for interacting with tags.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">._api_object</span> <span class="kn">import</span> <span class="n">ApiObject</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Model</span>
+
+
+<div class="viewcode-block" id="Tags"><a class="viewcode-back" href="../../modzy.html#modzy.tags.Tags">[docs]</a><span class="k">class</span> <span class="nc">Tags</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;The `Tags` object.</span>
+
+<span class="sd">    This object is used to retreive information about tags from the API.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        This class should not be instantiated directly but rather accessed through the `tags`</span>
+<span class="sd">        attribute of an `ApiClient` instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_base_route</span> <span class="o">=</span> <span class="s1">&#39;/models/tags&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_client</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates a `Tags` instance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            api_client (ApiClient): An `ApiClient` instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_api_client</span> <span class="o">=</span> <span class="n">api_client</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Tags.get_all"><a class="viewcode-back" href="../../modzy.html#modzy.tags.Tags.get_all">[docs]</a>    <span class="k">def</span> <span class="nf">get_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets a list of all `Tag` instances.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            List[Tag]: A list of `Tag` instances.</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            ApiError: A subclass of ApiError will be raised if the API returns an error status,</span>
+<span class="sd">                or the client is unable to connect.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">json_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api_client</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_base_route</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">Tag</span><span class="p">(</span><span class="n">json_obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api_client</span><span class="p">)</span> <span class="k">for</span> <span class="n">json_obj</span> <span class="ow">in</span> <span class="n">json_list</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Tags.get_tags_and_models"><a class="viewcode-back" href="../../modzy.html#modzy.tags.Tags.get_tags_and_models">[docs]</a>    <span class="k">def</span> <span class="nf">get_tags_and_models</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag_identifiers</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a list of all `Tag` instances provided in the `tag_identifiers` argument,</span>
+<span class="sd">           with all the models that are related to those tags.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tag_identifiers (Union[str, Tag, Sequence[Union[str, Tag]] ]): the tags identifiers</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple[List[Tag], List[Model]]: A tuple containing the list of `Tag` and `Model` instances</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ApiError: A subclass of ApiError will be raised if the API returns an error status,</span>
+<span class="sd">                or the client is unable to connect.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">tag_identifiers</span> <span class="o">=</span> <span class="n">Tag</span><span class="o">.</span><span class="n">_coerce_identifier</span><span class="p">(</span><span class="n">tag_identifiers</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="n">tag_identifiers</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">Tag</span><span class="o">.</span><span class="n">_coerce_identifier</span><span class="p">(</span><span class="n">identifier</span><span class="p">)</span> <span class="k">for</span> <span class="n">identifier</span> <span class="ow">in</span> <span class="n">tag_identifiers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;getting tags </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">tag_identifiers</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_base_route</span><span class="p">,</span> <span class="n">tag_identifiers</span><span class="p">)</span>
+        <span class="n">json_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api_client</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">Model</span><span class="p">(</span><span class="n">json_tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api_client</span><span class="p">)</span> <span class="k">for</span> <span class="n">json_tag</span> <span class="ow">in</span> <span class="n">json_obj</span><span class="o">.</span><span class="n">tags</span><span class="p">),</span>
+                <span class="nb">list</span><span class="p">(</span><span class="n">Model</span><span class="p">(</span><span class="n">json_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api_client</span><span class="p">)</span> <span class="k">for</span> <span class="n">json_model</span> <span class="ow">in</span> <span class="n">json_obj</span><span class="o">.</span><span class="n">models</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="Tag"><a class="viewcode-back" href="../../modzy.html#modzy.tags.Tag">[docs]</a><span class="k">class</span> <span class="nc">Tag</span><span class="p">(</span><span class="n">ApiObject</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A tag object.</span>
+
+<span class="sd">    This object contains a parsed copy of the information returned from the server about a certain tag.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        identifier (str): The tag identifier.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        This class should not be instantiated directly. Instead, it is returned by various package</span>
+<span class="sd">        functions.</span>
+
+<span class="sd">        This object is a `dict` subclass that also supports attribute access. Information can be</span>
+<span class="sd">        accessed through dotted attribute notation using &quot;snake_case&quot; or the original &quot;camelCase&quot; JSON</span>
+<span class="sd">        key name (``tag.data_type`` or ``tag.dataType``). Alternatively, the original</span>
+<span class="sd">        &quot;camelCase&quot; JSON key can be used with bracketed key access notation (``tag[&#39;dataType&#39;]``).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_coerce_identifier</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">maybe_tag</span><span class="p">):</span>
+        <span class="n">identifier</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">maybe_tag</span><span class="p">,</span> <span class="s1">&#39;identifier&#39;</span><span class="p">,</span> <span class="n">maybe_tag</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;the identifier must be </span><span class="si">{}</span><span class="s1"> or str, not </span><span class="si">{}</span><span class="s1">&#39;</span>
+                            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">maybe_tag</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">identifier</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Tag(identifier=&#39;</span><span class="si">{}</span><span class="s2">&#39;,name=&#39;</span><span class="si">{}</span><span class="s2">&#39;)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Modzy Python SDK 0.3.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">modzy.tags</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Modzy.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.1.
+    </div>
+  </body>
+</html>
