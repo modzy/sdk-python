@@ -103,6 +103,19 @@ client = ApiClient(base_url='https://modzy.example.com/api', api_key='my_key.mod
 
 === Basic usage
 
+The code below is applicable for `text/plain` input type.
+
+
+++++
+<div align="center">
+
+<img src="python.gif" alt="basic usage" style="max-width:100%">
+
+</div>
+
+<br>
+++++
+
 Submit a job providing the model, version, and input file:
 
 [source, py]
@@ -191,13 +204,138 @@ results_json = outputs['results.json']
 print(results_json)
 ----
 
+== Features
+
+Currently we support the following api routes:
+
+:url-pages: https://pages.github.com/modzy/sdk-python/html/
+:doc-pages: https://models.modzy.com/docs/
+[cols=3*, stripes=even]
+|===
+|Feature|Code|Api route
+
+|[small]#Retrieve all models#
+|[small]#link:{url-pages}modzy.html#modzy.models.Models.get_all[`client.models.get_all()`]#
+|[small]#link:{doc-pages}api-reference/marketplace/retrieve-models[api/models]#
+
+|[small]#Retrieve some models#
+|[small]#link:{url-pages}modzy.html#modzy.models.Models.get_models[`client.models.get_models()`]#
+|[small]#link:{doc-pages}api-reference/marketplace/retrieve-models[api/models]#
+
+|[small]#Retrieve model details#
+|[small]#link:{url-pages}modzy.html#modzy.models.Models.get[`client.models.get()`]#
+|[small]#link:{doc-pages}api-reference/marketplace/retrieve-model-details[api/models/:model-id]#
+
+|[small]#Retrieve model by name#
+|[small]#link:{url-pages}modzy.html#modzy.models.Models.get_by_name[`client.models.get_by_name()`]#
+|[small]#link:{doc-pages}api-reference/marketplace/retrieve-models[api/models]#
+
+|[small]#Retrieve related models#
+|[small]#link:{url-pages}modzy.html#modzy.models.Models.get_related[`client.models.get_related()`]#
+|[small]#link:{doc-pages}api-reference/marketplace/retrieve-related-models[api/models/:model-id/related-models]#
+
+|[small]#Retrieve model versions#
+|[small]#link:{url-pages}modzy.html#modzy.models.Models.get_versions[`client.models.get_versions()`]#
+|[small]#link:{doc-pages}api-reference/marketplace/retrieve-versions[api/models/:model-id/versions]#
+
+|[small]#Retrieve model version details#
+|[small]#link:{url-pages}modzy.html#modzy.models.Models.get_version[`client.models.get_version()`]#
+|[small]#link:{doc-pages}api-reference/marketplace/retrieve-version-details[api/models/:model-id/versions/:version-id]#
+
+|[small]#Retrieve all tags#
+|[small]#link:{url-pages}modzy.html#modzy.tags.Tags.get_all[`client.tags.get_all()`]#
+|[small]#link:{doc-pages}api-reference/marketplace/retrieve-tags[api/models/tags]#
+
+|[small]#Retrieve Tags and Models#
+|[small]#link:{url-pages}modzy.html#modzy.tags.Tags.get_tags_and_models[`client.tags.get_tags_and_models()`]#
+|[small]#link:{doc-pages}api-reference/marketplace/retrieve-models-by-tags[api/models/tags/:tag-id]#
+
+|[small]#Submit a Job (Single Text)#
+|[small]#link:{url-pages}modzy.html#modzy.jobs.Jobs.submit_text[`client.jobs.submit_text()`]#
+|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+
+|[small]#Submit a Job (Multiple Text)#
+|[small]#link:{url-pages}modzy.html#modzy.jobs.Jobs.submit_text_bulk[`client.jobs.submit_text_bulk()`]#
+|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+
+|[small]#Submit a Job (Single Embedded)#
+|[small]#link:{url-pages}modzy.html#modzy.jobs.Jobs.submit_bytes[`client.jobs.submit_bytes()`]#
+|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+
+|[small]#Submit a Job (Multiple Embedded)#
+|[small]#link:{url-pages}modzy.html#modzy.jobs.Jobs.submit_bytes_bulk[`client.jobs.submit_bytes_bulk()`]#
+|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+
+|[small]#Submit a Job (Single File)#
+|[small]#link:{url-pages}modzy.html#modzy.jobs.Jobs.submit_files[`client.jobs.submit_files()`]#
+|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+
+|[small]#Submit a Job (Multiple Files)#
+|[small]#link:{url-pages}modzy.html#modzy.jobs.Jobs.submit_files_bulk[`client.jobs.submit_files_bulk()`]#
+|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+
+|[small]#Submit a Job (Single AWS S3)#
+|[small]#link:{url-pages}modzy.html#modzy.jobs.Jobs.submit_aws_s3[`client.jobs.submit_aws_s3()`]#
+|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+
+|[small]#Submit a Job (Multiple AWS S3)#
+|[small]#link:{url-pages}modzy.html#modzy.jobs.Jobs.submit_aws_s3_bulk[`client.jobs.submit_aws_s3_bulk()`]#
+|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+
+|[small]#Submit a Job (JDBC)#
+|[small]#link:{url-pages}modzy.html#modzy.jobs.Jobs.submit_jdbc[`client.jobs.submit_jdbc()`]#
+|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+
+|[small]#Cancel job#
+|[small]#link:{url-pages}modzy.html#modzy.jobs.Job.cancel[`job.cancel()`]#
+|[small]#link:{doc-pages}api-reference/jobs/cancel-pending-job[api/jobs/:job-id]#
+
+|[small]#Hold until inference is complete#
+|[small]#link:{url-pages}modzy.html#modzy.jobs.Job.block_until_complete[`job.block_until_complete()`]#
+|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+
+|[small]#Get Job details#
+|[small]#link:{url-pages}modzy.html#modzy.jobs.Jobs.get[`client.jobs.get()`]#
+|[small]#link:{doc-pages}api-reference/jobs/retrieve-job-details[api/jobs/:job-id]#
+
+|[small]#Retrieve results#
+|[small]#link:{url-pages}modzy.html#modzy.results.Results.get[`job.get_result()`]#
+|[small]#link:{doc-pages}api-reference/jobs/cancel-pending-job[api/jobs/:job-id]#
+
+|[small]#Retrieve Job History#
+|[small]#link:{url-pages}modzy.html#modzy.jobs.Jobs.get_history[`client.jobs.get_history()`]#
+|[small]#link:{doc-pages}api-reference/jobs/retrieve-job-history[api/jobs/history]#
+
+|===
 
 == Samples
+
+
 
 ++++
 <p>Check out our <a href=/samples style="text-decoration:none">samples</a> for details on specific use cases.
 </p>
 ++++
+
+Set the base url and api key in each sample file:
+
+[source, python]
+----
+# TODO: set the base url of modzy api and you api key
+client = ApiClient(base_url=BASE_URL, api_key=API_KEY)
+----
+++++
+<p>Or follow the instructions <a href="/contributing.adoc#set-environment-variables-in-bash" style="text-decoration:none">here</a> to learn more.
+</p>
+++++
+
+And then, you can:
+
+[source, bash]
+----
+`$ py samples/job_with_text_input_sample.py`
+----
+
 
 == Contributing
 
@@ -205,14 +343,6 @@ print(results_json)
 <p>We are happy to receive contributions from all of our users. Check out our <a href="/CONTRIBUTING.adoc" style="text-decoration:none">contributing file</a> to learn more.
 </p>
 ++++
-
-// === To do
-// - Documentation improvement
-// - Comprehensive unit tests
-// - Wider API coverage (custom models, accounting, audit, etc)
-// - [Maybe] Add retry logic for possibly transient issues
-// - [Maybe] Consider moving to concrete classes for the API JSON objects, or else move the ApiObject to a public module
-// - [Maybe] Python 2.7 compatibility
 
 
 //For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
