@@ -185,4 +185,4 @@ Push your branch to GitHub:
 == Support
 
 Use GitHub to report bugs and send feature requests. +
-Reach out to  ....... for support requests.
+Reach out to https://www.modzy.com/support/ for support requests.
