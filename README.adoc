@@ -208,102 +208,101 @@ print(results_json)
 
 Currently we support the following api routes:
 
-:url-pages: https://pages.github.com/modzy/sdk-python/html/
 :doc-pages: https://models.modzy.com/docs/
 [cols=3*, stripes=even]
 |===
 |Feature|Code|Api route
 
 |[small]#Retrieve all models#
-|[small]#link:{url-pages}modzy.html#modzy.models.Models.get_all[`client.models.get_all()`]#
+|[small]#client.models.get_all()#
 |[small]#link:{doc-pages}api-reference/marketplace/retrieve-models[api/models]#
 
 |[small]#Retrieve some models#
-|[small]#link:{url-pages}modzy.html#modzy.models.Models.get_models[`client.models.get_models()`]#
+|[small]#client.models.get_models()#
 |[small]#link:{doc-pages}api-reference/marketplace/retrieve-models[api/models]#
 
 |[small]#Retrieve model details#
-|[small]#link:{url-pages}modzy.html#modzy.models.Models.get[`client.models.get()`]#
+|[small]#client.models.get()#
 |[small]#link:{doc-pages}api-reference/marketplace/retrieve-model-details[api/models/:model-id]#
 
 |[small]#Retrieve model by name#
-|[small]#link:{url-pages}modzy.html#modzy.models.Models.get_by_name[`client.models.get_by_name()`]#
+|[small]#client.models.get_by_name()#
 |[small]#link:{doc-pages}api-reference/marketplace/retrieve-models[api/models]#
 
 |[small]#Retrieve related models#
-|[small]#link:{url-pages}modzy.html#modzy.models.Models.get_related[`client.models.get_related()`]#
+|[small]#client.models.get_related()#
 |[small]#link:{doc-pages}api-reference/marketplace/retrieve-related-models[api/models/:model-id/related-models]#
 
 |[small]#Retrieve model versions#
-|[small]#link:{url-pages}modzy.html#modzy.models.Models.get_versions[`client.models.get_versions()`]#
+|[small]#client.models.get_versions()#
 |[small]#link:{doc-pages}api-reference/marketplace/retrieve-versions[api/models/:model-id/versions]#
 
 |[small]#Retrieve model version details#
-|[small]#link:{url-pages}modzy.html#modzy.models.Models.get_version[`client.models.get_version()`]#
+|[small]#client.models.get_version()#
 |[small]#link:{doc-pages}api-reference/marketplace/retrieve-version-details[api/models/:model-id/versions/:version-id]#
 
 |[small]#Retrieve all tags#
-|[small]#link:{url-pages}modzy.html#modzy.tags.Tags.get_all[`client.tags.get_all()`]#
+|[small]#client.tags.get_all()#
 |[small]#link:{doc-pages}api-reference/marketplace/retrieve-tags[api/models/tags]#
 
 |[small]#Retrieve Tags and Models#
-|[small]#link:{url-pages}modzy.html#modzy.tags.Tags.get_tags_and_models[`client.tags.get_tags_and_models()`]#
+|[small]#client.tags.get_tags_and_models()#
 |[small]#link:{doc-pages}api-reference/marketplace/retrieve-models-by-tags[api/models/tags/:tag-id]#
 
 |[small]#Submit a Job (Single Text)#
-|[small]#link:{url-pages}modzy.html#modzy.jobs.Jobs.submit_text[`client.jobs.submit_text()`]#
+|[small]#client.jobs.submit_text()#
 |[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
 
 |[small]#Submit a Job (Multiple Text)#
-|[small]#link:{url-pages}modzy.html#modzy.jobs.Jobs.submit_text_bulk[`client.jobs.submit_text_bulk()`]#
+|[small]#client.jobs.submit_text_bulk()#
 |[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
 
 |[small]#Submit a Job (Single Embedded)#
-|[small]#link:{url-pages}modzy.html#modzy.jobs.Jobs.submit_bytes[`client.jobs.submit_bytes()`]#
+|[small]#client.jobs.submit_bytes()#
 |[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
 
 |[small]#Submit a Job (Multiple Embedded)#
-|[small]#link:{url-pages}modzy.html#modzy.jobs.Jobs.submit_bytes_bulk[`client.jobs.submit_bytes_bulk()`]#
+|[small]#client.jobs.submit_bytes_bulk()#
 |[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
 
 |[small]#Submit a Job (Single File)#
-|[small]#link:{url-pages}modzy.html#modzy.jobs.Jobs.submit_files[`client.jobs.submit_files()`]#
+|[small]#client.jobs.submit_files()#
 |[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
 
 |[small]#Submit a Job (Multiple Files)#
-|[small]#link:{url-pages}modzy.html#modzy.jobs.Jobs.submit_files_bulk[`client.jobs.submit_files_bulk()`]#
+|[small]#client.jobs.submit_files_bulk()#
 |[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
 
 |[small]#Submit a Job (Single AWS S3)#
-|[small]#link:{url-pages}modzy.html#modzy.jobs.Jobs.submit_aws_s3[`client.jobs.submit_aws_s3()`]#
+|[small]#client.jobs.submit_aws_s3()#
 |[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
 
 |[small]#Submit a Job (Multiple AWS S3)#
-|[small]#link:{url-pages}modzy.html#modzy.jobs.Jobs.submit_aws_s3_bulk[`client.jobs.submit_aws_s3_bulk()`]#
+|[small]#client.jobs.submit_aws_s3_bulk()#
 |[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
 
 |[small]#Submit a Job (JDBC)#
-|[small]#link:{url-pages}modzy.html#modzy.jobs.Jobs.submit_jdbc[`client.jobs.submit_jdbc()`]#
+|[small]#client.jobs.submit_jdbc()#
 |[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
 
 |[small]#Cancel job#
-|[small]#link:{url-pages}modzy.html#modzy.jobs.Job.cancel[`job.cancel()`]#
+|[small]#job.cancel()#
 |[small]#link:{doc-pages}api-reference/jobs/cancel-pending-job[api/jobs/:job-id]#
 
 |[small]#Hold until inference is complete#
-|[small]#link:{url-pages}modzy.html#modzy.jobs.Job.block_until_complete[`job.block_until_complete()`]#
+|[small]#job.block_until_complete()#
 |[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
 
 |[small]#Get Job details#
-|[small]#link:{url-pages}modzy.html#modzy.jobs.Jobs.get[`client.jobs.get()`]#
+|[small]#client.jobs.get()#
 |[small]#link:{doc-pages}api-reference/jobs/retrieve-job-details[api/jobs/:job-id]#
 
 |[small]#Retrieve results#
-|[small]#link:{url-pages}modzy.html#modzy.results.Results.get[`job.get_result()`]#
+|[small]#job.get_result()#
 |[small]#link:{doc-pages}api-reference/jobs/cancel-pending-job[api/jobs/:job-id]#
 
 |[small]#Retrieve Job History#
-|[small]#link:{url-pages}modzy.html#modzy.jobs.Jobs.get_history[`client.jobs.get_history()`]#
+|[small]#client.jobs.get_history()#
 |[small]#link:{doc-pages}api-reference/jobs/retrieve-job-history[api/jobs/history]#
 
 |===
