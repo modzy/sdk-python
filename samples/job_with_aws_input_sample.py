@@ -24,7 +24,7 @@ client = ApiClient(base_url=BASE_URL, api_key=API_KEY)
 
 # Create a Job with a text input, wait and retrieve results
 
-model = client.models.get_by_name("GDB - Facial Embedding")
+model = client.models.get_by_name("Facial Embedding")
 logger.info("Model {}".format(model))
 
 modelVersion = client.models.get_version(model, model.latest_version)

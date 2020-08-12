@@ -23,7 +23,7 @@ API_KEY = os.getenv('MODZY_API_KEY')
 client = ApiClient(base_url=BASE_URL, api_key=API_KEY)
 
 # Create a Job with a text input, wait and retrieve results
-model = client.models.get_by_name("GDB - Sentiment Analysis")
+model = client.models.get_by_name("Sentiment Analysis")
 logger.info("Model {}".format(model))
 
 modelVersion = client.models.get_version(model, model.latest_version)
