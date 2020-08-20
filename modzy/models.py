@@ -2,8 +2,10 @@
 """Classes for interacting with models."""
 
 import logging
-
+from datetime import datetime
 from ._api_object import ApiObject
+from urllib.parse import urlencode
+from .error import NotFoundError
 
 
 class Models:
@@ -44,6 +46,26 @@ class Models:
         self.logger.debug("getting model %s", model)
         json_obj = self._api_client.http.get('{}/{}'.format(self._base_route, modelId))
         return Model(json_obj, self._api_client)
+
+    def get_by_name(self, name):
+        """Gets a `Model` instance by name.
+
+        Args:
+            name (str): The model name.
+
+        Returns:
+            Model: The `Model` instance.
+
+        Raises:
+            ApiError: A subclass of ApiError will be raised if the API returns an error status,
+                or the client is unable to connect.
+        """
+        params = {'name': name}
+        models = self.get_models(**params)
+        if models is not None and len(models) > 0:
+            return self.get(models[0])
+        else:
+            raise NotFoundError("Model {} not found".format(name), self._base_route, None)
 
     def get_related(self, model):
         """Gets a list of all the models associated with the model provided, together with the model’s details.
@@ -102,9 +124,104 @@ class Models:
                 or the client is unable to connect.
         """
         self.logger.debug("getting all models")
-        json_list = self._api_client.http.get(self._base_route)
-        return list(Model(json_obj, self._api_client) for json_obj in json_list)
+        return self.get_models()
 
+    def get_models(self, model_id=None, author=None, created_by_email=None, name=None, description=None,
+                   is_active=None, is_expired=None, is_recommended=None, last_active_date_time=None,
+                   expiration_date_time=None, sort_by=None, direction=None, page=None, per_page=1000):
+        """Gets a list of `Model` instances within a set of parameters.
+
+        Args:
+            model_id (Optional[str]): Identifier of the model
+            author (Optional[str]): authoring company
+            created_by_email (Optional[str]): creator email
+            name (Optional[str]): name of the model
+            description (Optional[str]): description of the model
+            is_active (Optional[boolean, str]): availability of the model in the marketplace
+            is_expired (Optional[boolean, str]): expiration status
+            is_recommended (Optional[boolean, str]): recommended status
+            last_active_date_time (Optional[datetime, str]): latest use date
+            expiration_date_time (Optional[datetime, str]): expiration date
+            sort_by (Optional[str]): attribute name to sort results
+            direction (Optional[str]): Direction of the sorting algorithm (asc, desc)
+            page (Optional[float]): The page number for which results are being returned
+            per_page (Optional[float]): The number of job identifiers returned by page
+
+        Returns:
+            List[Model]: A list of `Model` instances.
+        Raises:
+            ApiError: A subclass of ApiError will be raised if the API returns an error status,
+                or the client is unable to connect.
+        """
+        if model_id is not None and not isinstance(model_id, str):
+            raise TypeError("the model_id param should be a string")
+        if author is not None and not isinstance(author, str):
+            raise TypeError("the author param should be a string")
+        if created_by_email is not None and not isinstance(created_by_email, str):
+            raise TypeError("the created_by_email param should be a string")
+        if name is not None and not isinstance(name, str):
+            raise TypeError("the name param should be a string")
+        if description is not None and not isinstance(description, str):
+            raise TypeError("the description param should be a string")
+        if is_active is not None:
+            if isinstance(is_active, bool):
+                is_active = str(is_active)
+            elif not isinstance(is_active, str):
+                raise TypeError("the is_active param should be a bool or string")
+        if is_expired is not None:
+            if isinstance(is_expired, bool):
+                is_expired = str(is_expired)
+            elif not isinstance(is_expired, str):
+                raise TypeError("the is_expired param should be a bool or string")
+        if is_recommended is not None:
+            if isinstance(is_recommended, bool):
+                is_recommended = str(is_recommended)
+            elif not isinstance(is_recommended, str):
+                raise TypeError("the is_recommended param should be a bool or string")
+        if last_active_date_time is not None:
+            if isinstance(last_active_date_time, datetime):
+                last_active_date_time = last_active_date_time.isoformat(timespec='milliseconds')
+            elif not isinstance(last_active_date_time, str):
+                raise TypeError("the last_active_date_time param should be a datetime or string")
+        if expiration_date_time is not None:
+            if isinstance(expiration_date_time, datetime):
+                expiration_date_time = expiration_date_time.isoformat(timespec='milliseconds')
+            elif not isinstance(expiration_date_time, str):
+                raise TypeError("the expiration_date_time param should be a datetime or string")
+        if sort_by is not None and not isinstance(sort_by, str):
+            raise TypeError("the sort_by param should be a string")
+        if direction is not None and not isinstance(direction, str):
+            raise TypeError("the direction param should be a string")
+        if page is not None:
+            if isinstance(page, (int, float)):
+                page = int(page)
+            else:
+                raise TypeError("the page param should be a number")
+        if per_page is not None:
+            if isinstance(per_page, (int, float)):
+                per_page = int(per_page)
+            else:
+                raise TypeError("the per_page param should be a number")
+        body = {
+            "modelId":model_id,
+            "author": author,
+            "createdByEmail":created_by_email,
+            "name":name,
+            "description": description,
+            "isActive": is_active,
+            "isExpired": is_expired,
+            "isRecommended": is_recommended,
+            "lastActiveDateTime": last_active_date_time,
+            "expirationDateTime": expiration_date_time,
+            "sort-by": sort_by,
+            "direction": direction,
+            "page": page,
+            "per-page": per_page
+        }
+        body = {k: v for (k, v) in body.items() if v is not None}
+        self.logger.debug("body 2? %s", body)
+        json_list = self._api_client.http.get('{}?{}'.format(self._base_route, urlencode(body)))
+        return list(Model(json_obj, self._api_client) for json_obj in json_list)
 
 class Model(ApiObject):
     """A model object.

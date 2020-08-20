@@ -103,6 +103,19 @@ client = ApiClient(base_url='https://modzy.example.com/api', api_key='my_key.mod
 
 === Basic usage
 
+The code below is applicable for `text/plain` input type.
+
+
+++++
+<div align="center">
+
+<img src="python.gif" alt="basic usage" style="max-width:100%">
+
+</div>
+
+<br>
+++++
+
 Submit a job providing the model, version, and input file:
 
 [source, py]
@@ -191,13 +204,137 @@ results_json = outputs['results.json']
 print(results_json)
 ----
 
+== Features
+
+Currently we support the following api routes:
+
+:doc-pages: https://models.modzy.com/docs/
+[cols=3*, stripes=even]
+|===
+|Feature|Code|Api route
+
+|[small]#Retrieve all models#
+|[small]#client.models.get_all()#
+|[small]#link:{doc-pages}api-reference/marketplace/retrieve-models[api/models]#
+
+|[small]#Retrieve some models#
+|[small]#client.models.get_models()#
+|[small]#link:{doc-pages}api-reference/marketplace/retrieve-models[api/models]#
+
+|[small]#Retrieve model details#
+|[small]#client.models.get()#
+|[small]#link:{doc-pages}api-reference/marketplace/retrieve-model-details[api/models/:model-id]#
+
+|[small]#Retrieve model by name#
+|[small]#client.models.get_by_name()#
+|[small]#link:{doc-pages}api-reference/marketplace/retrieve-models[api/models]#
+
+|[small]#Retrieve related models#
+|[small]#client.models.get_related()#
+|[small]#link:{doc-pages}api-reference/marketplace/retrieve-related-models[api/models/:model-id/related-models]#
+
+|[small]#Retrieve model versions#
+|[small]#client.models.get_versions()#
+|[small]#link:{doc-pages}api-reference/marketplace/retrieve-versions[api/models/:model-id/versions]#
+
+|[small]#Retrieve model version details#
+|[small]#client.models.get_version()#
+|[small]#link:{doc-pages}api-reference/marketplace/retrieve-version-details[api/models/:model-id/versions/:version-id]#
+
+|[small]#Retrieve all tags#
+|[small]#client.tags.get_all()#
+|[small]#link:{doc-pages}api-reference/marketplace/retrieve-tags[api/models/tags]#
+
+|[small]#Retrieve Tags and Models#
+|[small]#client.tags.get_tags_and_models()#
+|[small]#link:{doc-pages}api-reference/marketplace/retrieve-models-by-tags[api/models/tags/:tag-id]#
+
+|[small]#Submit a Job (Single Text)#
+|[small]#client.jobs.submit_text()#
+|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+
+|[small]#Submit a Job (Multiple Text)#
+|[small]#client.jobs.submit_text_bulk()#
+|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+
+|[small]#Submit a Job (Single Embedded)#
+|[small]#client.jobs.submit_bytes()#
+|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+
+|[small]#Submit a Job (Multiple Embedded)#
+|[small]#client.jobs.submit_bytes_bulk()#
+|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+
+|[small]#Submit a Job (Single File)#
+|[small]#client.jobs.submit_files()#
+|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+
+|[small]#Submit a Job (Multiple Files)#
+|[small]#client.jobs.submit_files_bulk()#
+|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+
+|[small]#Submit a Job (Single AWS S3)#
+|[small]#client.jobs.submit_aws_s3()#
+|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+
+|[small]#Submit a Job (Multiple AWS S3)#
+|[small]#client.jobs.submit_aws_s3_bulk()#
+|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+
+|[small]#Submit a Job (JDBC)#
+|[small]#client.jobs.submit_jdbc()#
+|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+
+|[small]#Cancel job#
+|[small]#job.cancel()#
+|[small]#link:{doc-pages}api-reference/jobs/cancel-pending-job[api/jobs/:job-id]#
+
+|[small]#Hold until inference is complete#
+|[small]#job.block_until_complete()#
+|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+
+|[small]#Get Job details#
+|[small]#client.jobs.get()#
+|[small]#link:{doc-pages}api-reference/jobs/retrieve-job-details[api/jobs/:job-id]#
+
+|[small]#Retrieve results#
+|[small]#job.get_result()#
+|[small]#link:{doc-pages}api-reference/jobs/cancel-pending-job[api/jobs/:job-id]#
+
+|[small]#Retrieve Job History#
+|[small]#client.jobs.get_history()#
+|[small]#link:{doc-pages}api-reference/jobs/retrieve-job-history[api/jobs/history]#
+
+|===
 
 == Samples
+
+
 
 ++++
 <p>Check out our <a href=/samples style="text-decoration:none">samples</a> for details on specific use cases.
 </p>
 ++++
+
+Set the base url and api key in each sample file:
+
+[source, python]
+----
+# TODO: set the base url of modzy api and you api key
+client = ApiClient(base_url=BASE_URL, api_key=API_KEY)
+----
+++++
+<p>Or follow the instructions <a href="/contributing.adoc#set-environment-variables-in-bash" style="text-decoration:none">here</a> to learn more.
+</p>
+++++
+
+And then, you can:
+
+[source, bash]
+----
+`$ py samples/job_with_text_input_sample.py`
+----
+
 
 == Contributing
 
@@ -205,14 +342,6 @@ print(results_json)
 <p>We are happy to receive contributions from all of our users. Check out our <a href="/CONTRIBUTING.adoc" style="text-decoration:none">contributing file</a> to learn more.
 </p>
 ++++
-
-// === To do
-// - Documentation improvement
-// - Comprehensive unit tests
-// - Wider API coverage (custom models, accounting, audit, etc)
-// - [Maybe] Add retry logic for possibly transient issues
-// - [Maybe] Consider moving to concrete classes for the API JSON objects, or else move the ApiObject to a public module
-// - [Maybe] Python 2.7 compatibility
 
 
 //For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.

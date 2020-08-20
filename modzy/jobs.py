@@ -26,10 +26,11 @@ class Jobs:
 
     # is this the best place to put these?
     status = SimpleNamespace(
-        SUBMITTED='SUBMITTED',
+        SUBMITTED='SUBMITTED',        
         IN_PROGRESS='IN_PROGRESS',
         COMPLETED='COMPLETED',
         CANCELED='CANCELED',
+        TIMEOUT='TIMEOUT',
     )
     """Possible job statuses."""
 
@@ -174,7 +175,7 @@ class Jobs:
         while True:  # poll at least once
             job = self.get(identifier)
             self.logger.debug("job %s", job)
-            if job.status in (Jobs.status.COMPLETED, Jobs.status.CANCELED):
+            if job.status not in (Jobs.status.SUBMITTED, Jobs.status.IN_PROGRESS):
                 return job
             if (endby is not None) and (time.time() > endby - poll_interval):
                 raise Timeout('timed out before completion')

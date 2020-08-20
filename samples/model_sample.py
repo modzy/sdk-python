@@ -19,7 +19,7 @@ BASE_URL = os.getenv('MODZY_BASE_URL')
 API_KEY = os.getenv('MODZY_API_KEY')
 
 # Client initialization
-
+# TODO: set the base url of modzy api and you api key
 client = ApiClient(base_url=BASE_URL, api_key=API_KEY)
 
 # Get all models

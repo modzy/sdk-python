@@ -3,9 +3,12 @@
 
 import logging
 import os
+import dotenv
 import pytest
 from datetime import datetime, timedelta
 from modzy import ApiClient, error
+
+dotenv.load_dotenv()
 
 BASE_URL = os.getenv('MODZY_BASE_URL')
 API_KEY = os.getenv('MODZY_API_KEY')
