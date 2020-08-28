@@ -26,7 +26,7 @@ class Jobs:
 
     # is this the best place to put these?
     status = SimpleNamespace(
-        SUBMITTED='SUBMITTED',        
+        SUBMITTED='SUBMITTED',
         IN_PROGRESS='IN_PROGRESS',
         COMPLETED='COMPLETED',
         CANCELED='CANCELED',
@@ -676,7 +676,7 @@ class Job(ApiObject):
             ApiError: A subclass of ApiError will be raised if the API returns an error status,
                 or the client is unable to connect.
         """
-        if self.status in (Jobs.status.COMPLETED, Jobs.status.CANCELED):
+        if self.status not in (Jobs.status.SUBMITTED, Jobs.status.IN_PROGRESS):
             return self
 
         updated = self._api_client.jobs.block_until_complete(self.job_identifier,
