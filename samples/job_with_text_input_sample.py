@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 # The system admin can provide the right base API URL, the API key can be downloaded from your profile page on Modzy.
 # You can config those params as is described in the readme file (as environment variables, or by using the .env file), or you
-# can just update and use this sample code (not recommended for production environments).
+# or you can just update the BASE_URL and API_KEY vars and use this sample code (not recommended for production environments).
 
 dotenv.load_dotenv()
 
