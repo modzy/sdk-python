@@ -119,12 +119,12 @@ The code below is applicable for `text/plain` input type.
 Submit a job providing the model, version, and input file:
 
 An inference job groups input data that you send to a model. You can send any amount of inputs for process 
-and you can identify and refer to a specific input by the key that you assign, in the following code we are 
+and you can identify and refer to a specific input by the *source-key* that you assign, in the following code we are 
 just sending one input, so we don't care about the source key assignation.
 
 [source, py]
 ----
-job = client.jobs.submit_files('ed542963de', '0.0.27', {'input.txt': './some-file.txt'})
+job = client.jobs.submit_text('ed542963de', '0.0.27', {'input.txt': 'Modzy is great!'})
 ----
 
 Hold until the inference is complete and results become available:
@@ -141,7 +141,8 @@ result = client.results.block_until_complete(job, timeout=None)
 Get the output results:
 
 The result object group individual data about the inference process of each input, most important it contains 
-the output of the model, you need to check for the output key and format (in this case results.json).
+the output of the model, you need to check for the output key and format (in this case results.json), we also 
+provide a helper method to get the first *source-key* result. 
 
 [source, py]
 ----
