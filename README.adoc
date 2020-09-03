@@ -118,6 +118,10 @@ The code below is applicable for `text/plain` input type.
 
 Submit a job providing the model, version, and input file:
 
+An inference job groups input data that you send to a model. You can send any amount of inputs for process 
+and you can identify and refer to a specific input by the key that you assign, in the following code we are 
+just sending one input, so we don't care about the source key assignation.
+
 [source, py]
 ----
 job = client.jobs.submit_files('ed542963de', '0.0.27', {'input.txt': './some-file.txt'})
@@ -125,12 +129,19 @@ job = client.jobs.submit_files('ed542963de', '0.0.27', {'input.txt': './some-fil
 
 Hold until the inference is complete and results become available:
 
+Modzy creates the job and queue for processing. The job object contains all the info that you need to keep track
+of the process, the most important being the job identifier and the job status. We provide a helper method to listen 
+until the job finishes processing, in which the job will mode to COMPLETED, CANCELED, or TIMEOUT status.
+
 [source, py]
 ----
 result = client.results.block_until_complete(job, timeout=None)
 ----
 
 Get the output results:
+
+The result object group individual data about the inference process of each input, most important it contains 
+the output of the model, you need to check for the output key and format (in this case results.json).
 
 [source, py]
 ----
