@@ -61,7 +61,7 @@ class Jobs:
         json_obj = self._api_client.http.get('{}/{}'.format(self._base_route, identifier))
         return Job(json_obj, self._api_client)
 
-    def get_history(self, user=None, access_key=None, start_date=None, end_date=None, job_identifiers=None,
+    def get_history(self, user=None, access_key=None, start_date=None, end_date=None, model=None,
                     status='all', sort_by=None, direction=None, page=None, per_page=None):
         """Gets a list of `Job` instances within a set of parameters.
 
@@ -70,7 +70,7 @@ class Jobs:
             access_key (Optional[str]): Identifier of the access key to be assigned to the user
             start_date (Optional[datetime, str]): initial date to filter recods
             end_date (Optional[datetime, str]): final date to filter recods
-            job_identifiers (Optional[Union[List[str], Tuple[str]]]): Array of unique job identifiers
+            model (Optional[str]): Model name or version identifier
             status (Optional[str]): Status of the jobs (all, pending, terminated)
             sort_by (Optional[str]): attribute name to sort results
             direction (Optional[str]): Direction of the sorting algorithm (asc, desc)
@@ -99,8 +99,8 @@ class Jobs:
                 raise TypeError("the end_date param should be a datetime or string")
         if status is not None and not isinstance(status, str):
             raise TypeError("the status param should be a string")
-        if job_identifiers is not None and not isinstance(job_identifiers, (list, tuple)):
-            raise TypeError("the job_identifiers param should be a list or tuple")
+        if model is not None and not isinstance(model, str):
+            raise TypeError("the model param should be a string")
         if sort_by is not None and not isinstance(sort_by, str):
             raise TypeError("the sort_by param should be a string")
         if direction is not None and not isinstance(direction, str):
@@ -120,7 +120,7 @@ class Jobs:
             "accessKey": access_key,
             "startDate": start_date,
             "endDate": end_date,
-            "jobIdentifiers": job_identifiers,
+            "model": model,
             "status": status,
             "sort-by": sort_by,
             "direction": direction,
