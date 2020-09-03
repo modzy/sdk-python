@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # The system admin can provide the right base API URL, the API key can be downloaded from your profile page on Modzy.
-# You can config those params as is described in the readme file (as environment variables, or by using the .env file), or you
+# You can configure those params as is described in the README file (as environment variables, or by using the .env file),
 # or you can just update the BASE_URL and API_KEY vars and use this sample code (not recommended for production environments).
 
 dotenv.load_dotenv()
@@ -40,6 +40,7 @@ client = ApiClient(base_url=BASE_URL, api_key=API_KEY)
 model = client.models.get_by_name("Sentiment Analysis")
 # Or if you already know the model id and want to know more about the model, you can use this instead:
 # model = client.models.get("ed542963de")
+# You can find more information about how to query the models on the model_sample.py file.
 
 # The model identifier is under the modelId key. You can take a look at the other keys by uncommenting the following line
 # logger.info(", ".join("{} :: {}".format(key, value) for key, value in model.items()))
@@ -52,7 +53,7 @@ logger.info("The model identifier is {} and the latest version is {}".format(mod
 modelVersion = client.models.get_version(model, model.latest_version)
 # The info stored in modelVersion provides insights about the amount of time that the model can spend processing, the inputs, and
 # output keys of the model.
-logger.info("Ths model version is {}".format(modelVersion))
+logger.info("This model version is {}".format(modelVersion))
 logger.info("  timeouts: status {}ms, run {}ms ".format(modelVersion.timeout.status, modelVersion.timeout.run))
 logger.info("  inputs: ")
 for input in modelVersion.inputs:
@@ -72,7 +73,7 @@ sources["another-key"] = {"input.txt": "Born and raised in Pennsylvania, Swift m
 # If you send a wrong input key, the model fails to process the input.
 sources["wrong-key"] = {"a.wrong.key": "This input is wrong!"}
 # When you have all your inputs ready, you can use our helper method to submit the job as follows:
-job = client.jobs.submit_text_bulk(model.modelId, modelVersion.version,sources)
+job = client.jobs.submit_text_bulk(model.modelId, modelVersion.version, sources)
 # Modzy creates the job and queue for processing. The job object contains all the info that you need to keep track
 # of the process, the most important being the job identifier and the job status.
 logger.info("job: %s", job)
@@ -90,7 +91,7 @@ if job.status == Jobs.status.COMPLETED:
     result = job.get_result()
     # The result object has some useful info:
     logger.info("Result: finished: {}, total: {}, completed: {}, failed: {}".format(result.finished, result.total, result.completed, result.failed))
-    # Notice that we are iterating through the same input sources keys
+    # Notice that we are iterating through the same input source keys
     for key in sources:
         # The result object has the individual results of each job input. In this case the output key is called
         # results.json, so we can get the results as follows:
