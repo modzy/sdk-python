@@ -25,16 +25,16 @@ dotenv.load_dotenv()
 # The MODZY_BASE_URL should point to the API services route which may be different from the Modzy page URL.
 # (ie: https://modzy.example.com/api).
 BASE_URL = os.getenv('MODZY_BASE_URL')
-# The MODZY_API_KEY is your own personal API key. It is composed by a public part, a dot character and a private part
+# The MODZY_API_KEY is your own personal API key. It is composed by a public part, a dot character, and a private part
 # (ie: AzQBJ3h4B1z60xNmhAJF.uQyQh8putLIRDi1nOldh).
 API_KEY = os.getenv('MODZY_API_KEY')
 
-# Client initialization
+# Client initialization:
 #   Initialize the ApiClient instance with the BASE_URL and the API_KEY to store those arguments
 #   for the following API calls.
 client = ApiClient(base_url=BASE_URL, api_key=API_KEY)
 
-# Create a Job with a embedded input, wait and retrieve results
+# Create a Job with a embedded input, wait and retrieve results:
 
 # Get the model object:
 # If you already know the model identifier (i.e.: you got from the URL of the model details page or the input sample),
