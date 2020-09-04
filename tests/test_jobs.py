@@ -42,7 +42,7 @@ def test_get_job_history(client, logger):
 
 
 def test_get_job_history_by_user(client, logger):
-    params = {'user': API_KEY.split('.')[0]}
+    params = {'user': 'a'}
     jobs = client.jobs.get_history(**params)
     logger.debug("jobs history: by %s %d", params, len(jobs))
     for job in jobs:
@@ -102,25 +102,13 @@ def test_get_job_history_by_date(client, logger):
     assert api_error
 
 
-def test_get_job_history_by_job_identifiers(client, logger):
-    # by unexisting identifiers
-    params = {'job_identifiers': ["a", "b", "c"]}
+def test_get_job_history_by_model(client, logger):
+    # by model
+    params = {'model': 'Sentiment Analysis'}
     jobs = client.jobs.get_history(**params)
     logger.debug("jobs history: by %s %d", params, len(jobs))
-    assert len(jobs) == 0
-    # by valid identificators
-    job1 = client.jobs.submit_text(MODEL_ID, '0.0.27', {'input.txt': 'Modzy is great!'})
-    job2 = client.jobs.submit_text(MODEL_ID, '0.0.27', {'input.txt': 'Modzy is great!'})
-    params = {'job_identifiers': [job1.job_identifier, job2.job_identifier]}
-    jobs = client.jobs.get_history(**params)
     logger.debug("jobs history: by %s %d", params, len(jobs))
     assert len(jobs)
-    # by empty array
-    params = {'job_identifiers': []}
-    jobs = client.jobs.get_history(**params)
-    logger.debug("jobs history: by %s %d", params, len(jobs))
-    assert len(jobs)
-
 
 def test_get_job_history_by_status(client, logger):
     # by all
