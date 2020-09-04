@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # The system admin can provide the right base API URL, the API key can be downloaded from your profile page on Modzy.
-# You can config those params as is described in the readme file (as environment variables, or by using the .env file),
+# You can configure those params as is described in the README file (as environment variables, or by using the .env file),
 # or you can just update the BASE_URL and API_KEY variables and use this sample code (not recommended for production environments).
 
 dotenv.load_dotenv()
@@ -23,11 +23,11 @@ dotenv.load_dotenv()
 # The MODZY_BASE_URL should point to the API services route which may be different from the Modzy page URL.
 # (ie: https://modzy.example.com/api).
 BASE_URL = os.getenv('MODZY_BASE_URL')
-# The MODZY_API_KEY is your own personal API key. It is composed by a public part, a dot character and a private part
+# The MODZY_API_KEY is your own personal API key. It is composed by a public part, a dot character, and a private part
 # (ie: AzQBJ3h4B1z60xNmhAJF.uQyQh8putLIRDi1nOldh).
 API_KEY = os.getenv('MODZY_API_KEY')
 
-# Client initialization
+# Client initialization:
 #   Initialize the ApiClient instance with the BASE_URL and the API_KEY to store those arguments
 #   for the following API calls.
 client = ApiClient(base_url=BASE_URL, api_key=API_KEY)
@@ -40,7 +40,7 @@ client = ApiClient(base_url=BASE_URL, api_key=API_KEY)
 model = client.models.get_by_name("Facial Embedding")
 # Or if you already know the model id and want to know more about the model, you can use this instead:
 # model = client.models.get("f7e252e26a")
-# You can find more information about how to query the models on the model_sample.py file
+# You can find more information about how to query the models on the model_sample.py file.
 
 # The model identifier is under the modelId key. You can take a look at the other keys by uncommenting the following line
 # logger.info(", ".join("{} :: {}".format(key, value) for key, value in model.items()))
@@ -53,7 +53,7 @@ logger.info("The model identifier is {} and the latest version is {}".format(mod
 modelVersion = client.models.get_version(model, model.latest_version)
 # The info stored in modelVersion provides insights about the amount of time that the model can spend processing,
 # the inputs, and output keys of the model.
-logger.info("Ths model version is {}".format(modelVersion))
+logger.info("This model version is {}".format(modelVersion))
 logger.info("  timeouts: status {}ms, run {}ms ".format(modelVersion.timeout.status, modelVersion.timeout.run))
 logger.info("  inputs: ")
 for input in modelVersion.inputs:
