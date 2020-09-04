@@ -9,7 +9,7 @@ from modzy.jobs import Jobs
 sys.path.insert(0, '..')
 from modzy import ApiClient
 
-
+ 
 # Always configure the logger level (ie: DEBUG, INFO, WARNING, ERROR, CRITICAL)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
