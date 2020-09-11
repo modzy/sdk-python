@@ -107,11 +107,43 @@ class Models:
             ApiError: A subclass of ApiError will be raised if the API returns an error status,
                 or the client is unable to connect.
         """
-        self.logger.debug("getting versopm model %s version %s", model, version)
+        self.logger.debug("getting version model %s version %s", model, version)
         modelId = Model._coerce_identifier(model)
         versionId = ModelVersion._coerce_identifier(version)
         json_obj = self._api_client.http.get('{}/{}/versions/{}'.format(self._base_route, modelId, versionId))
         return ModelVersion(json_obj, self._api_client)
+
+    def get_version_input_sample(self, model, version):
+        """Gets the input sample associated with the model and version provided.
+
+        Returns:
+            String: A json string with the input sample
+
+        Raises:
+            ApiError: A subclass of ApiError will be raised if the API returns an error status,
+                or the client is unable to connect.
+        """
+        self.logger.debug("getting input sample: model %s version %s", model, version)
+        modelId = Model._coerce_identifier(model)
+        versionId = ModelVersion._coerce_identifier(version)
+        json_obj = self._api_client.http.get('{}/{}/versions/{}/sample-input'.format(self._base_route, modelId, versionId))
+        return json_obj
+
+    def get_version_output_sample(self, model, version):
+        """Gets the output sample associated with the model and version provided.
+
+        Returns:
+            String: A json string with the output sample
+
+        Raises:
+            ApiError: A subclass of ApiError will be raised if the API returns an error status,
+                or the client is unable to connect.
+        """
+        self.logger.debug("getting output sample: model %s version %s", model, version)
+        modelId = Model._coerce_identifier(model)
+        versionId = ModelVersion._coerce_identifier(version)
+        json_obj = self._api_client.http.get('{}/{}/versions/{}/sample-output'.format(self._base_route, modelId, versionId))
+        return json_obj
 
     def get_all(self):
         """Gets a list of all `Model` instances.

@@ -102,3 +102,21 @@ def test_get_model_versions(client, logger):
         logger.debug("version: %s", version)
         assert version.version
     assert len(version)  # just going to assume there should be some versions
+
+
+def test_get_model_version(client, logger):
+    version = client.models.get_version(MODEL_ID, '0.0.27')
+    logger.debug("version: %s", version)
+    assert version.version
+
+
+def test_get_model_version_input_sample(client, logger):
+    input_sample = client.models.get_version_input_sample(MODEL_ID, '0.0.27')
+    logger.debug("version: %s", input_sample)
+    assert input_sample
+
+
+def test_get_model_version_output_sample(client, logger):
+    output_sample = client.models.get_version_output_sample(MODEL_ID, '0.0.27')
+    logger.debug("version: %s", output_sample)
+    assert output_sample
