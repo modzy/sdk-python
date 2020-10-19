@@ -56,7 +56,7 @@ def test_get_single_model(client, logger):
     assert model.modelId == model_copy.modelId
 
 def test_get_model_by_name(client, logger):
-    model = client.models.get_by_name("Sentiment Analysis")  # by name
+    model = client.models.get_by_name("Military Equipment Classification")  # by name
     logger.debug("model_modelId: %s", model.modelId)
     assert model.modelId
     logger.debug("model_latestVersion: %s", model.latestVersion)
