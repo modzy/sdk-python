@@ -172,15 +172,15 @@ class Jobs:
         """
         identifier = Job._coerce_identifier(job)
         endby = time.time() + timeout if (timeout is not None) else None
-        while True:  # poll at least once
+        while True:  # wait one poll at least once
+            self.logger.debug("waiting... %g", poll_interval)
+            time.sleep(poll_interval)
             job = self.get(identifier)
             self.logger.debug("job %s", job)
             if job.status not in (Jobs.status.SUBMITTED, Jobs.status.IN_PROGRESS):
                 return job
             if (endby is not None) and (time.time() > endby - poll_interval):
                 raise Timeout('timed out before completion')
-            self.logger.debug("waiting... %g", poll_interval)
-            time.sleep(poll_interval)
         # TODO: should probably ramp up poll_interval as wait time increases
 
     def submit_text(self, model, version, source, source_name='job'):
@@ -608,6 +608,10 @@ class Job(ApiObject):
         key name (``job.job_identifier`` or ``job.jobIdentifier``). Alternatively, the original
         "camelCase" JSON key can be used with bracketed key access notation (``job['jobIdentifier']``).
     """
+    def __init__(self, json_obj, api_client=None):
+        if 'status' not in json_obj:
+            json_obj['status'] = Jobs.status.SUBMITTED
+        super().__init__(json_obj, api_client)
 
     @classmethod
     def _coerce_identifier(cls, maybe_job):
