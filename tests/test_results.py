@@ -16,6 +16,14 @@ API_KEY = os.getenv('MODZY_API_KEY')
 MODEL_ID = 'ed542963de'  # sentiment-analysis
 BLOCK_TIMEOUT = 600  # how long to wait until giving up on real api
 
+@pytest.fixture()
+def client():
+    return ApiClient(base_url=BASE_URL, api_key=API_KEY)
+
+@pytest.fixture()
+def logger():
+    return logging.getLogger(__name__)
+
 def test_get_results(client, logger):
     job = client.jobs.submit_text(MODEL_ID, '0.0.27', {'input.txt': 'Modzy is great!'})
     logger.debug("job %s", job)

@@ -36,7 +36,7 @@ def test_get_all_tags(client, logger):
 
 
 def test_get_tags_and_models(client, logger):
-    tags, models = client.tags.get_tags_and_models('computer-vision')  # by identifier
+    tags, models = client.tags.get_tags_and_models('computer_vision')  # by identifier
     logger.debug("tags by computer_vision: %d", len(models))
     for tag in tags:
         logger.debug("tag: %s", tag)
