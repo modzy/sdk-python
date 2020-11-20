@@ -2,6 +2,10 @@
 History
 =======
 
+0.5.1
+------------------
+* Update version to match Modzy version
+
 0.3.2 (2020-05-12)
 ------------------
 
