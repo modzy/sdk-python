@@ -3,14 +3,14 @@
 ![Modzy Logo](https://www.modzy.com/wp-content/uploads/2019/10/modzy-logo-tm.svg)
 
 
-Modzy's Python SDK queries models, submits inference jobs and returns results directly to your editor.
+Modzy's Python SDK queries models, submits inference jobs, and returns results directly to your editor.
 
 
 ![GitHub contributors](https://img.shields.io/github/contributors/modzy/sdk-python)
 ![GitHub last commit](https://img.shields.io/github/last-commit/modzy/sdk-python)
 ![GitHub Release Date](https://img.shields.io/github/issues-raw/modzy/sdk-python)
 
-[The job lifecycle](https://models.modzy.com/docs/how-to-guides/job-lifecycle) | [API Keys](https://models.modzy.com/docs/how-to-guides/api-keys) | [Samples](http://github.com/modzy/python-sdk/samples) | [Documentation](https://models.modzy.com/docs)
+[The job lifecycle](https://models.modzy.com/docs/how-to-guides/job-lifecycle) | [API Keys](https://models.modzy.com/docs/how-to-guides/api-keys) | [Samples](https://github.com/modzy/sdk-python/tree/main/samples) | [Documentation](https://models.modzy.com/docs)
 
 ### Basic usage
 
@@ -45,7 +45,7 @@ Error      | Description
 `ResultsError` | The model returns an error during the inference job.
 
 
-Submitting jobs: + `NetworkError`, `ResponseError`
+Submitting jobs: `NetworkError`, `ResponseError`
 
 
 ```python
@@ -59,7 +59,7 @@ except error.ResponseError as ex:
     raise
 ```
 
-While the model completes inference: +
+While the model completes inference:
 `NetworkError`, `ResponseError`, `Timeout`
 ```python
 timeout = 600
@@ -76,7 +76,7 @@ except error.ResponseError as ex:
     raise
 ```
 
-Retrieving results: +
+Retrieving results:
 `ResultsError`
 ```python
 try:
@@ -88,15 +88,15 @@ except error.ResultsError as ex:
 results_json = outputs['results.json']
 print(results_json)
 ```
-
+ 
 ## Features
 
-Currently we support the following api routes:
+Currently we support the following API routes:
 
 
 | Feature | Code |Api route
 | ---     | ---  | ---
-|Retrieve all models|client.models.get_all()|[api/models](https://models.modzy.com/docs/api-reference/marketplace/retrieve-models)|
+|Retrieve all models|client.models.get_all()|[api/models](https://models.modzy.com/docs/api-reference/marketplace/retrieve-all-models-versions)|
 |Retrieve some models|client.models.get_models()|[api/models](https://models.modzy.com/docs/api-reference/marketplace/retrieve-models)|
 |Retrieve model details|client.models.get()|[api/models/:model-id](https://models.modzy.com/docs/api-reference/marketplace/retrieve-model-details)|
 |Retrieve model by name|client.models.get_by_name()|[api/models](https://models.modzy.com/docs/api-reference/marketplace/retrieve-models)|
@@ -115,7 +115,7 @@ Currently we support the following api routes:
 |Submit a Job (Multiple AWS S3)|client.jobs.submit_aws_s3_bulk()|[api/jobs](https://models.modzy.com/docs/api-reference/job-inputs/submit-job)|
 |Submit a Job (JDBC)|client.jobs.submit_jdbc()|[api/jobs](https://models.modzy.com/docs/api-reference/job-inputs/submit-job)|
 |Cancel job|job.cancel()|[api/jobs/:job-id](https://models.modzy.com/docs/api-reference/jobs/cancel-pending-job)  |
-|Hold until inference is complete|job.block_until_complete()|[api/jobs](https://models.modzy.com/docs/api-reference/job-inputs/submit-job)  |
+|Hold until inference is complete|job.block_until_complete()|[api/jobs](https://models.modzy.com/docs/api-reference/jobs/retrieve-job-details)  |
 |Get Job details|client.jobs.get()|[api/jobs/:job-id](https://models.modzy.com/docs/api-reference/jobs/retrieve-job-details)  |
-|Retrieve results|job.get_result()|[api/jobs/:job-id](https://models.modzy.com/docs/api-reference/jobs/cancel-pending-job)  |
+|Retrieve results|job.get_result()|[api/jobs/:job-id](https://models.modzy.com/docs/api-reference/results/retrieve-results)  |
 |Retrieve Job History|client.jobs.get_history()|[api/jobs/history](https://models.modzy.com/docs/api-reference/jobs/retrieve-job-history)  |
