@@ -213,97 +213,97 @@ Currently we support the following api routes:
 |===
 |Feature|Code|Api route
 
-|[small]#Retrieve all models#
+|[small]#Get all models#
 |[small]#client.models.get_all()#
-|[small]#link:{doc-pages}api-reference/marketplace/retrieve-models[api/models]#
+|[small]#link:{doc-pages}marketplace/models/retrieve-all-models-versions[/api/models/all/versions/all]#
 
-|[small]#Retrieve some models#
+|[small]#List some models#
 |[small]#client.models.get_models()#
-|[small]#link:{doc-pages}api-reference/marketplace/retrieve-models[api/models]#
+|[small]#link:{doc-pages}marketplace/models/retrieve-models[/api/models]#
 
-|[small]#Retrieve model details#
+|[small]#Get model details#
 |[small]#client.models.get()#
-|[small]#link:{doc-pages}api-reference/marketplace/retrieve-model-details[api/models/:model-id]#
+|[small]#link:{doc-pages}marketplace/models/retrieve-model-details[/api/models/:modelId]#
 
-|[small]#Retrieve model by name#
+|[small]#Search models by name#
 |[small]#client.models.get_by_name()#
-|[small]#link:{doc-pages}api-reference/marketplace/retrieve-models[api/models]#
+|[small]#link:{doc-pages}marketplace/models/search-model-details[/api/models/search]#
 
-|[small]#Retrieve related models#
+|[small]#Get related models#
 |[small]#client.models.get_related()#
-|[small]#link:{doc-pages}api-reference/marketplace/retrieve-related-models[api/models/:model-id/related-models]#
+|[small]#link:{doc-pages}marketplace/models/retrieve-related-models[/api/models/:modelId/related-models]#
 
-|[small]#Retrieve model versions#
+|[small]#List model versions#
 |[small]#client.models.get_versions()#
-|[small]#link:{doc-pages}api-reference/marketplace/retrieve-versions[api/models/:model-id/versions]#
+|[small]#link:{doc-pages}marketplace/versions/retrieve-versions[/api/models/:modelId/versions]#
 
-|[small]#Retrieve model version details#
+|[small]#Get version details#
 |[small]#client.models.get_version()#
-|[small]#link:{doc-pages}api-reference/marketplace/retrieve-version-details[api/models/:model-id/versions/:version-id]#
+|[small]#link:{doc-pages}marketplace/versions/retrieve-version-details[/api/models/:modelId/versions/:version]#
 
-|[small]#Retrieve all tags#
+|[small]#List tags#
 |[small]#client.tags.get_all()#
-|[small]#link:{doc-pages}api-reference/marketplace/retrieve-tags[api/models/tags]#
+|[small]#link:{doc-pages}marketplace/tags/retrieve-tags[/api/models/tags]#
 
-|[small]#Retrieve Tags and Models#
+|[small]#Get models by tags#
 |[small]#client.tags.get_tags_and_models()#
-|[small]#link:{doc-pages}api-reference/marketplace/retrieve-models-by-tags[api/models/tags/:tag-id]#
+|[small]#link:{doc-pages}marketplace/tags/retrieve-models-by-tags[/api/models/tags/:tagId]#
 
-|[small]#Submit a Job (Single Text)#
+|[small]#Create a job (single text)#
 |[small]#client.jobs.submit_text()#
-|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+|[small]#link:{doc-pages}jobs/jobs/submit-job-text[/api/jobs]#
 
-|[small]#Submit a Job (Multiple Text)#
+|[small]#Create a job (multiple text)#
 |[small]#client.jobs.submit_text_bulk()#
-|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+|[small]#link:{doc-pages}jobs/jobs/submit-job-text[/api/jobs]#
 
-|[small]#Submit a Job (Single Embedded)#
+|[small]#Create a job (single embedded)#
 |[small]#client.jobs.submit_bytes()#
-|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+|[small]#link:{doc-pages}jobs/jobs/submit-job-embedded[/api/jobs]#
 
-|[small]#Submit a Job (Multiple Embedded)#
+|[small]#Create a job (multiple embedded)#
 |[small]#client.jobs.submit_bytes_bulk()#
-|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+|[small]#link:{doc-pages}jobs/jobs/submit-job-embedded[/api/jobs]#
 
-|[small]#Submit a Job (Single File)#
+|[small]#Create a job (single file)#
 |[small]#client.jobs.submit_files()#
-|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+|[small]#link:{doc-pages}jobs/jobs/submit-job-embedded[/api/jobs]#
 
-|[small]#Submit a Job (Multiple Files)#
+|[small]#Create a job (multiple files)#
 |[small]#client.jobs.submit_files_bulk()#
-|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+|[small]#link:{doc-pages}jobs/jobs/submit-job-embedded[/api/jobs]#
 
-|[small]#Submit a Job (Single AWS S3)#
+|[small]#Create a job (single AWS S3)#
 |[small]#client.jobs.submit_aws_s3()#
-|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+|[small]#link:{doc-pages}jobs/jobs/submit-job-aws[/api/jobs]#
 
-|[small]#Submit a Job (Multiple AWS S3)#
+|[small]#Create a job (multiple AWS S3)#
 |[small]#client.jobs.submit_aws_s3_bulk()#
-|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+|[small]#link:{doc-pages}jobs/jobs/submit-job-aws[/api/jobs]#
 
-|[small]#Submit a Job (JDBC)#
+|[small]#Create a job (JDBC)#
 |[small]#client.jobs.submit_jdbc()#
-|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+|[small]#link:{doc-pages}jobs/jobs/submit-job-jdbc[/api/jobs]#
 
-|[small]#Cancel job#
+|[small]#Cancel a job#
 |[small]#job.cancel()#
-|[small]#link:{doc-pages}api-reference/jobs/cancel-pending-job[api/jobs/:job-id]#
+|[small]#link:{doc-pages}jobs/jobs/cancel-pending-job[/api/jobs/:jobId]#
 
 |[small]#Hold until inference is complete#
 |[small]#job.block_until_complete()#
-|[small]#link:{doc-pages}api-reference/job-inputs/submit-job[api/jobs]#
+|[small]#link:{doc-pages}jobs/jobs/submit-job-text[/api/jobs]#
 
-|[small]#Get Job details#
+|[small]#Get job details#
 |[small]#client.jobs.get()#
-|[small]#link:{doc-pages}api-reference/jobs/retrieve-job-details[api/jobs/:job-id]#
+|[small]#link:{doc-pages}jobs/jobs/retrieve-job-details[/api/jobs/:jobId]#
 
-|[small]#Retrieve results#
+|[small]#Get results#
 |[small]#job.get_result()#
-|[small]#link:{doc-pages}api-reference/jobs/cancel-pending-job[api/jobs/:job-id]#
+|[small]#link:{doc-pages}jobs/results/retrieve-results[/api/results/:jobId]#
 
-|[small]#Retrieve Job History#
+|[small]#List the job history#
 |[small]#client.jobs.get_history()#
-|[small]#link:{doc-pages}api-reference/jobs/retrieve-job-history[api/jobs/history]#
+|[small]#link:{doc-pages}jobs/job-history/retrieve-job-history[/api/jobs/history]#
 
 |===
 
