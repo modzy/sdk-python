@@ -4,7 +4,7 @@
 
 <div align="center">
 
-Modzy's Python SDK queries models, submits inference jobs, and returns results directly to your editor.
+**Modzy's Python SDK queries models, submits inference jobs, and returns results directly to your editor.**
 
 
 ![GitHub contributors](https://img.shields.io/github/contributors/modzy/sdk-python)
