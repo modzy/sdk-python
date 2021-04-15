@@ -40,7 +40,7 @@
 <br>
 
 <div align="center">
-<a href="/README.adoc" style="text-decoration:none">Readme</a> |
+<a href="/README.md" style="text-decoration:none">Readme</a> |
 <a href="https://models.modzy.com/docs" style="text-decoration:none">Documentation</a>
 
 </div>
