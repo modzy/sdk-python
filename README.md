@@ -18,7 +18,7 @@
 
 ## Installation
 
-[![installation](https://github.com/modzy/sdk-python/tree/main/install.gif)](https://asciinema.org/a/0lHaPxvXTrPTp1Bb6bNea1ZCG)
+[![installation](https://github.com/modzy/sdk-python/raw/main/install.gif)](https://asciinema.org/a/0lHaPxvXTrPTp1Bb6bNea1ZCG)
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) install the SDK:
 
@@ -39,7 +39,7 @@ client = ApiClient(base_url='https://modzy.example.com/api', api_key='my_key.mod
 
 The code below is applicable for `text/plain` input type.
 
-![Basic Usage](https://github.com/modzy/sdk-python/tree/main/python.gif)
+![Basic Usage](https://github.com/modzy/sdk-python/raw/main/python.gif)
 
 Submit a job providing the model, version, and input file:
 
