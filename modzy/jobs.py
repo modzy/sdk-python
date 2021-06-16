@@ -15,7 +15,7 @@ from .models import Model
 class Jobs:
     """The `Jobs` object.
 
-    This object is used to retreive information about jobs from the API.
+    This object is used to retrieve information about jobs from the API.
 
     Note:
         This class should not be instantiated directly but rather accessed through the `jobs`
@@ -68,8 +68,8 @@ class Jobs:
         Args:
             user (Optional[str]): Name of the job submitter
             access_key (Optional[str]): Identifier of the access key to be assigned to the user
-            start_date (Optional[datetime, str]): initial date to filter recods
-            end_date (Optional[datetime, str]): final date to filter recods
+            start_date (Optional[datetime, str]): initial date to filter records
+            end_date (Optional[datetime, str]): final date to filter records
             model (Optional[str]): Model name or version identifier
             status (Optional[str]): Status of the jobs (all, pending, terminated)
             sort_by (Optional[str]): attribute name to sort results
@@ -183,13 +183,14 @@ class Jobs:
                 raise Timeout('timed out before completion')
         # TODO: should probably ramp up poll_interval as wait time increases
 
-    def submit_text(self, model, version, source, source_name='job'):
+    def submit_text(self, model, version, source, explain=False, source_name='job'):
         """Submits text data for a single source `Job`.
 
         Args:
             model (Union[str, Model]): The model identifier or a `Model` instance.
             version (str): The model version string.
             source (dict): A mapping of model input filename to text string.
+            explain (bool): indicates if you desire an explainable result for your model.`
             source_name (Optional[str]): The source name. Defaults to 'job'.
 
         Returns:
@@ -209,9 +210,9 @@ class Jobs:
                     })
         """
         sources = {source_name: source}
-        return self.submit_text_bulk(model, version, sources)
+        return self.submit_text_bulk(model, version, sources, explain)
 
-    def submit_text_bulk(self, model, version, sources):
+    def submit_text_bulk(self, model, version, sources, explain=False):
         """Submits text data for a multiple source `Job`.
 
         Args:
@@ -219,6 +220,7 @@ class Jobs:
             version (str): The model version string.
             sources (dict): A mapping of source names to text sources. Each source should be a
                 mapping of model input filename to text string.
+            explain (bool): indicates if you desire an explainable result for your model.`
 
         Returns:
             Job: The submitted `Job` instance.
@@ -251,6 +253,7 @@ class Jobs:
                 "identifier": identifier,
                 "version": version
             },
+            "explain": explain,
             "input": {
                 "type": "text",
                 "sources": sources
@@ -260,13 +263,14 @@ class Jobs:
         response = self._api_client.http.post(self._base_route, body)
         return Job(response, self._api_client)
 
-    def submit_bytes(self, model, version, source, source_name='job'):
+    def submit_bytes(self, model, version, source, explain=False, source_name='job'):
         """Submits bytes-like data for a single source `Job`.
 
         Args:
             model (Union[str, Model]): The model identifier or a `Model` instance.
             version (str): The model version string.
             source (dict): A mapping of model input filename to bytes-like object.
+            explain (bool): indicates if you desire an explainable result for your model.`
             source_name (Optional[str]): The source name. Defaults to 'job'.
 
         Returns:
@@ -286,9 +290,9 @@ class Jobs:
                 })
         """
         sources = {source_name: source}
-        return self.submit_bytes_bulk(model, version, sources)
+        return self.submit_bytes_bulk(model, version, sources, explain)
 
-    def submit_bytes_bulk(self, model, version, sources):
+    def submit_bytes_bulk(self, model, version, sources, explain=False):
         """Submits bytes-like data for a multiple source `Job`.
 
         Args:
@@ -296,6 +300,7 @@ class Jobs:
             version (str): The model version string.
             sources (dict): A mapping of source names to text sources. Each source should be a
                 mapping of model input filename to bytes-like object.
+            explain (bool): indicates if you desire an explainable result for your model.`
 
         Returns:
             Job: The submitted `Job` instance.
@@ -334,6 +339,7 @@ class Jobs:
                 "identifier": identifier,
                 "version": version
             },
+            "explain": explain,
             "input": {
                 "type": "embedded",
                 "sources": sources
@@ -343,13 +349,14 @@ class Jobs:
         response = self._api_client.http.post(self._base_route, body)
         return Job(response, self._api_client)
 
-    def submit_files(self, model, version, source, source_name='job'):
+    def submit_files(self, model, version, source, explain=False, source_name='job'):
         """Submits filepath or file-like data for a single source `Job`.
 
         Args:
             model (Union[str, Model]): The model identifier or a `Model` instance.
             version (str): The model version string.
             source (dict): A mapping of model input filename to filepath or file-like object.
+            explain (bool): indicates if you desire an explainable result for your model.`
             source_name (Optional[str]): The source name. Defaults to 'job'.
 
         Returns:
@@ -371,9 +378,9 @@ class Jobs:
                 })
         """
         sources = {source_name: source}
-        return self.submit_files_bulk(model, version, sources)
+        return self.submit_files_bulk(model, version, sources, explain)
 
-    def submit_files_bulk(self, model, version, sources):
+    def submit_files_bulk(self, model, version, sources, explain=False):
         """Submits filepath or file-like data data for a multiple source `Job`.
 
         Args:
@@ -381,6 +388,7 @@ class Jobs:
             version (str): The model version string.
             sources (dict): A mapping of source names to text sources. Each source should be a
                 mapping of model input filename to filepath or file-like object.
+            explain (bool): indicates if you desire an explainable result for your model.`
 
         Returns:
             Job: The submitted `Job` instance.
@@ -411,9 +419,9 @@ class Jobs:
             }
             for source, inputs in sources.items()
         }
-        return self.submit_bytes_bulk(model, version, sources)
+        return self.submit_bytes_bulk(model, version, sources, explain)
 
-    def submit_aws_s3(self, model, version, source, access_key_id, secret_access_key, region, source_name='job'):
+    def submit_aws_s3(self, model, version, source, access_key_id, secret_access_key, region, explain=False, source_name='job'):
         """Submits AwS S3 hosted data for a single source `Job`.
 
         Args:
@@ -423,6 +431,7 @@ class Jobs:
             access_key_id (str): The AWS Access Key ID.
             secret_access_key (str): The AWS Secret Access Key.
             region (str): The AWS Region.
+            explain (bool): indicates if you desire an explainable result for your model.`
             source_name (Optional[str]): The source name. Defaults to 'job'.
 
         Returns:
@@ -452,9 +461,9 @@ class Jobs:
                 )
         """
         sources = {source_name: source}
-        return self.submit_aws_s3_bulk(model, version, sources, access_key_id, secret_access_key, region)
+        return self.submit_aws_s3_bulk(model, version, sources, access_key_id, secret_access_key, region, explain)
 
-    def submit_aws_s3_bulk(self, model, version, sources, access_key_id, secret_access_key, region):
+    def submit_aws_s3_bulk(self, model, version, sources, access_key_id, secret_access_key, region, explain=False):
         """Submits AwS S3 hosted data for a multiple source `Job`.
 
         Args:
@@ -465,6 +474,7 @@ class Jobs:
             access_key_id (str): The AWS Access Key ID.
             secret_access_key (str): The AWS Secret Access Key.
             region (str): The AWS Region.
+            explain (bool): indicates if you desire an explainable result for your model.`
 
         Returns:
             Job: The submitted `Job` instance.
@@ -515,6 +525,7 @@ class Jobs:
                 "identifier": identifier,
                 "version": version
             },
+            "explain": explain,
             "input": {
                 "type": "aws-s3",
                 "accessKeyID": access_key_id,
@@ -527,7 +538,7 @@ class Jobs:
         response = self._api_client.http.post(self._base_route, body)
         return Job(response, self._api_client)
 
-    def submit_jdbc(self, model, version, url, username, password, driver, query):
+    def submit_jdbc(self, model, version, url, username, password, driver, query, explain=False):
         """Submits jdbc query as input for a `Job`, each row is interpreted as a input.
             Modzy will create a data source with the parameters provided and will execute
             the query provided, then will match the inputs defined of the model with the columns
@@ -541,6 +552,7 @@ class Jobs:
             password (str): the password to access the database
             driver (str): full driver class name
             query (str): the query to execute
+            explain (bool): indicates if you desire an explainable result for your model.`
 
         Returns:
             Job: The submitted `Job` instance.
@@ -577,6 +589,7 @@ class Jobs:
                 "identifier": identifier,
                 "version": version
             },
+            "explain": explain,
             "input": {
                 "type": "jdbc",
                 "url": url,
