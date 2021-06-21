@@ -78,11 +78,9 @@ class HttpClient:
             headers['Authorization'] = 'ApiKey {}'.format(self._api_client.api_key)
         if json_data is not None:
             headers['Content-Type'] = 'application/json'
-        self.logger.debug("%s: %s", method, url)
+        self.logger.debug("%s: %s - [%s]", method, url, self._api_client.certs)
 
         try:
-            if self._api_client.certs is not None:
-                self.logger.debug("using custom cert %s", self._api_client.certs)
             response = self.session.request(method, url, data=data, headers=headers, cert=self._api_client.certs)
             self.logger.debug("response %s", response.status_code)
         except requests.exceptions.RequestException as ex:
