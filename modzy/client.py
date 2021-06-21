@@ -30,12 +30,13 @@ class ApiClient:
         results (Results): `Results` object used to interact with results.
     """
 
-    def __init__(self, base_url, api_key):
+    def __init__(self, base_url, api_key, certs=None):
         """Creates an `ApiClient` instance.
 
         Args:
             base_url (str): The base url for the API.
             api_key (str): The API key to use for authentication.
+            certs (str): A tuple to use custom cert and key, i.e.: (cert_file_path, key_file_path)
         """
         if base_url is None or base_url == "":
             raise ValueError("Cannot initialize the modzy client: the base_url param should be a valid not empty string")
@@ -43,6 +44,7 @@ class ApiClient:
             raise ValueError("Cannot initialize the modzy client: the api_key param should be a valid not empty string")
         self.base_url = base_url
         self.api_key = api_key
+        self.certs = certs
 
         self.http = HttpClient(self)
 

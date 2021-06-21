@@ -81,7 +81,7 @@ class HttpClient:
         self.logger.debug("%s: %s", method, url)
 
         try:
-            response = self.session.request(method, url, data=data, headers=headers)
+            response = self.session.request(method, url, data=data, headers=headers, cert=self._api_client.certs)
             self.logger.debug("response %s", response.status_code)
         except requests.exceptions.RequestException as ex:
             self.logger.exception('unable to make network request')
