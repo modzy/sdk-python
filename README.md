@@ -1,5 +1,5 @@
 # Modzy Python SDK
- 
+
 ![Modzy Logo](https://www.modzy.com/wp-content/uploads/2020/06/MODZY-RGB-POS.png)
 
 <div align="center">
@@ -26,13 +26,30 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) install the SDK:
 
 ## Usage
 
+
+### Get your API key
+
+
+
+API keys are security credentials required to perform API requests to Modzy. Our API keys are composed of an ID that is split by a dot into two parts: a public and private part.
+
+The *public* part is the API keys' visible part only used to identify the key and by itself, it’s unable to perform API requests.
+
+The *private* part is the public part's complement and it’s required to perform API requests. Since it’s not stored on Modzy’s servers, it cannot be recovered. Make sure to save it securely. If lost, you can [replace the API key](https://models.modzy.com/docs/users-keys/api-keys/replace-API-key).
+
+
+Find your API key in your user profile. To get your full API key click on "Get key":
+
+<img src="key.png" alt="get key" width="10%"/>
+
+
 ### Initialize
 
-Once you have a `model` and `version` identified, authenticate to Modzy with your API key:
+Once you have a `model` and `version` identified, get authenticated with your API key.
 
 ```python
 from modzy import ApiClient, error
-client = ApiClient(base_url='https://modzy.example.com/api', api_key='my_key.modzy')
+client = ApiClient(base_url='https://modzy.example.com/api', api_key='API Key')
 ```
 
 ### Basic usage
