@@ -67,14 +67,16 @@ for output in modelVersion.outputs:
 
 # Send the job:
 # A file input can be a byte array or any file path. This input type fits for any size files.
+image_path = pathlib.Path('./samples/image.png')
+config_path = pathlib.Path('./samples/config.json')
 # With the info about the model (identifier), the model version (version string, input/output keys), you are ready to
 # submit the job. Just prepare the source dictionary:
-sources = {"source-key": {"input": '../samples/image.png', "config.json": '../samples/config.json'}}
+sources = {"source-key": {"input": image_path.resolve(), "config.json": config_path.resolve()}}
 # An inference job groups input data that you send to a model. You can send any amount of inputs to
 # process and you can identify and refer to a specific input by the key that you assign, for example we can add:
-sources["second-key"] = {"input": pathlib.Path('../samples/image.png'), "config.json": pathlib.Path('../samples/config.png')}
+sources["second-key"] = {"input": image_path, "config.json": config_path}
 # You don't need to load all the inputs from files, you can just convert the files to bytes as follows:
-image_bytes = file_to_bytes('../samples/image.png')
+image_bytes = file_to_bytes(image_path.resolve())
 config_bytes = json.dumps({"languages":["spa"]}).encode('utf-8')
 sources["another-key"] = {"input": image_bytes, "config.json": config_bytes}
 # If you send a wrong input key, the model fails to process the input.
