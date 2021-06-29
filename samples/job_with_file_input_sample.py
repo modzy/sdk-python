@@ -35,11 +35,11 @@ API_KEY = os.getenv('MODZY_API_KEY')
 #   for the following API calls.
 client = ApiClient(base_url=BASE_URL, api_key=API_KEY)
 
-# Create a Job with a embedded input, wait and retrieve results:
+# Create a Job with a file input, wait, and retrieve results:
 
 # Get the model object:
-# If you already know the model identifier (i.e.: you got from the URL of the model details page or the input sample),
-# you can skip this step. If you don't you can find the model identifier by using its name as follows:
+# If you already know the model identifier (i.e.: you got it from the URL of the model details page or from the input sample),
+# you can skip this step. If you don't, you can find the model identifier by using its name as follows:
 model = client.models.get_by_name("Multi-Language OCR")
 # Or if you already know the model id and want to know more about the model, you can use this instead:
 # model = client.models.get("c60c8dbd79")
