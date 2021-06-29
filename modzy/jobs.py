@@ -423,6 +423,7 @@ class Jobs:
         }
         # Open the job with an empty call to the job api
         open_job = Job(self._api_client.http.post(self._base_route, body), self._api_client)
+        self.logger.debug("open job %s", open_job)
         try:
             # Iterate on the sources, submitting each input as a multipart post request
             # jobIdentifier/input-item-name/model-input-name
@@ -434,10 +435,12 @@ class Jobs:
                         {"input": value if isinstance(value, (bytes, bytearray)) else file_to_bytes(value)}
                     )
             open_job = self._api_client.http.post('{}/{}/close'.format(self._base_route, open_job.job_identifier))
+            self.logger.debug("close job %s", open_job)
         except:
             try:
                 # Try to cancel the job as something unexpected happened, ignore any error if something bad happen
                 # with this call in order to pass the real cause to the caller
+                self.logger.debug("canceling job %s", open_job)
                 open_job.cancel()
             finally:
                 pass
