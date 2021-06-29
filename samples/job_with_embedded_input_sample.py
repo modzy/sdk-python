@@ -66,7 +66,7 @@ for output in modelVersion.outputs:
 
 # Send the job:
 # An embedded input is a byte array encoded as a string in Base64. This input type comes very handy for small to middle size files. However,
-# it requires to load and encode files in memory which can be an issue for larger files, use submit_files istead.
+# it requires to load and encode files in memory which can be an issue for larger files, use submit_files instead.
 image_bytes = file_to_bytes('../samples/image.png')
 config_bytes = file_to_bytes('../samples/config.json')
 # With the info about the model (identifier), the model version (version string, input/output keys), you are ready to
