@@ -1,4 +1,5 @@
 import json
+import pathlib
 import sys
 import os
 import logging
@@ -65,25 +66,23 @@ for output in modelVersion.outputs:
     logger.info("    key {}, type {}, description: {}".format(output.name, output.mediaType, output.description))
 
 # Send the job:
-# An embedded input is a byte array encoded as a string in Base64. This input type comes very handy for small to middle size files. However,
-# it requires to load and encode files in memory which can be an issue for larger files, use submit_files istead.
-image_bytes = file_to_bytes('../samples/image.png')
-config_bytes = file_to_bytes('../samples/config.json')
+# A file input can be a byte array or any file path. This input type fits for any size files.
 # With the info about the model (identifier), the model version (version string, input/output keys), you are ready to
 # submit the job. Just prepare the source dictionary:
-sources = {"source-key": {"input": image_bytes, "config.json":config_bytes}}
+sources = {"source-key": {"input": '../samples/image.png', "config.json": '../samples/config.json'}}
 # An inference job groups input data that you send to a model. You can send any amount of inputs to
 # process and you can identify and refer to a specific input by the key that you assign, for example we can add:
-sources["second-key"] = {"input": image_bytes, "config.json":config_bytes}
+sources["second-key"] = {"input": pathlib.Path('../samples/image.png'), "config.json": pathlib.Path('../samples/config.png')}
 # You don't need to load all the inputs from files, you can just convert the files to bytes as follows:
+image_bytes = file_to_bytes('../samples/image.png')
 config_bytes = json.dumps({"languages":["spa"]}).encode('utf-8')
-sources["another-key"] = {"input": image_bytes, "config.json":config_bytes}
+sources["another-key"] = {"input": image_bytes, "config.json": config_bytes}
 # If you send a wrong input key, the model fails to process the input.
 sources["wrong-key"] = {"a.wrong.key": image_bytes, "config.json":config_bytes}
 # If you send a correct input key but some wrong values, the model fails too.
 sources["wrong-value"] = {"input": config_bytes, "config.json":image_bytes}
 # When you have all your inputs ready, you can use our helper method to submit the job as follows:
-job = client.jobs.submit_bytes_bulk(model.modelId, modelVersion.version, sources)
+job = client.jobs.submit_files_bulk(model.modelId, modelVersion.version, sources)
 # Modzy creates the job and queue for processing. The job object contains all the info that you need to keep track
 # of the process, the most important being the job identifier and the job status.
 logger.info("job: %s", job)
