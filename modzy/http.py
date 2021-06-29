@@ -126,7 +126,7 @@ class HttpClient:
         """
         return self.request('GET', url)
 
-    def post(self, url, json_data=None):
+    def post(self, url, json_data=None, file_data=None):
         """Sends a POST request.
 
         Args:
@@ -140,7 +140,7 @@ class HttpClient:
             ApiError: A subclass of ApiError will be raised if the API returns an error status,
                 or the client is unable to connect.
         """
-        return self.request('POST', url, json_data=json_data)
+        return self.request('POST', url, json_data=json_data, file_data=file_data)
 
     def patch(self, url, json_data=None):
         """Sends a PATCH request.
