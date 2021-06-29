@@ -412,14 +412,37 @@ class Jobs:
                         }
                     })
         """
-        sources = {
-            source: {
-                key: file_to_bytes(value)
-                for key, value in inputs.items()
-            }
-            for source, inputs in sources.items()
+        identifier = Model._coerce_identifier(model)
+        version = str(version)
+        body = {
+            "model": {
+                "identifier": identifier,
+                "version": version
+            },
+            "explain": explain
         }
-        return self.submit_bytes_bulk(model, version, sources, explain)
+        # Open the job with an empty call to the job api
+        open_job = Job(self._api_client.http.post(self._base_route, body), self._api_client)
+        try:
+            # Iterate on the sources, submitting each input as a multipart post request
+            # jobIdentifier/input-item-name/model-input-name
+            for source, inputs in sources.items():
+                for key, value in inputs.items():
+                    self._api_client.http.post(
+                        '{}/{}/{}/{}'.format(self._base_route, open_job.job_identifier, source, key),
+                        None,
+                        {"input": value if isinstance(value, (bytes, bytearray)) else file_to_bytes(value)}
+                    )
+            open_job = self._api_client.http.post('{}/{}/close'.format(self._base_route, open_job.job_identifier))
+        except:
+            try:
+                # Try to cancel the job as something unexpected happened, ignore any error if something bad happen
+                # with this call in order to pass the real cause to the caller
+                open_job.cancel()
+            finally:
+                pass
+            raise
+        return Job(open_job, self._api_client)
 
     def submit_aws_s3(self, model, version, source, access_key_id, secret_access_key, region, explain=False, source_name='job'):
         """Submits AwS S3 hosted data for a single source `Job`.
