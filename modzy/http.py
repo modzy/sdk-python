@@ -48,7 +48,7 @@ class HttpClient:
         self.session = session if session is not None else requests.Session()
         self.logger = logging.getLogger(__name__)
 
-    def request(self, method, url, json_data=None):
+    def request(self, method, url, json_data=None, file_data=None):
         """Sends an HTTP request.
 
         The client's API key will automatically be used for authentication.
@@ -57,6 +57,7 @@ class HttpClient:
             method (str): The HTTP method for the request.
             url (str): URL to request.
             json_data (Optional[Any]): JSON serializeable object to include in the request body.
+            file_data (Optional[Any]): Dictionary to be submitted as files part of the request
 
         Returns:
             dict: JSON object deserialized from the response body.
@@ -81,8 +82,8 @@ class HttpClient:
         self.logger.debug("%s: %s", method, url)
 
         try:
-            response = self.session.request(method, url, data=data, headers=headers)
-            self.logger.debug("response %s", response.status_code)
+            response = self.session.request(method, url, data=data, headers=headers, files=file_data)
+            self.logger.debug("response %s - length %s", response.status_code, len(response.content))
         except requests.exceptions.RequestException as ex:
             self.logger.exception('unable to make network request')
             raise NetworkError(str(ex), url, reason=ex)
@@ -90,7 +91,10 @@ class HttpClient:
         try:
             json_data = json.loads(response.content.decode('utf-8'), object_hook=ApiObject)
         except ValueError:
-            json_data = None
+            if len(response.content) > 0:
+                json_data = None
+            else:
+                json_data = {}
 
         if not (200 <= response.status_code < 300):
             message = None
@@ -122,7 +126,7 @@ class HttpClient:
         """
         return self.request('GET', url)
 
-    def post(self, url, json_data=None):
+    def post(self, url, json_data=None, file_data=None):
         """Sends a POST request.
 
         Args:
@@ -136,7 +140,7 @@ class HttpClient:
             ApiError: A subclass of ApiError will be raised if the API returns an error status,
                 or the client is unable to connect.
         """
-        return self.request('POST', url, json_data=json_data)
+        return self.request('POST', url, json_data=json_data, file_data=file_data)
 
     def patch(self, url, json_data=None):
         """Sends a PATCH request.
