@@ -6,6 +6,7 @@ from .jobs import Jobs
 from .models import Models
 from .results import Results
 from .tags import Tags
+from .accounting import Accounting
 
 
 class ApiClient:
@@ -46,6 +47,7 @@ class ApiClient:
 
         self.http = HttpClient(self)
 
+        self.accounting = Accounting(self)
         self.models = Models(self)
         self.jobs = Jobs(self)
         self.results = Results(self)

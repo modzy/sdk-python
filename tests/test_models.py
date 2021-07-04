@@ -120,3 +120,26 @@ def test_get_model_version_output_sample(client, logger):
     output_sample = client.models.get_version_output_sample(MODEL_ID, '0.0.27')
     logger.debug("version: %s", output_sample)
     assert output_sample
+
+
+def test_get_model_details(client):
+    client.models.get_model_details(MODEL_ID, "0.0.27")
+
+
+def test_get_minimum_engines(client):
+    client.models.get_minimum_engines()
+
+
+def test_update_processing_state(client):
+    client.models.update_processing_engines(MODEL_ID, "0.0.27", 0, 1)
+
+
+def test_update_processing_state_wait(client):
+    client.models.update_processing_engines(MODEL_ID, "0.0.27", 2, 2, None)
+
+
+@pytest.mark.parametrize("engine_min_max", [(100, 200), (1, 0)])
+def test_processing_state_errors(client, engine_min_max):
+    min_engines, max_engines = engine_min_max
+    with pytest.raises(ValueError):
+        client.models.update_processing_engines(MODEL_ID, "0.0.27", min_engines, max_engines)
