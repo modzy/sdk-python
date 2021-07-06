@@ -58,7 +58,7 @@ class Models:
         return None
 
     def get_minimum_engines(self) -> int:
-        """Obtains the total amount of processing engines set as the minimum processing capacity"""
+        """Obtains the total amount of processing engines set as the minimum processing capacity across all models."""
         route = f"{self._base_route}/processing-engines"
         raw_result = self._api_client.http.get(route)
         minimum_engines_sum = int(raw_result["minimumProcessingEnginesSum"])
@@ -92,7 +92,6 @@ class Models:
         model_id = Model._coerce_identifier(model)
 
         admin_entitlement = "CAN_PATCH_PROCESSING_MODEL_VERSION"
-        data_scientist_entitlement = "CAN_PATCH_MODEL_VERSIONS"
         admin = self._api_client.accounting.has_entitlement(admin_entitlement)
 
         base_request_body = {
