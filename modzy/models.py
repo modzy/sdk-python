@@ -47,16 +47,8 @@ class Models:
         """
         model_id = Model._coerce_identifier(model)
 
-        # TODO: this changed from being in the models api to the resources api,
-        #  so maybe it should go in a different module?
+        # TODO: this was moved from the models api to the resources api, perhaps it should go in a different module?
         endpoint = "/resources/processing/models"
-
-        required_entitlements = "CAN_VIEW_MODELS_PROCESSING_STATE"
-        allowed = self._api_client.accounting.has_entitlement(required_entitlements)
-        if not allowed:
-            error_message = \
-                f"In order to get usage details, you must have the following entitlement: {required_entitlements}"
-            raise ForbiddenError(error_message, self._api_client, None)
 
         result = self._api_client.http.get(endpoint)
 
@@ -102,7 +94,6 @@ class Models:
         admin_entitlement = "CAN_PATCH_PROCESSING_MODEL_VERSION"
         data_scientist_entitlement = "CAN_PATCH_MODEL_VERSIONS"
         admin = self._api_client.accounting.has_entitlement(admin_entitlement)
-        data_scientist = self._api_client.accounting.has_entitlement(data_scientist_entitlement)
 
         base_request_body = {
             "minimumParallelCapacity": min_engines,
@@ -113,15 +104,11 @@ class Models:
         if admin:
             endpoint = f"{base_endpoint}/processing"
             request_body = base_request_body
-        elif data_scientist:
+        else:  # Assume the user is either a data scientist or allow them to handle the 400 error by themselves
             endpoint = base_endpoint
             request_body = {
                 "processing": base_request_body
             }
-        else:
-            error_message = "You are not authorized to update processing engines. You will need one of the following" \
-                            f"endpoints in order to process: {admin_entitlement}, {data_scientist_entitlement}"
-            raise ForbiddenError(error_message, self._base_route, None)
 
         try:
             result = self._api_client.http.patch(endpoint, json_data=request_body)
@@ -137,7 +124,7 @@ class Models:
             return
         else:
             assert timeout is None or timeout > 0, \
-                "Timeout must either be an integer >= 0 or None to indicate no timeout"
+                "Timeout must either be an integer >= 0 or None if you wish to indicate no timeout"
             start_time = t()
             while True:
                 current_time = t() - start_time
