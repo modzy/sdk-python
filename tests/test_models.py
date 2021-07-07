@@ -122,8 +122,8 @@ def test_get_model_version_output_sample(client, logger):
     assert output_sample
 
 
-def test_get_model_details(client):
-    client.models.get_model_details(MODEL_ID, "0.0.27")
+def test_get_model_processing_details(client):
+    client.models.get_model_processing_details(MODEL_ID, "0.0.27")
 
 
 def test_get_minimum_engines(client):

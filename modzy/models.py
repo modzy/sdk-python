@@ -31,7 +31,7 @@ class Models:
         self._api_client = api_client
         self.logger = logging.getLogger(__name__)
 
-    def get_model_details(self, model, version):
+    def get_model_processing_details(self, model, version):
         """
         Checks to see if a model with a certain id and version is active, and if it is, will return the model
         details for that particular model.
@@ -132,7 +132,7 @@ class Models:
                         f"Timeout of {timeout} seconds reached while waiting for processing engines to initialize."
                     )
                     return
-                model_details = self.get_model_details(model_id, version)
+                model_details = self.get_model_processing_details(model_id, version)
                 if model_details is not None:  # This means the model with the id and version is now visible
                     engines_ready = sum([engine["ready"] for engine in model_details["engines"]])
                     if engines_ready >= min_engines:
