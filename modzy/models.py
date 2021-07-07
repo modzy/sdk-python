@@ -5,8 +5,10 @@ import logging
 from datetime import datetime
 from ._api_object import ApiObject
 from urllib.parse import urlencode
-from .error import NotFoundError
-
+from .error import NotFoundError, ForbiddenError, BadRequestError
+from typing import Union
+from time import time as t
+from time import sleep
 
 class Models:
     """The `Models` object.
@@ -28,6 +30,115 @@ class Models:
         """
         self._api_client = api_client
         self.logger = logging.getLogger(__name__)
+
+    def get_model_processing_details(self, model, version):
+        """
+        Checks to see if a model with a certain id and version is active, and if it is, will return the model
+        details for that particular model.
+
+        Args:
+            model: model id, or `Model` instance
+            version: semantic version of previously specified model
+
+        Returns:
+            model: The model details for the model with the id and version specified or None if there are no active
+            models with these parameters
+
+        """
+        model_id = Model._coerce_identifier(model)
+
+        # TODO: this was moved from the models api to the resources api, perhaps it should go in a different module?
+        endpoint = "/resources/processing/models"
+
+        result = self._api_client.http.get(endpoint)
+
+        for model in result:
+            if model["identifier"] == model_id and model["version"] == version:
+                return model
+        return None
+
+    def get_minimum_engines(self) -> int:
+        """Obtains the total amount of processing engines set as the minimum processing capacity across all models."""
+        route = f"{self._base_route}/processing-engines"
+        raw_result = self._api_client.http.get(route)
+        minimum_engines_sum = int(raw_result["minimumProcessingEnginesSum"])
+
+        self.logger.info(f"The sum of minimum processing engines is: {minimum_engines_sum}")
+        return minimum_engines_sum
+
+    def update_processing_engines(
+        self, model, version: str, min_engines: int, max_engines: int, timeout: int = 0, poll_rate: int = 5
+    ):
+        """
+        Updates the minimum and maximum processing engines for a specific model identifier and version.
+
+        Args:
+            model: model id, or `Model` instance
+            version: semantic version of previously specified model
+            min_engines: minimum number of processing engines allowed for this model and version
+            max_engines: maximum number of processing engines allowed for this model and version
+            timeout: time in seconds to wait until processing engine is spun up. 0 means return immediately, None means
+            block and wait forever
+            poll_rate: If timeout is nonzero, this value will determine the rate at which the state of the cluster
+            is checked
+
+        Raises:
+            ForbiddenError: Occurs if the current API client does not have the appropriate entitlements in order
+            to update processing engines
+        """
+        if not max_engines >= min_engines:
+            raise ValueError("Your min_engines value may not exceed the max_engines value")
+
+        model_id = Model._coerce_identifier(model)
+
+        admin_entitlement = "CAN_PATCH_PROCESSING_MODEL_VERSION"
+        admin = self._api_client.accounting.has_entitlement(admin_entitlement)
+
+        base_request_body = {
+            "minimumParallelCapacity": min_engines,
+            "maximumParallelCapacity": max_engines
+        }
+        base_endpoint = f"{self._base_route}/{model_id}/versions/{version}"
+
+        if admin:
+            endpoint = f"{base_endpoint}/processing"
+            request_body = base_request_body
+        else:  # Assume the user is either a data scientist or allow them to handle the 400 error by themselves
+            endpoint = base_endpoint
+            request_body = {
+                "processing": base_request_body
+            }
+
+        try:
+            result = self._api_client.http.patch(endpoint, json_data=request_body)
+            self.logger.info(
+                f"Updated processing engines for Model {model_id} {version}: \n{result['processing']}"
+            )
+        except BadRequestError as e:
+            error_message = e.message
+            self.logger.error(error_message)
+            raise ValueError(error_message)
+
+        if timeout == 0:
+            return
+        else:
+            assert timeout is None or timeout > 0, \
+                "Timeout must either be an integer >= 0 or None if you wish to indicate no timeout"
+            start_time = t()
+            while True:
+                current_time = t() - start_time
+                if timeout is not None and current_time > timeout:
+                    self.logger.warning(
+                        f"Timeout of {timeout} seconds reached while waiting for processing engines to initialize."
+                    )
+                    return
+                model_details = self.get_model_processing_details(model_id, version)
+                if model_details is not None:  # This means the model with the id and version is now visible
+                    engines_ready = sum([engine["ready"] for engine in model_details["engines"]])
+                    if engines_ready >= min_engines:
+                        self.logger.info(f"{engines_ready} engines are ready.")
+                        return
+                sleep(poll_rate)
 
     def get(self, model):
         """Gets a `Model` instance.
@@ -254,6 +365,7 @@ class Models:
         self.logger.debug("body 2? %s", body)
         json_list = self._api_client.http.get('{}?{}'.format(self._base_route, urlencode(body)))
         return list(Model(json_obj, self._api_client) for json_obj in json_list)
+
 
 class Model(ApiObject):
     """A model object.
