@@ -2,9 +2,6 @@
 
 import pathlib
 from base64 import b64encode
-import logging
-logger = logging.getLogger(__name__)
-
 
 def encode_data_uri(bytes_like, mimetype='application/octet-stream'):
     encoded = b64encode(bytes_like).decode('ascii')
@@ -37,7 +34,6 @@ def file_to_bytes(file_like):
 
 
 def file_to_chunks(file_like, chunk_size):
-    logger.debug(f"file_to_chunks({type(file_like)} :: {file_like}, {chunk_size}) :: splitting ")
     file = None
     if not hasattr(file_like, 'read'):
         if hasattr(file_like, '__fspath__'):  # os.PathLike
@@ -53,11 +49,8 @@ def file_to_chunks(file_like, chunk_size):
     if hasattr(file, 'seekable') and file.seekable():
         file.seek(0)
 
-    i = 0
     while True:
         chunk = file.read(chunk_size)
-        logger.debug(f"file_to_chunks({type(file)}, {chunk_size}) :: chunk [{i}:{i + chunk_size}]")
-        i += 1
         if not chunk:
             break
         if not isinstance(chunk, bytes):
@@ -71,7 +64,5 @@ def file_to_chunks(file_like, chunk_size):
 
 
 def bytes_to_chunks(byte_array, chunk_size):
-    logger.debug(f"bytes_to_chunks({len(byte_array)}, {chunk_size}) :: splitting")
-    for i in range(0, len(byte_array), chunk_size):
-        logger.debug(f"bytes_to_chunks({len(byte_array)}, {chunk_size}) :: slice [{i}:{i+chunk_size}]")
+    for i in range(0, len(byte_array), chunk_size):        
         yield byte_array[i:i + chunk_size]

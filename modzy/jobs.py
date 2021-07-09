@@ -458,17 +458,15 @@ class Jobs:
         if isinstance(input_value, (bytes, bytearray)):
             iterable = bytes_to_chunks(input_value, chunk_size)
         else:
-            iterable = file_to_chunks(input_value, chunk_size)
-            self.logger.debug(f"_append_input -> {iterable}")
-        i = 0
-        for chunk in iterable:
-            self.logger.debug(f"_append_input({job.job_identifier}, {input_item_name}, {data_item_name}, {type(input_value)}, {chunk_size}) chunk #{i}")
+            iterable = file_to_chunks(input_value, chunk_size)            
+        
+        for i, chunk in enumerate(iterable):            
+            self.logger.debug("_append_input(%s, %s, %s, %s, %s) chunk %i", job.job_identifier, input_item_name, data_item_name, type(input_value), chunk_size, i )
             self._api_client.http.post(
                 '{}/{}/{}/{}'.format(self._base_route, job.job_identifier, input_item_name, data_item_name),
                 None,
                 {"input": chunk}
-            )
-            i += 1
+            )            
 
     def submit_aws_s3(self, model, version, source, access_key_id, secret_access_key, region, explain=False,
                       source_name='job'):
