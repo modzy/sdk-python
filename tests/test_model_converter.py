@@ -25,7 +25,8 @@ def test_model_converter_check_endpoints(converter):
         "ds/model-converter/sagemaker/image-classification/weights.tar.gz",
         "ds/model-converter/sagemaker/image-classification/resources.tar.gz",
         "image-classification",
-        "sagemaker"
+        "sagemaker",
+        "S3"
     )
     assert response
 
