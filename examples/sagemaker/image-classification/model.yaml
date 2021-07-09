@@ -1,0 +1,99 @@
+specification: "0.3"
+type: "file"
+source: "Custom Model"
+version: "0.0.1"
+name: "Caltech image classification"
+author: "AWS Sagemaker"
+description:
+  summary: "The Amazon SageMaker image classification algorithm is a supervised learning algorithm that supports multi-label classification."
+  details: "It takes an image as input and outputs one or more labels assigned to that image. It uses a convolutional neural network (ResNet)
+            that can be trained from scratch or trained using transfer learning when a large number of training images are not available."
+  technical: |-
+    #OVERVIEW:
+    The recommended input format for the Amazon SageMaker image classification algorithms is Apache MXNet RecordIO.
+
+    #TRAINING:
+    If you use the RecordIO format for training, specify both train and validation channels as values for the InputDataConfig parameter of the
+    CreateTrainingJob request. Specify one RecordIO (.rec) file in the train channel and one RecordIO file in the validation channel. Set the
+    content type for both channels to application/x-recordio.
+
+    #VALIDATION:
+    The image classification model processes a single image per request and so outputs only one line in the JSON or JSON Lines format. The
+    following is an example of a response in JSON Lines format:
+
+    accept: application/jsonlines
+
+    {"prediction": [prob_0, prob_1, prob_2, prob_3, ...]}
+
+
+    #INPUT SPECIFICATION:
+    The generated models can be hosted for inference and support encoded .jpg and .png image formats as image/png, image/jpeg, and
+    application/x-image content-type. The input image is resized automatically.
+
+    #OUTPUT DETAILS:
+    The output is the probability values for all classes encoded in JSON format, or in JSON Lines text format for batch transform.
+
+    For image classification, we support the following GPU instances for training: ml.p2.xlarge, ml.p2.8xlarge, ml.p2.16xlarge, ml.p3.2xlarge,
+    ml.p3.8xlargeand ml.p3.16xlarge. We recommend using GPU instances with more memory for training with large batch sizes. However, both CPU (such
+    as C4) and GPU (such as P2 and P3) instances can be used for the inference. You can also run the algorithm on multi-GPU and multi-machine settings
+    for distributed training.
+
+  performance: "Accuracy, Precision, Recall, F1-score"
+releaseNotes: "Image classification in Amazon SageMaker can be run in two modes: full training and transfer learning."
+
+tags:
+- "Computer Vision"
+- "Image classification"
+- "ResNet"
+filters:
+- type: "Task"
+  label: "Image Classification"
+- type: "Input Type"
+  label: "Image"
+- type: "Subject"
+  label: "Still images"
+
+metrics:
+- label: "Probability"
+  type: "percentage"
+  value: 1.0
+  description: |-
+    Use case dependent
+
+
+inputs:
+  image:
+    acceptedMediaTypes:
+      - "image/jpeg"
+      - "image/png"
+      - "image/tiff"
+    maxSize: 5M
+    description: "Any jpg or png image for object detection"
+
+outputs:
+  results.json:
+    mediaType: "application/json"
+    maxSize: 128K
+    description: "Classify objects in an image and give probabilities for each"
+
+
+resources:
+  memory:
+    size: 6G
+  cpu:
+    count: 1
+  gpu:
+    count: 1
+
+timeout:
+  status: 20s
+  run: 20s
+
+internal:
+  recommended: false
+  experimental: false
+  available: true
+  active: true
+  features:
+    explainable: false
+    adversarialDefense: false

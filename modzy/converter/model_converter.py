@@ -91,9 +91,13 @@ class ModelConverter:
         response = raw_response["responseEntries"][0]
         status_code = response["httpCode"]
         message = response["message"]
+        self.logger.info(f"Response received with status code {status_code}: {message}")
 
         # TODO: This may not be possible if status code is not 200
-        success = raw_response["successEntry"]
-        self.logger.info(f"Response received with status code {status_code}: {message}")
-        self.logger.info(f"Details: {json.dumps(success, indent=4)}")
+        if status_code == "200":
+            success = raw_response["successEntry"]
+            self.logger.info(f"Details: {json.dumps(success, indent=4)}")
+        else:
+            success = None
+
         return status_code, success
