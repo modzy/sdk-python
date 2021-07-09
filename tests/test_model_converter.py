@@ -19,8 +19,8 @@ def test_model_converter_env_status(converter):
 
 def test_model_converter_check_endpoints(converter):
     response = converter.check_endpoints(
-        "AKIAUX272I2XFHORFQ7D",
-        "35exOPRUPxNn5FPdY8h43uF5cWSVEfzw9JfheVnF",
+        os.getenv("SP_ACCESS_KEY_ID"),
+        os.getenv("SP_SECRET_ACCESS_KEY"),
         "modzy-engineering-tests",
         "ds/model-converter/sagemaker/image-classification/weights.tar.gz",
         "ds/model-converter/sagemaker/image-classification/resources.tar.gz",
@@ -32,8 +32,8 @@ def test_model_converter_check_endpoints(converter):
 
 def test_model_converter_run(converter):
     status_code, succes_entry = converter.run(
-        "AKIAUX272I2XFHORFQ7D",
-        "35exOPRUPxNn5FPdY8h43uF5cWSVEfzw9JfheVnF",
+        os.getenv("SP_ACCESS_KEY_ID"),
+        os.getenv("SP_SECRET_ACCESS_KEY"),
         "modzy-engineering-tests",
         "ds/model-converter/sagemaker/image-classification/weights.tar.gz",
         "ds/model-converter/sagemaker/image-classification/resources.tar.gz",
