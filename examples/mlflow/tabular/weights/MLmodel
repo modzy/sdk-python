@@ -1,0 +1,19 @@
+flavors:
+  python_function:
+    data: data
+    env: conda.yaml
+    loader_module: mlflow.pytorch
+    pickle_module_name: mlflow.pytorch.pickle_module
+    python_version: 3.8.5
+  pytorch:
+    model_data: data
+    pytorch_version: 1.8.1
+signature:
+  inputs: '[{"name": "fixed acidity", "type": "double"}, {"name": "volatile acidity",
+    "type": "double"}, {"name": "citric acid", "type": "double"}, {"name": "residual
+    sugar", "type": "double"}, {"name": "chlorides", "type": "double"}, {"name": "free
+    sulfur dioxide", "type": "double"}, {"name": "total sulfur dioxide", "type": "double"},
+    {"name": "density", "type": "double"}, {"name": "pH", "type": "double"}, {"name":
+    "sulphates", "type": "double"}, {"name": "alcohol", "type": "double"}]'
+  outputs: '[{"name": "quality", "type": "long"}]'
+utc_time_created: '2021-07-13 17:01:09.348648'
