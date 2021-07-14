@@ -7,7 +7,8 @@ from datetime import datetime
 from types import SimpleNamespace
 from urllib.parse import urlencode
 from ._api_object import ApiObject
-from ._util import encode_data_uri, file_to_bytes
+from ._size import human_read_to_bytes
+from ._util import encode_data_uri, file_to_bytes, file_to_chunks, bytes_to_chunks
 from .error import Timeout
 from .models import Model
 
@@ -424,16 +425,21 @@ class Jobs:
         # Open the job with an empty call to the job api
         open_job = Job(self._api_client.http.post(self._base_route, body), self._api_client)
         self.logger.debug("open job %s", open_job)
+        chunk_size = None
+        try:
+            job_features = self.get_features()
+            chunk_size = human_read_to_bytes(job_features["input_chunk_maximum_size"])
+        except:
+            self.logger.warning("Error getting features, assuming defaults")
+            chunk_size = 1024*1024
+
         try:
             # Iterate on the sources, submitting each input as a multipart post request
             # jobIdentifier/input-item-name/model-input-name
             for source, inputs in sources.items():
                 for key, value in inputs.items():
-                    self._api_client.http.post(
-                        '{}/{}/{}/{}'.format(self._base_route, open_job.job_identifier, source, key),
-                        None,
-                        {"input": value if isinstance(value, (bytes, bytearray)) else file_to_bytes(value)}
-                    )
+                    self._append_input(open_job, source, key, value, chunk_size)
+
             open_job = self._api_client.http.post('{}/{}/close'.format(self._base_route, open_job.job_identifier))
             self.logger.debug("close job %s", open_job)
         except:
@@ -447,7 +453,23 @@ class Jobs:
             raise
         return Job(open_job, self._api_client)
 
-    def submit_aws_s3(self, model, version, source, access_key_id, secret_access_key, region, explain=False, source_name='job'):
+    def _append_input(self, job, input_item_name, data_item_name, input_value, chunk_size):
+        iterable = None
+        if isinstance(input_value, (bytes, bytearray)):
+            iterable = bytes_to_chunks(input_value, chunk_size)
+        else:
+            iterable = file_to_chunks(input_value, chunk_size)            
+        
+        for i, chunk in enumerate(iterable):            
+            self.logger.debug("_append_input(%s, %s, %s, %s, %s) chunk %i", job.job_identifier, input_item_name, data_item_name, type(input_value), chunk_size, i )
+            self._api_client.http.post(
+                '{}/{}/{}/{}'.format(self._base_route, job.job_identifier, input_item_name, data_item_name),
+                None,
+                {"input": chunk}
+            )            
+
+    def submit_aws_s3(self, model, version, source, access_key_id, secret_access_key, region, explain=False,
+                      source_name='job'):
         """Submits AwS S3 hosted data for a single source `Job`.
 
         Args:
@@ -629,6 +651,21 @@ class Jobs:
         response = self._api_client.http.post(self._base_route, body)
         return Job(response, self._api_client)
 
+    def get_features(self):
+        """Gets the `Job` features
+
+        Returns:
+            ApiObject: a generic api object with the feature name as keys.
+
+        Raises:
+            ApiError: A subclass of ApiError will be raised if the API returns an error status,
+                or the client is unable to connect.
+        """
+        self.logger.debug("getting features ")
+
+        json_obj = self._api_client.http.get('{}/features'.format(self._base_route))
+        return ApiObject(json_obj, self._api_client)
+
 
 class Job(ApiObject):
     """A job object.
@@ -647,6 +684,7 @@ class Job(ApiObject):
         key name (``job.job_identifier`` or ``job.jobIdentifier``). Alternatively, the original
         "camelCase" JSON key can be used with bracketed key access notation (``job['jobIdentifier']``).
     """
+
     def __init__(self, json_obj, api_client=None):
         if 'status' not in json_obj:
             json_obj['status'] = Jobs.status.SUBMITTED
