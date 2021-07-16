@@ -79,10 +79,10 @@ class HttpClient:
             headers['Authorization'] = 'ApiKey {}'.format(self._api_client.api_key)
         if json_data is not None:
             headers['Content-Type'] = 'application/json'
-        self.logger.debug("%s: %s", method, url)
+        self.logger.debug("%s: %s - [%s]", method, url, self._api_client.cert)
 
         try:
-            response = self.session.request(method, url, data=data, headers=headers, files=file_data)
+            response = self.session.request(method, url, data=data, headers=headers, files=file_data, verify=self._api_client.cert)
             self.logger.debug("response %s - length %s", response.status_code, len(response.content))
         except requests.exceptions.RequestException as ex:
             self.logger.exception('unable to make network request')
