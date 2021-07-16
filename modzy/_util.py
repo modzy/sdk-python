@@ -3,7 +3,6 @@
 import pathlib
 from base64 import b64encode
 
-
 def encode_data_uri(bytes_like, mimetype='application/octet-stream'):
     encoded = b64encode(bytes_like).decode('ascii')
     data_uri = 'data:{};base64,{}'.format(mimetype, encoded)
@@ -32,3 +31,37 @@ def file_to_bytes(file_like):
 
     with open(path, 'rb') as file:
         return file.read()
+
+
+def file_to_chunks(file_like, chunk_size):
+    file = None
+    should_close = False
+    if not hasattr(file_like, 'read'):
+        if hasattr(file_like, '__fspath__'):  # os.PathLike
+            path = file_like.__fspath__()
+        elif isinstance(file_like, pathlib.Path):  # Python 3.4-3.5
+            path = str(file_like)
+        else:
+            path = file_like
+        file = open(path, 'rb')
+        should_close = True
+    else:
+        file = file_like
+
+    if hasattr(file, 'seekable') and file.seekable():
+        file.seek(0)
+
+    while chunk := file.read(chunk_size):
+        if not isinstance(chunk, bytes):
+            raise TypeError("the file object's 'read' function must return bytes not {}; "
+                            "files should be opened using binary mode 'rb'"
+                            .format(type(chunk).__name__))
+        yield chunk
+
+    if should_close:
+        file.close()
+
+
+def bytes_to_chunks(byte_array, chunk_size):
+    for i in range(0, len(byte_array), chunk_size):
+        yield byte_array[i:i + chunk_size]
