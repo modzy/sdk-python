@@ -31,7 +31,7 @@ class Jobs:
         IN_PROGRESS='IN_PROGRESS',
         COMPLETED='COMPLETED',
         CANCELED='CANCELED',
-        TIMEOUT='TIMEOUT',
+        TIMEDOUT='TIMEDOUT',
     )
     """Possible job statuses."""
 
