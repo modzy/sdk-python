@@ -160,9 +160,9 @@ Currently we support the following API routes:
 |Submit a Job (JDBC)|client.jobs.submit_jdbc()|[api/jobs](https://models.modzy.com/docs/jobs/jobs/submit-job-jdbc)|
 |Cancel job|job.cancel()|[api/jobs/:job-id](https://models.modzy.com/docs/jobs/jobs/cancel-pending-job)  |
 |Hold until inference is complete|job.block_until_complete()|[api/jobs/:job-id](https://models.modzy.com/docs/jobs/jobs/retrieve-job-details)  |
-|Get Job details|client.jobs.get()|[api/jobs/:job-id](https://models.modzy.com/docs/jobs/jobs/retrieve-job-details)  |
-|Retrieve results|job.get_result()|[api/jobs/:job-id](https://models.modzy.com/docs/jobs/results/retrieve-results)  |
-|Retrieve Job History|client.jobs.get_history()|[api/jobs/history](https://models.modzy.com/docs/jobs/job-history/retrieve-job-history-details)  |
+|Get job details|client.jobs.get()|[api/jobs/:job-id](https://models.modzy.com/docs/jobs/jobs/retrieve-job-details)  |
+|Get results|job.get_result()|[api/results/:job-id](https://models.modzy.com/docs/jobs/results/retrieve-results)  |
+|Get the job history|client.jobs.get_history()|[api/jobs/history](https://models.modzy.com/docs/jobs/job-history/retrieve-job-history-details)  |
 
 ## Samples
 
