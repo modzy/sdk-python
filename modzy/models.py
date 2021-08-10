@@ -5,7 +5,7 @@ import logging
 from datetime import datetime
 from ._api_object import ApiObject
 from urllib.parse import urlencode
-from .error import NotFoundError, ForbiddenError, BadRequestError
+from .error import NotFoundError, ResponseError
 from typing import Union
 from time import time as t
 from time import sleep
@@ -91,33 +91,30 @@ class Models:
 
         model_id = Model._coerce_identifier(model)
 
-        admin_entitlement = "CAN_PATCH_PROCESSING_MODEL_VERSION"
-        admin = self._api_client.accounting.has_entitlement(admin_entitlement)
-
         base_request_body = {
             "minimumParallelCapacity": min_engines,
             "maximumParallelCapacity": max_engines
         }
         base_endpoint = f"{self._base_route}/{model_id}/versions/{version}"
 
-        if admin:
-            endpoint = f"{base_endpoint}/processing"
-            request_body = base_request_body
-        else:  # Assume the user is either a data scientist or allow them to handle the 400 error by themselves
-            endpoint = base_endpoint
-            request_body = {
-                "processing": base_request_body
-            }
-
+        error_message = None
         try:
-            result = self._api_client.http.patch(endpoint, json_data=request_body)
+            result = self._api_client.http.patch(base_endpoint, json_data={"processing": base_request_body})
             self.logger.info(
                 f"Updated processing engines for Model {model_id} {version}: \n{result['processing']}"
             )
-        except BadRequestError as e:
+        except ResponseError as e:
             error_message = e.message
-            self.logger.error(error_message)
-            raise ValueError(error_message)
+            self.logger.error(f"Direct try failed {error_message}, second try")
+            try:
+                result = self._api_client.http.patch(f"{base_endpoint}/processing", json_data=base_request_body)
+                self.logger.info(
+                    f"Updated processing engines for Model {model_id} {version}: \n{result['processing']}"
+                )
+            except ResponseError as e:
+                error_message = e.message
+                self.logger.error(error_message)
+                raise ValueError(error_message)
 
         if timeout == 0:
             return
