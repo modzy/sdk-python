@@ -288,7 +288,7 @@ class Models:
             sort_by (Optional[str]): attribute name to sort results
             direction (Optional[str]): Direction of the sorting algorithm (asc, desc)
             page (Optional[float]): The page number for which results are being returned
-            per_page (Optional[float]): The number of job identifiers returned by page
+            per_page (Optional[float]): The number of models returned by page
 
         Returns:
             List[Model]: A list of `Model` instances.
