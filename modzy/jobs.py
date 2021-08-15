@@ -8,9 +8,10 @@ from types import SimpleNamespace
 from urllib.parse import urlencode
 from ._api_object import ApiObject
 from ._size import human_read_to_bytes
-from ._util import encode_data_uri, file_to_bytes, file_to_chunks, bytes_to_chunks
+from ._util import encode_data_uri, depth, file_to_chunks, bytes_to_chunks
 from .error import Timeout
 from .models import Model
+from deprecation import deprecated
 
 
 class Jobs:
@@ -184,36 +185,23 @@ class Jobs:
                 raise Timeout('timed out before completion')
         # TODO: should probably ramp up poll_interval as wait time increases
 
-    def submit_text(self, model, version, source, explain=False, source_name='job'):
-        """Submits text data for a single source `Job`.
+    def __fix_single_source_job(self, sources):
+        """Compatibility function to check and fix the sources parameter if is a single source dict
 
         Args:
-            model (Union[str, Model]): The model identifier or a `Model` instance.
-            version (str): The model version string.
-            source (dict): A mapping of model input filename to text string.
-            explain (bool): indicates if you desire an explainable result for your model.`
-            source_name (Optional[str]): The source name. Defaults to 'job'.
+            sources (dict): a single of double source dict
 
         Returns:
-            Job: The submitted `Job` instance.
+            dict: a properly formatted sources dictionary
 
-        Raises:
-            ApiError: A subclass of ApiError will be raised if the API returns an error status,
-                or the client is unable to connect.
-
-            Example:
-                .. code-block::
-
-                    job = client.jobs.submit_text('model-identifier', '1.2.3',
-                    {
-                        'model-input-name-1': 'some text',
-                        'model-input-name-2': 'some more text',
-                    })
         """
-        sources = {source_name: source}
-        return self.submit_text_bulk(model, version, sources, explain)
+        dict_levels = depth(sources)
+        if dict_levels == 1:
+            return {'job': sources}
+        else:
+            return sources
 
-    def submit_text_bulk(self, model, version, sources, explain=False):
+    def submit_text(self, model, version, sources, explain=False):
         """Submits text data for a multiple source `Job`.
 
         Args:
@@ -247,8 +235,6 @@ class Jobs:
         """
         identifier = Model._coerce_identifier(model)
         version = str(version)
-        # TODO: source validation?
-
         body = {
             "model": {
                 "identifier": identifier,
@@ -257,44 +243,18 @@ class Jobs:
             "explain": explain,
             "input": {
                 "type": "text",
-                "sources": sources
+                "sources": self.__fix_single_source_job(sources)
             }
         }
-
         response = self._api_client.http.post(self._base_route, body)
         return Job(response, self._api_client)
 
-    def submit_bytes(self, model, version, source, explain=False, source_name='job'):
-        """Submits bytes-like data for a single source `Job`.
+    @deprecated(deprecated_in="0.5.6", removed_in="1.0", details="Use jobs.submit_text function instead")
+    def submit_text_bulk(self, model, version, sources, explain=False):
+        return self.submit_text(model, version, sources, explain)
 
-        Args:
-            model (Union[str, Model]): The model identifier or a `Model` instance.
-            version (str): The model version string.
-            source (dict): A mapping of model input filename to bytes-like object.
-            explain (bool): indicates if you desire an explainable result for your model.`
-            source_name (Optional[str]): The source name. Defaults to 'job'.
-
-        Returns:
-            Job: The submitted `Job` instance.
-
-        Raises:
-            ApiError: A subclass of ApiError will be raised if the API returns an error status,
-                or the client is unable to connect.
-
-        Example:
-            .. code-block::
-
-                job = client.jobs.submit_bytes('model-identifier', '1.2.3',
-                {
-                    'model-input-name-1': b'some bytes',
-                    'model-input-name-2': bytearray([1,2,3,4]),
-                })
-        """
-        sources = {source_name: source}
-        return self.submit_bytes_bulk(model, version, sources, explain)
-
-    def submit_bytes_bulk(self, model, version, sources, explain=False):
-        """Submits bytes-like data for a multiple source `Job`.
+    def submit_embedded(self, model, version, sources, explain=False):
+        """Submits embedded data for a multiple source `Job`.
 
         Args:
             model (Union[str, Model]): The model identifier or a `Model` instance.
@@ -343,76 +303,53 @@ class Jobs:
             "explain": explain,
             "input": {
                 "type": "embedded",
-                "sources": sources
+                "sources": self.__fix_single_source_job(sources)
             }
         }
 
         response = self._api_client.http.post(self._base_route, body)
         return Job(response, self._api_client)
 
-    def submit_files(self, model, version, source, explain=False, source_name='job'):
-        """Submits filepath or file-like data for a single source `Job`.
+    @deprecated(deprecated_in="0.5.6", removed_in="1.0", details="Use jobs.submit_embedded function instead")
+    def submit_bytes(self, model, version, source, explain=False, source_name='job'):
+        return self.submit_embedded(model, version, source, explain)
 
-        Args:
-            model (Union[str, Model]): The model identifier or a `Model` instance.
-            version (str): The model version string.
-            source (dict): A mapping of model input filename to filepath or file-like object.
-            explain (bool): indicates if you desire an explainable result for your model.`
-            source_name (Optional[str]): The source name. Defaults to 'job'.
+    @deprecated(deprecated_in="0.5.6", removed_in="1.0", details="Use jobs.submit_embedded function instead")
+    def submit_bytes_bulk(self, model, version, sources, explain=False):
+        return self.submit_embedded(model, version, sources, explain)
 
-        Returns:
-            Job: The submitted `Job` instance.
-
-        Raises:
-            ApiError: A subclass of ApiError will be raised if the API returns an error status,
-                or the client is unable to connect.
-
-        Example:
-            .. code-block::
-
-                job = client.jobs.submit_files('model-identifier', '1.2.3',
-                {
-                    'model-input-name-1': '/path/to/file.dat',
-                    'model-input-name-2': pathlib.Path('./path/to/file.dat'),
-                    'model-input-name-3': open('/path/to/file.dat', 'rb'),
-                    'model-input-name-4': io.BytesIO(b'file-like object'),
-                })
-        """
-        sources = {source_name: source}
-        return self.submit_files_bulk(model, version, sources, explain)
-
-    def submit_files_bulk(self, model, version, sources, explain=False):
+    def submit_file(self, model, version, sources, explain=False):
         """Submits filepath or file-like data data for a multiple source `Job`.
 
-        Args:
-            model (Union[str, Model]): The model identifier or a `Model` instance.
-            version (str): The model version string.
-            sources (dict): A mapping of source names to text sources. Each source should be a
-                mapping of model input filename to filepath or file-like object.
-            explain (bool): indicates if you desire an explainable result for your model.`
+                Args:
+                    model (Union[str, Model]): The model identifier or a `Model` instance.
+                    version (str): The model version string.
+                    sources (dict): A mapping of source names to text sources. Each source should be a
+                        mapping of model input filename to filepath or file-like object.
+                    explain (bool): indicates if you desire an explainable result for your model.`
 
-        Returns:
-            Job: The submitted `Job` instance.
+                Returns:
+                    Job: The submitted `Job` instance.
 
-        Raises:
-            ApiError: A subclass of ApiError will be raised if the API returns an error status,
-                or the client is unable to connect.
+                Raises:
+                    ApiError: A subclass of ApiError will be raised if the API returns an error status,
+                        or the client is unable to connect.
 
-            Example:
-                .. code-block::
+                    Example:
+                        .. code-block::
 
-                    job = client.jobs.submit_files_bulk('model-identifier', '1.2.3',
-                    {
-                        'source-name-1': {
-                            'model-input-name-1': '/path/to/file.dat',
-                            'model-input-name-2': pathlib.Path('./path/to/file.dat'),
-                        },
-                        'source-name-2': {
-                            'model-input-name-1': open('/path/to/file.dat', 'rb'),
-                            'model-input-name-2': io.BytesIO(b'file-like object'),
-                        }
-                    })
-        """
+                            job = client.jobs.submit_files_bulk('model-identifier', '1.2.3',
+                            {
+                                'source-name-1': {
+                                    'model-input-name-1': '/path/to/file.dat',
+                                    'model-input-name-2': pathlib.Path('./path/to/file.dat'),
+                                },
+                                'source-name-2': {
+                                    'model-input-name-1': open('/path/to/file.dat', 'rb'),
+                                    'model-input-name-2': io.BytesIO(b'file-like object'),
+                                }
+                            })
+                """
         identifier = Model._coerce_identifier(model)
         version = str(version)
         body = {
@@ -431,14 +368,14 @@ class Jobs:
             chunk_size = human_read_to_bytes(job_features["input_chunk_maximum_size"])
         except:
             self.logger.warning("Error getting features, assuming defaults")
-            chunk_size = 1024*1024
+            chunk_size = 1024 * 1024
 
         try:
             # Iterate on the sources, submitting each input as a multipart post request
             # jobIdentifier/input-item-name/model-input-name
-            for source, inputs in sources.items():
+            for source, inputs in self.__fix_single_source_job(sources).items():
                 for key, value in inputs.items():
-                    self._append_input(open_job, source, key, value, chunk_size)
+                    self.__append_input(open_job, source, key, value, chunk_size)
 
             open_job = self._api_client.http.post('{}/{}/close'.format(self._base_route, open_job.job_identifier))
             self.logger.debug("close job %s", open_job)
@@ -453,65 +390,32 @@ class Jobs:
             raise
         return Job(open_job, self._api_client)
 
-    def _append_input(self, job, input_item_name, data_item_name, input_value, chunk_size):
+    @deprecated(deprecated_in="0.5.6", removed_in="1.0", details="Use jobs.submit_file function instead")
+    def submit_files(self, model, version, source, explain=False, source_name='job'):
+        sources = {source_name: source}
+        return self.submit_file(model, version, sources, explain)
+
+    @deprecated(deprecated_in="0.5.6", removed_in="1.0", details="Use jobs.submit_file function instead")
+    def submit_files_bulk(self, model, version, sources, explain=False):
+        return self.submit_file(model, version, sources, explain)
+
+    def __append_input(self, job, input_item_name, data_item_name, input_value, chunk_size):
         iterable = None
         if isinstance(input_value, (bytes, bytearray)):
             iterable = bytes_to_chunks(input_value, chunk_size)
         else:
-            iterable = file_to_chunks(input_value, chunk_size)            
-        
-        for i, chunk in enumerate(iterable):            
-            self.logger.debug("_append_input(%s, %s, %s, %s, %s) chunk %i", job.job_identifier, input_item_name, data_item_name, type(input_value), chunk_size, i )
+            iterable = file_to_chunks(input_value, chunk_size)
+
+        for i, chunk in enumerate(iterable):
+            self.logger.debug("__append_input(%s, %s, %s, %s, %s) chunk %i", job.job_identifier, input_item_name,
+                              data_item_name, type(input_value), chunk_size, i)
             self._api_client.http.post(
                 '{}/{}/{}/{}'.format(self._base_route, job.job_identifier, input_item_name, data_item_name),
                 None,
                 {"input": chunk}
-            )            
+            )
 
-    def submit_aws_s3(self, model, version, source, access_key_id, secret_access_key, region, explain=False,
-                      source_name='job'):
-        """Submits AwS S3 hosted data for a single source `Job`.
-
-        Args:
-            model (Union[str, Model]): The model identifier or a `Model` instance.
-            version (str): The model version string.
-            source (dict): A mapping of model input filename to S3 bucket and key.
-            access_key_id (str): The AWS Access Key ID.
-            secret_access_key (str): The AWS Secret Access Key.
-            region (str): The AWS Region.
-            explain (bool): indicates if you desire an explainable result for your model.`
-            source_name (Optional[str]): The source name. Defaults to 'job'.
-
-        Returns:
-            Job: The submitted `Job` instance.
-
-        Raises:
-            ApiError: A subclass of ApiError will be raised if the API returns an error status,
-                or the client is unable to connect.
-
-        Example:
-            .. code-block::
-
-                job = client.jobs.submit_aws_s3('model-identifier', '1.2.3',
-                {
-                    'model-input-name-1': {
-                        'bucket': 'my-bucket',
-                        'key': '/my/data/file-1.dat'
-                    },
-                    'model-input-name-2': {
-                        'bucket': 'my-bucket',
-                        'key': '/my/data/file-2.dat'
-                    }
-                },
-                    access_key_id='AWS_ACCESS_KEY_ID',
-                    secret_access_key='AWS_SECRET_ACCESS_KEY',
-                    region='us-east-1',
-                )
-        """
-        sources = {source_name: source}
-        return self.submit_aws_s3_bulk(model, version, sources, access_key_id, secret_access_key, region, explain)
-
-    def submit_aws_s3_bulk(self, model, version, sources, access_key_id, secret_access_key, region, explain=False):
+    def submit_aws_s3(self, model, version, sources, access_key_id, secret_access_key, region, explain=False):
         """Submits AwS S3 hosted data for a multiple source `Job`.
 
         Args:
@@ -566,7 +470,6 @@ class Jobs:
         version = str(version)
         access_key_id = str(access_key_id)
         region = str(region)
-        # TODO: source validation?
 
         body = {
             "model": {
@@ -579,12 +482,16 @@ class Jobs:
                 "accessKeyID": access_key_id,
                 "secretAccessKey": secret_access_key,
                 "region": region,
-                "sources": sources
+                "sources": self.__fix_single_source_job(sources)
             }
         }
 
         response = self._api_client.http.post(self._base_route, body)
         return Job(response, self._api_client)
+
+    @deprecated(deprecated_in="0.5.6", removed_in="1.0", details="Use jobs.submit_aws_s3 function instead")
+    def submit_aws_s3_bulk(self, model, version, sources, access_key_id, secret_access_key, region, explain=False):
+        return self.submit_aws_s3(model, version, sources, access_key_id, secret_access_key, region, explain)
 
     def submit_jdbc(self, model, version, url, username, password, driver, query, explain=False):
         """Submits jdbc query as input for a `Job`, each row is interpreted as a input.
@@ -629,8 +536,6 @@ class Jobs:
         password = str(password)
         driver = str(driver)
         query = str(query)
-
-        # TODO: source validation?
 
         body = {
             "model": {

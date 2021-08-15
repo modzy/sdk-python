@@ -138,8 +138,6 @@ Run tests:
 
 - `$ py.test`
 
-//validate this one with Raúl.
-
 Or specify the test that you want to run:
 
 - `$ py.test tests.test_client`

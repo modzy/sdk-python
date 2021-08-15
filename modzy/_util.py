@@ -65,3 +65,9 @@ def file_to_chunks(file_like, chunk_size):
 def bytes_to_chunks(byte_array, chunk_size):
     for i in range(0, len(byte_array), chunk_size):
         yield byte_array[i:i + chunk_size]
+
+
+def depth(d):
+    if d and isinstance(d, dict):
+        return max(depth(v) for k, v in d.items()) + 1
+    return 0

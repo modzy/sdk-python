@@ -61,7 +61,7 @@ The code below is applicable for `text/plain` input type.
 Submit a job providing the model, version, and input file:
 
 ```python
-job = client.jobs.submit_files('ed542963de', '0.0.27', {'input.txt': './some-file.txt'})
+job = client.jobs.submit_file('ed542963de', '0.0.27', {'input.txt': './some-file.txt'})
 ```
 
 Hold until the inference is complete and results become available:
@@ -149,14 +149,10 @@ Currently we support the following API routes:
 |Update processing engines|client.models.update_processing_engines()|[api/resource/models](https://models.modzy.com/docs/management/processing/set-processing)|
 |Get minimum engines|client.models.get_minimum_engines()|[api/models/processing-engines](https://models.modzy.com/docs/management/processing/get-minimum-engines)|
 |List tags|client.tags.get_all()|[api/models/tags](https://models.modzy.com/docs/marketplace/tags/retrieve-tags)|
-|Submit a Job (Single Text)|client.jobs.submit_text()|[api/jobs](https://models.modzy.com/docs/jobs/jobs/submit-job-text)|
-|Submit a Job (Multiple Text)|client.jobs.submit_text_bulk()|[api/jobs](https://models.modzy.com/docs/jobs/jobs/submit-job-text)|
-|Submit a Job (Single Embedded)|client.jobs.submit_bytes()|[api/jobs](https://models.modzy.com/docs/jobs/jobs/submit-job-embedded)|
-|Submit a Job (Multiple Embedded)|client.jobs.submit_bytes_bulk()|[api/jobs](https://models.modzy.com/docs/jobs/jobs/submit-job-embedded)|
-|Submit a Job (Single File)|client.jobs.submit_files()|[api/jobs](https://models.modzy.com/docs/jobs/jobs/submit-job-aws)|
-|Submit a Job (Multiple Files)|client.jobs.submit_files_bulk()|[api/jobs](https://models.modzy.com/docs/jobs/jobs/submit-job-aws)|
-|Submit a Job (Single AWS S3)|client.jobs.submit_aws_s3()|[api/jobs](https://models.modzy.com/docs/jobs/jobs/submit-job-aws)|
-|Submit a Job (Multiple AWS S3)|client.jobs.submit_aws_s3_bulk()|[api/jobs](https://models.modzy.com/docs/jobs/jobs/submit-job-aws)|
+|Submit a Job (Text)|client.jobs.submit_text()|[api/jobs](https://models.modzy.com/docs/jobs/jobs/submit-job-text)|
+|Submit a Job (Embedded)|client.jobs.submit_embedded()|[api/jobs](https://models.modzy.com/docs/jobs/jobs/submit-job-embedded)|
+|Submit a Job (File)|client.jobs.submit_file()|[api/jobs](https://models.modzy.com/docs/jobs/jobs/submit-job-aws)|
+|Submit a Job (AWS S3)|client.jobs.submit_aws_s3()|[api/jobs](https://models.modzy.com/docs/jobs/jobs/submit-job-aws)|
 |Submit a Job (JDBC)|client.jobs.submit_jdbc()|[api/jobs](https://models.modzy.com/docs/jobs/jobs/submit-job-jdbc)|
 |Cancel job|job.cancel()|[api/jobs/:job-id](https://models.modzy.com/docs/jobs/jobs/cancel-pending-job)  |
 |Hold until inference is complete|job.block_until_complete()|[api/jobs/:job-id](https://models.modzy.com/docs/jobs/jobs/retrieve-job-details)  |

@@ -9,7 +9,7 @@ from modzy.jobs import Jobs
 sys.path.insert(0, '..')
 from modzy import ApiClient
 
- 
+
 # Always configure the logger level (ie: DEBUG, INFO, WARNING, ERROR, CRITICAL)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -87,7 +87,7 @@ sources["wrong-key"] = {"a.wrong.key": {'bucket': BUCKET_NAME, 'key': FILE_KEY}}
 # If you send a correct input key, but a wrong AWS S3 value key, the model fails to process the input.
 sources["wrong-value"] = {"image": {'bucket': BUCKET_NAME, 'key': "wrong-aws-file-key.png"}}
 # When you have all your inputs ready, you can use our helper method to submit the job as follows:
-job = client.jobs.submit_aws_s3_bulk(model.modelId, modelVersion.version, sources, ACCESS_KEY, SECRET_ACCESS_KEY, "us-west-2")
+job = client.jobs.submit_aws_s3(model.modelId, modelVersion.version, sources, ACCESS_KEY, SECRET_ACCESS_KEY, "us-west-2")
 # Modzy creates the job and queue for processing. The job object contains all the info that you need to keep track
 # of the process, the most important being the job identifier and the job status.
 logger.info("job: %s", job)
