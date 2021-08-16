@@ -73,7 +73,7 @@ sources["another-key"] = {"input.txt": "Born and raised in Pennsylvania, Swift m
 # If you send a wrong input key, the model fails to process the input.
 sources["wrong-key"] = {"a.wrong.key": "This input is wrong!"}
 # When you have all your inputs ready, you can use our helper method to submit the job as follows:
-job = client.jobs.submit_text_bulk(model.modelId, modelVersion.version, sources)
+job = client.jobs.submit_text(model.modelId, modelVersion.version, sources)
 # Modzy creates the job and queue for processing. The job object contains all the info that you need to keep track
 # of the process, the most important being the job identifier and the job status.
 logger.info("job: %s", job)

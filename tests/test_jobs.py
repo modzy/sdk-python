@@ -165,20 +165,20 @@ def test_get_job(client, logger):
     logger.debug("job copy by id %s", job)
     assert job.job_identifier
     assert job.status
-    
+
 
 def test_cancel_job(client, logger):
-    job = client.jobs.submit_text_bulk(MODEL_ID, '0.0.27', {
+    job = client.jobs.submit_text(MODEL_ID, '0.0.27', {
         str(i): {'input.txt': 'Modzy is great!'}
         for i in range(2)
-    })    
+    })
     time.sleep(5)
-    job = client.jobs.get(job.job_identifier)  # by id    
+    job = client.jobs.get(job.job_identifier)  # by id
     logger.debug("job %s", job)
-    if job.status != Jobs.status.COMPLETED:    
+    if job.status != Jobs.status.COMPLETED:
         logger.debug("job before cancel %s", job)
         job = client.jobs.cancel(job.job_identifier)
         logger.debug("job after cancel %s", job)
-    
+
     assert job.status == client.jobs.status.CANCELED or job.status == client.jobs.status.COMPLETED
 

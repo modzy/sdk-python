@@ -83,7 +83,7 @@ sources["wrong-key"] = {"a.wrong.key": image_bytes, "config.json":config_bytes}
 # If you send a correct input key but some wrong values, the model fails too.
 sources["wrong-value"] = {"input": config_bytes, "config.json":image_bytes}
 # When you have all your inputs ready, you can use our helper method to submit the job as follows:
-job = client.jobs.submit_bytes_bulk(model.modelId, modelVersion.version, sources)
+job = client.jobs.submit_embedded(model.modelId, modelVersion.version, sources)
 # Modzy creates the job and queue for processing. The job object contains all the info that you need to keep track
 # of the process, the most important being the job identifier and the job status.
 logger.info("job: %s", job)
