@@ -41,7 +41,7 @@
 
 <div align="center">
 <a href="/README.md" style="text-decoration:none">Readme</a> |
-<a href="https://models.modzy.com/docs" style="text-decoration:none">Documentation</a>
+<a href="https://docs.modzy.com/docs" style="text-decoration:none">Documentation</a>
 
 </div>
 
