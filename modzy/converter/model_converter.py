@@ -34,7 +34,10 @@ class ModelConverter:
         resources_path,
         model_type,
         platform,
-        blobstore_provider        
+        blobstore_provider,
+        base_image_registry=None,
+        base_image_user=None,
+        base_image_pass=None       
         ):
         """Kicks off a `ModelConverter` job run
 
@@ -45,8 +48,11 @@ class ModelConverter:
             weights_path (str): Path to weights archive in blob container storage
             resource_path (str): Path to resources archive in blob container storage
             model_type (str): Type of model to be converted 
-            platform (str): The model provider where the input artifacts are generated. Options: `["sagemaker", "mlflow"]`
+            platform (str): The model provider where the input artifacts are generated. Options: `["sagemaker", "mlflow", "azure"]`
             blobstore_provider (str): Cloud provider where model artifacts are saved. Options: `["gcp", "azure", "S3"]`
+            base_image_registry (str): Only required for Azure, registry location output by prepare_azure_model()
+            base_image_registry_user (str): Only required for Azure, registry username output by prepare_azure_model()
+            base_image_registry_pass (str): Only required for Azure, registry password output by prepare_azure_model()
 
         Returns:
             converter_response (ApiObject): Raw response from `ModelConverter` with the status of the converter job, message, and http code 
@@ -66,6 +72,11 @@ class ModelConverter:
             "platform": platform,
             "blobstore_provider": blobstore_provider
         }
+
+        if platform == "azure":
+            converter_request['base_image_registry'] = base_image_registry
+            converter_request['base_image_registry_user'] = base_image_user
+            converter_request['base_image_registry_pass'] = base_image_pass
 
         converter_response = self._api_client.http.post('{}/{}'.format(self._base_route, "start"), json_data=converter_request)
         return converter_response
