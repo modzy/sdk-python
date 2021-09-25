@@ -8,6 +8,24 @@ from azureml.core.model import Model
 def prepare_azure_model(registered_model_name,subscription_id,resource_group,
                         workspace_name,env_name,entry_script_path,output_path,
                         overwrite=False):
+    """Prepares Azure model archive for submission to model converter.
+
+        Args:
+            registered_model_name (str): Registered Azure ML model name.
+            subscription_id (str): Azure ML subscription ID.
+            resource_group (str): Azure ML resource group.
+            workspace_name (str): Azure ML workspace name.
+            env_name (str): Azure ML environment name.
+            entry_script_path (str): Path to local entry script to be submitted.
+            output_path (str): Where to create prepared model archive.
+            overwrite (bool): Whether or not to overwrite output_path if already exists.
+
+        Returns:
+            registry_info (dict): Registry auth info required to be submitted to model converter service.
+
+        Raises:
+            OSError: If output directory already exists and overwrite==False.       
+        """
 
     if os.path.isdir(output_path):
         if overwrite:
