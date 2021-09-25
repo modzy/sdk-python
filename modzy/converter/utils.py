@@ -27,6 +27,7 @@ def get_authenticated_storage_provider_client(storage_provider, access_key, secr
 def upload_resources(model_yaml_path, container, resources_key,
                      storage_key, storage_secret, storage_provider, additional_filepaths=[]):
     """ Creates resources archive expected by model converter, uploads to storage provider.
+    
     Args:
         model_yaml_path (str): Path to model.yaml file to be included.
         container (str): Storage provider container name (e.g. Bucket name in S3).
@@ -72,6 +73,7 @@ def upload_resources(model_yaml_path, container, resources_key,
 def upload_model_dir(model_dir, container, model_key,
                         storage_key, storage_secret, storage_provider):
     """ Creates resources archive expected by model converter, uploads to storage provider.
+
     Args:
         model_dir (str): Path to saved model directory 
         container (str): Storage provider container name (e.g. Bucket name in S3).
