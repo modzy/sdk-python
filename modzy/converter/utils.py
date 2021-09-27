@@ -71,7 +71,7 @@ def upload_resources(model_yaml_path, container, resources_key,
 
 
 def upload_model_dir(model_dir, container, model_key,
-                        storage_key, storage_secret, storage_provider):
+                        storage_key, storage_secret, storage_provider, platform):
     """ Creates resources archive expected by model converter, uploads to storage provider.
 
     Args:
@@ -81,6 +81,7 @@ def upload_model_dir(model_dir, container, model_key,
         storage_key (str): Storage provider access key.
         storage_secret (str): Storage provider secret key.
         storage_provider (str): Storage provider name (must be one of "S3", "AZURE_BLOBS", or "GOOGLE_STORAGE").
+        platform (str): Either "azure" or "mlflow".
     """
     driver = get_authenticated_storage_provider_client(storage_provider, storage_key, storage_secret)
     container = driver.get_container(container_name=container)
@@ -99,7 +100,12 @@ def upload_model_dir(model_dir, container, model_key,
     for filename in model_filenames:
         if not filename.startswith('.'):
             full_path = os.path.join(model_dir, filename)
-            tar.add(full_path, arcname=os.path.join('imagefiles/',filename))
+            if platform=="azure":
+                tar.add(full_path, arcname=os.path.join('imagefiles/',filename))
+            elif platform=="mlflow":
+                tar.add(full_path, arcname=filename)
+            else:
+                raise ValueError("Only 'azure' or 'mlflow' are acceptable for 'platform'.")
     tar.close()
 
     # This method blocks until all the parts have been uploaded.
