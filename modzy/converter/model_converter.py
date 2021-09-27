@@ -126,7 +126,7 @@ class ModelConverter:
             time.sleep(poll_interval)
             status = self.get_status(job_id)
             self.logger.debug("job %s", job_id)
-            if status["jobStatus"] not in ["BUSY", "IMAGE_CREATION"]:
+            if status["jobStatus"] not in ["BUSY", "IMAGE_CREATION", "IMPORTER_PROC"]:
                 return status
             if (endby is not None) and (time.time() > endby - poll_interval):
                 raise Timeout('timed out before completion')
