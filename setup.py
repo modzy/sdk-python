@@ -11,7 +11,7 @@ with open('README.md') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['requests', 'python-dotenv', 'deprecated']
+requirements = ['requests', 'python-dotenv', 'deprecation']
 
 test_requirements = ['pytest']
 

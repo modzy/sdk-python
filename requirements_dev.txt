@@ -17,4 +17,4 @@ pytest==4.6.5
 python-dotenv==0.13.0
 pytest-dotenv==0.13.0
 
-deprecated==1.2.13
+deprecation==2.1.0
