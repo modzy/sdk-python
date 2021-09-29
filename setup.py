@@ -11,7 +11,7 @@ with open('README.md') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['requests', 'python-dotenv']
+requirements = ['requests', 'python-dotenv', 'deprecated']
 
 test_requirements = ['pytest']
 
@@ -40,6 +40,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/modzy/sdk-python',
-    version='0.5.6',
+    version='0.5.7',
     zip_safe=False,
 )

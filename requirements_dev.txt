@@ -16,3 +16,5 @@ Sphinx==2.2.0
 pytest==4.6.5
 python-dotenv==0.13.0
 pytest-dotenv==0.13.0
+
+deprecated==1.2.13
