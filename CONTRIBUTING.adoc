@@ -89,23 +89,23 @@ Clone the repository:
 
 Setup a virtual environment from the local git directory (NOTE: Requires Python >= 3.8):
 
-- `$ conda create --name modzy-sdk --file .\requirements_dev.txt -c conda-forge`
-or for non-conda python distros
-- '$ python3 -m venv /path/to/new/virtual/environment'
+- `$ conda create --name VIRTUAL_ENVIRON_NAME --file requirements_dev.txt -c conda-forge python=3.9`
+or for non-conda python distros:
+- `$ python3 -m venv /path/to/VIRTUAL_ENVIRON_NAME`
 
 Activate the virtual environment:
 
-- `$ conda  activate virtual-environ-name`
+- `$ conda activate VIRTUAL_ENVIRON_NAME`
 
 or for non-conda python distros there are different commands for Linux vs. Windows.
 
 On Linux use source to activate
 
-- `$ source activate virtual-environ-name`
+- `$ source /path/to/VIRTUAL_ENVIRON_NAME/bin/activate`
 
 On Windows run the activate.bat file
 
-- `C:>\path\to\virtual\environment\Scripts\activate.bat`
+- `C:>\path\to\VIRTUAL_ENVIRON_NAME\Scripts\activate.bat`
 
 
 Install dependencies (if not using conda):
