@@ -20,7 +20,7 @@
 
 [![installation](https://github.com/modzy/sdk-python/raw/main/install.gif)](https://asciinema.org/a/0lHaPxvXTrPTp1Bb6bNea1ZCG)
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) install the SDK:
+Use the package manager [pip](https://pip.pypa.io/en/stable/) to install the SDK (NOTE: Requires Python >= 3.8):
 
 - `$ pip install modzy-sdk`
 
