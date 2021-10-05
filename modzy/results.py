@@ -177,7 +177,7 @@ class Result(ApiObject):
             if source_name in source:  # deal with legacy double nesting of source source_name
                 source = source[source_name]
             return source
-        except KeyError:
+        except (KeyError, AttributeError):
             pass
 
         try:
@@ -185,7 +185,7 @@ class Result(ApiObject):
             if source_name in source:  # deal with legacy double nesting of source source_name
                 source = source[source_name]
             raise ResultsError(source.error)
-        except KeyError:
+        except (KeyError, AttributeError):
             pass
 
         # TODO: can we give a better error message if job canceled?
@@ -218,12 +218,12 @@ class Result(ApiObject):
     def _get_first_source_name(self):
         try:
             return next(iter(self.results))
-        except StopIteration:
+        except (StopIteration, AttributeError):
             pass
 
         try:
             return next(iter(self.failures))
-        except StopIteration:
+        except (StopIteration, AttributeError):
             pass
 
         # TODO: can we give a better error message if job canceled?
