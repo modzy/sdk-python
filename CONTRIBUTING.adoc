@@ -87,9 +87,31 @@ Clone the repository:
 
 - `$ git clone https://github.com/modzy/sdk-python.git`
 
-Install dependencies:
+Setup a virtual environment from the local git directory (NOTE: Requires Python >= 3.8):
 
-- `$ pip install ./sdk-python`
+- `$ conda create --name VIRTUAL_ENVIRON_NAME --file requirements_dev.txt -c conda-forge python=3.9`
+or for non-conda python distros:
+- `$ python3 -m venv /path/to/VIRTUAL_ENVIRON_NAME`
+
+Activate the virtual environment:
+
+- `$ conda activate VIRTUAL_ENVIRON_NAME`
+
+or for non-conda python distros there are different commands for Linux vs. Windows.
+
+On Linux use source to activate
+
+- `$ source /path/to/VIRTUAL_ENVIRON_NAME/bin/activate`
+
+On Windows run the activate.bat file
+
+- `C:>\path\to\VIRTUAL_ENVIRON_NAME\Scripts\activate.bat`
+
+
+Install dependencies (if not using conda):
+
+- `$ pip3 install -r requirements_dev.txt`
+
 
 Create a branch for your awesome new feature:
 
@@ -102,12 +124,15 @@ Fix that bug or build your feature.
 
 === 3. Run unit tests
 
-Configure the environment variables to easily run all the tests with a single configuration point.
+Configure the environment variables to easily run all the tests with a single configuration point. 
+Note that the environment variables must be set before opening the terminal or program that you will be running your tests from. Environmental variables do not update on the fly.
 
 You can:
 
 ==== Set environment variables in bash
-
+There are 2 environmental variables that the test scripts will need.
+MODZY_BASE_URL: This variable holds the network address of the modzy installation. Notice the '/api' appeanded to the end of the url. This is mandatory and will cause errors if not present.
+MODZY_API_KEY: This variable holds a full copy of a modzy API key. Modzy's role based access controls will cause some of the tests to fail if your key doesn't have all the roles assigned.
 ===== Windows
 
 [source,bash]
@@ -146,7 +171,7 @@ Or specify the test that you want to run:
 
 Add supporting documentation for your code.
 
-//what else would be useful for Raúl?
+//what else would be useful for maintainers?
 
 === 5. Send a pull request
 
@@ -160,6 +185,9 @@ Push your branch to GitHub:
 
 - `$ git push origin my-new-awesome-feature`
 
+Initiate a Pull Request: 
+
+If your PR doesn't pass all tests due to role based access controls with your key, please provide log information so that we may test the PR under appropriate conditions.
 
 
 
