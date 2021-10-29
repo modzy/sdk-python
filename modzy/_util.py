@@ -51,12 +51,16 @@ def file_to_chunks(file_like, chunk_size):
     if hasattr(file, 'seekable') and file.seekable():
         file.seek(0)
 
-    while chunk := file.read(chunk_size):
-        if not isinstance(chunk, bytes):
+    while True:
+        chunk = file.read(chunk_size)
+        if not chunk:
+            break
+        elif not isinstance(chunk, bytes):
             raise TypeError("the file object's 'read' function must return bytes not {}; "
                             "files should be opened using binary mode 'rb'"
                             .format(type(chunk).__name__))
-        yield chunk
+        else:
+            yield chunk
 
     if should_close:
         file.close()

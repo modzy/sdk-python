@@ -87,7 +87,7 @@ Clone the repository:
 
 - `$ git clone https://github.com/modzy/sdk-python.git`
 
-Setup a virtual environment from the local git directory (NOTE: Requires Python >= 3.8):
+Setup a virtual environment from the local git directory:
 
 - `$ conda create --name VIRTUAL_ENVIRON_NAME --file requirements_dev.txt -c conda-forge python=3.9`
 or for non-conda python distros:
