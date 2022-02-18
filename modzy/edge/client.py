@@ -20,7 +20,7 @@ class EdgeClient:
     This class is used to interact with the Modzy Edge API.
 
     Attributes:
-        base_url (str): The base url for the Modzy Edge API.
+        host (str): The base url for the Modzy Edge API.
         port (int): The port on which Modzy Edge is listening.
     """
 
@@ -34,11 +34,11 @@ class EdgeClient:
         self.logger = logging.getLogger(__name__)
         self.host = host
         self.port = port
-        self.origin = '{}:{}'.format(self.host,self.port)
         self._initialize_connection()
 
     def _initialize_connection(self):
         # attempt to create channel, service stubs, and test retrieving job details to confirm connection
+        self.origin = '{}:{}'.format(self.host,self.port)
         self._channel = grpc.insecure_channel(self.origin)
         self.jobs_service_stub = JobServiceStub(self._channel)
         self.results_service_stub = ResultsServiceStub(self._channel)
