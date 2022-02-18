@@ -11,7 +11,7 @@ with open('README.md') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['requests', 'python-dotenv', 'deprecation']
+requirements = ['requests', 'python-dotenv', 'deprecation', 'protobuf', 'grpcio', 'google-api-python-client']
 
 test_requirements = ['pytest']
 
@@ -29,17 +29,17 @@ setup(
         'Programming Language :: Python :: 3.7'
     ],
     description="Modzy's Python SDK queries models, submits inference jobs and returns results directly to your editor.",
-    python_requires='>=3.4',
+    python_requires='>=3.6',
     install_requires=requirements,
     long_description=readme,
     long_description_content_type='text/markdown',
     include_package_data=True,
     keywords='modzy, sdk',
     name='modzy-sdk',
-    packages=find_packages(include=['modzy']),
+    packages=find_packages(),
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/modzy/sdk-python',
-    version='0.6.0',
+    version='0.7.0',
     zip_safe=False,
 )
