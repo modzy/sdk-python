@@ -20,7 +20,7 @@ class EdgeClient:
     This class is used to interact with the Modzy Edge API.
 
     Attributes:
-        host (str): The base url for the Modzy Edge API.
+        host (str): The host for the Modzy Edge API.
         port (int): The port on which Modzy Edge is listening.
     """
 
@@ -28,7 +28,7 @@ class EdgeClient:
         """Creates an `ApiClient` instance.
 
         Args:
-            host (str): The base url for the API.
+            host (str): The host for the API.
             port (int): Port for the API.
         """
         self.logger = logging.getLogger(__name__)
