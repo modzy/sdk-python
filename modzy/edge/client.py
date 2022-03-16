@@ -44,7 +44,7 @@ class EdgeClient:
         self.results_service_stub = ResultsServiceStub(self._channel)
         self.get_all_job_details(timeout=5)
 
-    def __fix_single_source_job(self, sources):
+    def __fix_single_source_job(self, sources, s3=False):
         """Compatibility function to check and fix the sources parameter if is a single source dict
 
         Args:
@@ -55,7 +55,7 @@ class EdgeClient:
 
         """
         dict_levels = depth(sources)
-        if dict_levels == 1:
+        if dict_levels == (1 + s3):
             return {'job': sources}
         else:
             return sources
@@ -233,11 +233,12 @@ class EdgeClient:
                     )
         """
         sources_struct = Struct()
-        for k,v in self.__fix_single_source_job(sources).items():
+        for k,v in self.__fix_single_source_job(sources,s3=True).items():
             sources_struct[k] = v
-
+        
         job_input = JobInput(type="aws-s3",accessKeyID=access_key_id,secretAccessKey=secret_access_key,
                             region=region,sources=sources_struct)
+
         model_identifier = ModelIdentifier(identifier=identifier,version=version)
         job_submission = JobSubmission(model=model_identifier,input=job_input,explain=explain)
 
