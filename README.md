@@ -130,6 +130,38 @@ except error.ResultsError as ex:
 results_json = outputs['results.json']
 print(results_json)
 ```
+## Modzy Edge Functionality
+
+The SDK provides the following support for Modzy Edge:
+
+```python
+from modzy.edge.client import EdgeClient
+
+# initialize edge client
+client = EdgeClient('localhost',55000)
+
+# submit text job, wait for completion, get results
+job_id = client.submit_text("ed542963de","1.0.27",{"input.txt": "this is awesome"})
+final_job_details = client.block_until_complete(job_id)
+results = client.get_results(job_id)
+
+# submit embedded job (bytes), wait for completion, get results
+job_id = client.submit_embedded("ed542963de","1.0.27",{"input.txt": b"this is awesome"})
+final_job_details = client.block_until_complete(job_id)
+results = client.get_results(job_id)
+
+# submit S3 job, wait for completion, get results
+job_id = client.submit_aws_s3("ed542963de","1.0.27",{"input.txt": {"bucket":bucket,"key":key}},
+                             access_key,secret_key,region)
+final_job_details = client.block_until_complete(job_id)
+results = client.get_results(job_id)
+
+# get job details for a particular job
+job_details = client.get_job_details(job_id)
+
+# get job details for all jobs run on your Modzy Edge instance
+all_job_details = client.get_all_job_details()
+```
 
 ## Features
 
