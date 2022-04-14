@@ -13,7 +13,7 @@ with open('HISTORY.rst') as history_file:
 
 requirements = ['requests', 'python-dotenv', 'deprecation', 'protobuf', 'grpcio', 'google-api-python-client']
 
-test_requirements = ['pytest']
+# removed in 0.7.1 test_requirements = ['pytest']
 
 setup(
     author='Modzy',
@@ -37,9 +37,9 @@ setup(
     keywords='modzy, sdk',
     name='modzy-sdk',
     packages=find_packages(),
-    test_suite='tests',
-    tests_require=test_requirements,
+    # removed in 0.7.1 test_suite='tests',
+    # removed in 0.7.1 tests_require=test_requirements,
     url='https://github.com/modzy/sdk-python',
-    version='0.7.0',
+    version='0.7.1',
     zip_safe=False,
 )
