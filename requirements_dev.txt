@@ -25,3 +25,4 @@ grpcio-reflection
 protobuf==3.19.4
 pyyaml
 six
+gcloud
