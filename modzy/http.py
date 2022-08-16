@@ -48,7 +48,7 @@ class HttpClient:
         self.session = session if session is not None else requests.Session()
         self.logger = logging.getLogger(__name__)
 
-    def request(self, method, url, json_data=None, file_data=None):
+    def request(self, method, url, json_data=None, file_data=None, params=None):
         """Sends an HTTP request.
 
         The client's API key will automatically be used for authentication.
@@ -82,7 +82,7 @@ class HttpClient:
         self.logger.debug("%s: %s - [%s]", method, url, self._api_client.cert)
 
         try:
-            response = self.session.request(method, url, data=data, headers=headers, files=file_data, verify=self._api_client.cert)
+            response = self.session.request(method, url, data=data, headers=headers, files=file_data, verify=self._api_client.cert, params=params)
             self.logger.debug("response %s - length %s", response.status_code, len(response.content))
         except requests.exceptions.RequestException as ex:
             self.logger.exception('unable to make network request')
@@ -126,7 +126,7 @@ class HttpClient:
         """
         return self.request('GET', url)
 
-    def post(self, url, json_data=None, file_data=None):
+    def post(self, url, json_data=None, file_data=None, params=None):
         """Sends a POST request.
 
         Args:
@@ -140,7 +140,7 @@ class HttpClient:
             ApiError: A subclass of ApiError will be raised if the API returns an error status,
                 or the client is unable to connect.
         """
-        return self.request('POST', url, json_data=json_data, file_data=file_data)
+        return self.request('POST', url, json_data=json_data, file_data=file_data, params=params)
 
     def patch(self, url, json_data=None):
         """Sends a PATCH request.

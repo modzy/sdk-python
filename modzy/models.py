@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 """Classes for interacting with models."""
 
+import re
+import json
 import logging
 from datetime import datetime
 from ._api_object import ApiObject
 from urllib.parse import urlencode
-from .error import NotFoundError, ResponseError
-from typing import Union
+from .error import NotFoundError, ResponseError, BadRequestError
 from time import time as t
 from time import sleep
+from ._util import load_model, upload_input_example, run_model, deploy_model
 
 class Models:
     """The `Models` object.
@@ -30,6 +32,24 @@ class Models:
         """
         self._api_client = api_client
         self.logger = logging.getLogger(__name__)
+        # model deployment specific instance variables
+        self.container_registry_regex = "^((?:[A-Za-z0-9-_]+)(?:\.[A-Za-z0-9-_]+)+\/)?([^:]+)(?::(.+))?$"
+        self.default_inputs = [
+            {
+                "name": "input",
+                "acceptedMediaTypes": "application/json",
+                "maximumSize": 1000000,
+                "description": "Default input data"
+            }
+        ]
+        self.default_outputs = [
+            {
+                "name": "results.json",
+                "mediaType": "application/json",
+                "maximumSize": 1000000,
+                "description": "Default output data"
+            }    
+        ]        
 
     def get_model_processing_details(self, model, version):
         """
@@ -47,7 +67,6 @@ class Models:
         """
         model_id = Model._coerce_identifier(model)
 
-        # TODO: this was moved from the models api to the resources api, perhaps it should go in a different module?
         endpoint = "/resources/processing/models"
 
         result = self._api_client.http.get(endpoint)
@@ -362,6 +381,127 @@ class Models:
         self.logger.debug("body 2? %s", body)
         json_list = self._api_client.http.get('{}?{}'.format(self._base_route, urlencode(body)))
         return list(Model(json_obj, self._api_client) for json_obj in json_list)
+
+    def deploy(
+        self, container_image, model_name, model_version, sample_input_file, credentials=None, 
+        model_id=None, run_timeout=None, status_timeout=None, short_description=None, tags=[], 
+        gpu=False, long_description=None, technical_details=None, performance_summary=None,
+        performance_metrics=None, input_details=None, output_details=None
+        ):
+        """Deploys a new `Model` instance.
+
+        Args:
+            container_image (str): Docker container image to be deployed. This string should represent what follows a `docker pull` command 
+            model_name (str): Name of model to be deployed
+            model_version (str): Version of model to be deployed
+            sample_input_file (str): Path to local file to be used for sample inference
+            credentials (dict): Dictionary containing credentials if the container image is private. The keys in this dictionary must be `["user", "pass"]`
+            model_id (str): Model identifier if deploying a new version to a model that already exists
+            run_timeout (str): Timeout threshold for container `run` route
+            status_timeout (str): Timeout threshold for container `status` route
+            short_description (str): Short description to appear on model biography page
+            tags (list): List of tags to make model more discoverable in model library
+            gpu (bool): Flag for whether or not model requires GPU to run
+            long_description (str): Description to appear on model biography page
+            technical_details (str): Technical details to appear on model biography page. Markdown is accepted
+            performance_summary (str): Description providing model performance to appear on model biography page
+            performance_metrics (List): List of arrays describing model performance statistics
+            input_details (List): List of dictionaries describing details of model inputs
+            output_details (List): List of dictionaries describing details of model outputs
+
+        Returns:
+            dict: Newly deployed model information including formatted URL to newly deployed model page.
+        Raises:
+            ApiError: A subclass of ApiError will be raised if the API returns an error status,
+                or the client is unable to connect.
+        """ 
+        # generate model identifier and version to create new model        
+        if model_id:
+            identifier, version = model_id, model_version
+            # create new version of existing model
+            data = {"version": version}
+            try:
+                response = self._api_client.http.post(f"{self._base_route}/{identifier}/versions", data)
+            except BadRequestError as e:
+                raise e
+        else:
+            # create new model object
+            data = {'name': model_name, 'version': model_version}
+            response = self._api_client.http.post(self._base_route, data)
+            identifier, version = response.get('identifier'), model_version
+
+        self.logger.info(f"Created Model Version: {identifier}, {version}")
+
+        # add tags and description
+        tags_and_description = {
+            'description': short_description or ''
+        }
+        if len(tags) > 0:
+            tags_and_description['tags'] = tags
+        response = self._api_client.http.patch(f"{self._base_route}/{identifier}", tags_and_description)
+
+        # upload container image
+        m = re.search(self.container_registry_regex, container_image)
+        domain = m.group(1) or "registry.hub.docker.com/"
+        repository = m.group(2)
+        tag = m.group(3) or "latest"        
+        image_url = "https://{}v2/{}/manifests/{}".format(domain, repository, tag)
+        registry = {'registry': {'url': image_url, 'username': credentials['user'], 'password': credentials['pass']}} if credentials else {'registry': {'url': image_url}}      
+        response = self._api_client.http.post(f"{self._base_route}/{identifier}/versions/{version}/container-image", registry)
+        self.logger.info("Uploaded Container Image")
+
+        # add model metadata
+        run_timeout_body = int(run_timeout)*1000 if run_timeout else 60000
+        status_timeout_body = int(status_timeout)*1000 if status_timeout else 60000
+
+        model_metadata = {
+            "requirement": {"requirementId": -6 if gpu else 1},
+            "timeout": {
+                "run": run_timeout_body,
+                "status": status_timeout_body
+            },
+            "inputs": input_details or self.default_inputs,
+            "outputs": output_details or self.default_outputs,    
+            "statistics": performance_metrics or [],
+            "processing": {
+                "minimumParallelCapacity": 0,
+                "maximumParallelCapacity": 1
+            },
+            "longDescription": long_description or "",
+            "technicalDetails": technical_details or "",
+            "performanceSummary": performance_summary or ""
+        }
+        model_data = self._api_client.http.patch(f"{self._base_route}/{identifier}/versions/{version}", model_metadata)
+        self.logger.info(f"Model Data: {json.dumps(model_data)}")
+
+        # load model container
+        try:
+            load_model(self._api_client, self.logger, identifier, version)
+        except Exception as e:
+            raise ValueError("Loading model container failed. Make sure you passed through a valid Docker registry container image. \n\nSee full error below:\n{}".format(e))
+        # upload sample data for inference test
+        try:
+            upload_input_example(self._api_client, self.logger, identifier, version, model_data, sample_input_file)
+        except Exception as e:
+            raise ValueError("Uploading sample input failed. \n\nSee full error below:\n{}".format(e))
+        # run sample inference
+        try:
+            run_model(self._api_client, self.logger, identifier, version)
+        except Exception as e:
+            raise ValueError("Inference test failed. Make sure the provided input sample is valid and your model can process it for inference. \n\nSee full error below:\n{}".format(e))
+        # deploy model pending all tests have passed
+        try:
+            deploy_model(self._api_client, self.logger, identifier, version)
+        except Exception as e:
+            raise ValueError("Deployment failed. Check to make sure all of your parameters and assets are valid and try again. \n\nSee full error below:\n{}".format(e))
+        
+        # get new model URL and return model data
+        base_url = self._api_client.base_url.split("api")[0][:-1] 
+        container_data = {
+            'model_data': json.dumps(model_data),
+            'container_url': f"{base_url}{self._base_route}/{identifier}/{version}"
+        }
+        return container_data
 
 
 class Model(ApiObject):

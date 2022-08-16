@@ -170,6 +170,7 @@ Currently we support the following API routes:
 
 | Feature | Code |Api route
 | ---     | ---  | ---
+|Deploy new model|client.models.deploy()|[api/models](https://docs.modzy.com/reference/model-deployment)
 |Get all models|client.models.get_all()|[api/models](https://docs.modzy.com/reference/get-all-models)|
 |List models|client.models.get_models()|[api/models](https://docs.modzy.com/reference/list-models)|
 |Get model details|client.models.get()|[api/models/:model-id](https://docs.modzy.com/reference/list-model-details)|
