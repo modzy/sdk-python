@@ -391,9 +391,9 @@ class Models:
         """Deploys a new `Model` instance.
 
         Args:
-            container_image (str): Docker container image to be deployed. This string should represent what follows a `docker pull` command. 
+            container_image (str): Docker container image to be deployed. This string should represent what follows a `docker pull` command 
             model_name (str): Name of model to be deployed
-            model_version (str): Versin of model to be deployed
+            model_version (str): Version of model to be deployed
             sample_input_file (str): Path to local file to be used for sample inference
             credentials (dict): Dictionary containing credentials if the container image is private. The keys in this dictionary must be `["user", "pass"]`
             model_id (str): Model identifier if deploying a new version to a model that already exists
@@ -425,6 +425,7 @@ class Models:
             except BadRequestError as e:
                 raise e
         else:
+            # create new model object
             data = {'name': model_name, 'version': model_version}
             response = self._api_client.http.post(self._base_route, data)
             identifier, version = response.get('identifier'), model_version
@@ -443,7 +444,7 @@ class Models:
         m = re.search(self.container_registry_regex, container_image)
         domain = m.group(1) or "registry.hub.docker.com/"
         repository = m.group(2)
-        tag = m.group(3) or "latest"
+        tag = m.group(3) or "latest"        
         image_url = "https://{}v2/{}/manifests/{}".format(domain, repository, tag)
         registry = {'registry': {'url': image_url, 'username': credentials['user'], 'password': credentials['pass']}} if credentials else {'registry': {'url': image_url}}      
         response = self._api_client.http.post(f"{self._base_route}/{identifier}/versions/{version}/container-image", registry)
@@ -494,13 +495,12 @@ class Models:
         except Exception as e:
             raise ValueError("Deployment failed. Check to make sure all of your parameters and assets are valid and try again. \n\nSee full error below:\n{}".format(e))
         
-        # get new model URL and return
+        # get new model URL and return model data
         base_url = self._api_client.base_url.split("api")[0][:-1] 
         container_data = {
             **model_data,
             'container_url': f"{base_url}{self._base_route}/{identifier}/{version}"
         }
-
         return container_data
 
 
