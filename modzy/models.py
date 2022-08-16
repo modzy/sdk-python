@@ -498,7 +498,7 @@ class Models:
         # get new model URL and return model data
         base_url = self._api_client.base_url.split("api")[0][:-1] 
         container_data = {
-            **model_data,
+            'model_data': json.dumps(model_data),
             'container_url': f"{base_url}{self._base_route}/{identifier}/{version}"
         }
         return container_data
