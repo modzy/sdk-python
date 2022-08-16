@@ -28,7 +28,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7'
     ],
-    description="Modzy's Python SDK queries models, submits inference jobs and returns results directly to your editor.",
+    description="Modzy's Python SDK queries and deploys models, submits inference jobs and returns results directly to your editor.",
     python_requires='>=3.6',
     install_requires=requirements,
     long_description=readme,

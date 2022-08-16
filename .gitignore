@@ -84,6 +84,9 @@ target/
 # Jupyter Notebook
 .ipynb_checkpoints
 
+# files
+deploy-test.py
+
 # pyenv
 .python-version
 
