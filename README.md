@@ -1,15 +1,11 @@
-# Modzy Python SDK
-
-![Modzy Logo](https://www.modzy.com/wp-content/uploads/2020/06/MODZY-RGB-POS.png)
+![Modzy Python SDK Banner](https://github.com/modzy/sdk-python/blob/main/python-sdk-github-banner.png)
 
 <div align="center">
 
-**Modzy's Python SDK queries models, submits inference jobs, and returns results directly to your editor.**
-
-
-![GitHub contributors](https://img.shields.io/github/contributors/modzy/sdk-python)
-![GitHub last commit](https://img.shields.io/github/last-commit/modzy/sdk-python)
-![GitHub Release Date](https://img.shields.io/github/issues-raw/modzy/sdk-python)
+![GitHub contributors](https://img.shields.io/github/contributors/modzy/sdk-python?logo=GitHub&style=flat-square)
+![GitHub last commit](https://img.shields.io/github/last-commit/modzy/sdk-python?logo=GitHub&style=flat-square)
+![GitHub issues](https://img.shields.io/github/issues-raw/modzy/sdk-python?logo=github&style=flat-square)
+![GitHub](https://img.shields.io/github/license/modzy/sdk-python?logo=apache&style=flat-square)
 
 [The job lifecycle](https://docs.modzy.com/reference/the-job-lifecycle) | [API Keys](https://docs.modzy.com/reference/api-keys-1) | [Samples](https://github.com/modzy/sdk-python/tree/main/samples) | [Documentation](https://docs.modzy.com/docs)
 
@@ -17,20 +13,13 @@
 
 
 ## Installation
-
-[![installation](https://github.com/modzy/sdk-python/raw/main/install.gif)](https://asciinema.org/a/0lHaPxvXTrPTp1Bb6bNea1ZCG)
-
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install the SDK:
 
 - `$ pip install modzy-sdk`
 
 ## Usage
 
-
 ### Get your API key
-
-
-
 API keys are security credentials required to perform API requests to Modzy. Our API keys are composed of an ID that is split by a dot into two parts: a public and private part.
 
 The *public* part is the API keys' visible part only used to identify the key and by itself, it’s unable to perform API requests.
@@ -44,7 +33,6 @@ Find your API key in your user profile. To get your full API key click on "Get k
 
 
 ### Initialize
-
 Once you have a `model` and `version` identified, get authenticated with your API key.
 
 ```python
@@ -53,12 +41,7 @@ client = ApiClient(base_url='https://modzy.example.com/api', api_key='API Key')
 ```
 
 ### Basic usage
-
-The code below is applicable for `text/plain` input type.
-
-![Basic Usage](https://github.com/modzy/sdk-python/raw/main/python.gif)
-
-Submit a job providing the model, version, and input file:
+Submit an inference job to a `text/plain` model by providing the model, version, and input file:
 
 ```python
 job = client.jobs.submit_file('ed542963de', '0.0.27', {'input.txt': './some-file.txt'})
@@ -166,7 +149,6 @@ all_job_details = client.get_all_job_details()
 ## Features
 
 Currently we support the following API routes:
-
 
 | Feature | Code |Api route
 | ---     | ---  | ---
