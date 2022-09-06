@@ -1,11 +1,14 @@
-![Modzy Python SDK Banner](https://github.com/modzy/sdk-python/blob/main/python-sdk-github-banner.png)
-
-<div align="center">
-
 ![GitHub contributors](https://img.shields.io/github/contributors/modzy/sdk-python?logo=GitHub&style=flat-square)
 ![GitHub last commit](https://img.shields.io/github/last-commit/modzy/sdk-python?logo=GitHub&style=flat-square)
 ![GitHub issues](https://img.shields.io/github/issues-raw/modzy/sdk-python?logo=github&style=flat-square)
 ![GitHub](https://img.shields.io/github/license/modzy/sdk-python?logo=apache&style=flat-square)
+
+![PyPI](https://img.shields.io/pypi/v/modzy-sdk?logo=pypi&style=flat-square)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/modzy-sdk?logo=pypi&style=flat-square)
+
+![Modzy Python SDK Banner](https://github.com/modzy/sdk-python/blob/main/python-sdk-github-banner.png)
+
+<div align="center">
 
 [The job lifecycle](https://docs.modzy.com/reference/the-job-lifecycle) | [API Keys](https://docs.modzy.com/reference/api-keys-1) | [Samples](https://github.com/modzy/sdk-python/tree/main/samples) | [Documentation](https://docs.modzy.com/docs)
 
