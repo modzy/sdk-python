@@ -149,7 +149,7 @@ SECRET_ACCESS_KEY = "secret-access-key"
 STORAGE_GRID_ENDPOINT = "https://endpoint.storage-grid.example"
 
 # Submit StorageGRID input to v1.0.1 of a Sentiment Analysis model
-job = client.jobs.submit_netapp_storage_grid("ed542963de", "1.0.1", sources, ACCESS_KEY, SECRET_ACCESS_KEY, STORAGE_GRID_ENDPOINT)
+job = client.jobs.submit_netapp_storagegrid("ed542963de", "1.0.1", sources, ACCESS_KEY, SECRET_ACCESS_KEY, STORAGE_GRID_ENDPOINT)
 ```
 ## Getting Results
 Modzy's APIs are asynchronous by nature, which means you can use the `results` API to query available results for all completed inference jobs at any point in time. There are two ways you might leverage this Python SDK to query results:
