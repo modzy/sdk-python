@@ -7,7 +7,7 @@
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/modzy-sdk?logo=pypi&style=flat-square)
 
 ![Modzy Python SDK Banner](https://github.com/modzy/sdk-python/blob/main/python-sdk-github-banner.png)
-## Installation
+# Installation
 
 Install Modzy's Python SDK with PIP
 
@@ -15,25 +15,25 @@ Install Modzy's Python SDK with PIP
   pip install modzy-sdk
 ```
     
-## Usage/Examples
+# Usage/Examples
 
-### Initializing the SDK
+## Initializing the SDK
 Initialize your client by authenticating with an API key. You can [download an API Key](https://docs.modzy.com/docs/view-and-manage-api-keys#download-team-api-key) from your instance of Modzy.
 
 ```python
-from modzy import ApiClient, error
+from modzy import ApiClient
 
 # Sets BASE_URL and API_KEY values
 # Best to set these as environment variables
-BASE_URL = "Valid Modzy URL"
-API_KEY = "Valid Modzy API Key"
+BASE_URL = "Valid Modzy URL" # e.g., "https://trial.modzy.com"
+API_KEY = "Valid Modzy API Key" # e.g., "JbFkWZMx4Ea3epIrxSgA.a2fR36fZi3sdFPoztAXT"
 
 mdz = ApiClient(base_url=BASE_URL, api_key=API_KEY)
 ```
 
-### Running Inferences
-#### Text-based models
-Submit an inference job to a text-based model by providing the model ID, version number, and input text:
+## Running Inferences
+### Raw Text Inputs
+Submit an inference job to a text-based model by providing the model ID, version, and raw input text:
 
 ```python
 # Creates a dictionary for text input(s)
@@ -44,51 +44,120 @@ sources["first-phone-call"] = {
     "input.txt": "Mr Watson, come here. I want to see you.",
 }
 
-# Submit the text to v1.0.1 of a Sentiment Analysis model
-job = mdzy.jobs.submit_text("ed542963de", "1.0.1", sources)
+# Submit the text to v1.0.1 of a Sentiment Analysis model, and to make the job explainable, change explain=True
+job = mdz.jobs.submit_text("ed542963de", "1.0.1", sources, explain=False)
 ```
+### File inputs
+Pass a file from your local directory to a model by providing the model ID, version, and the filepath of your sample data:
 
-#### Embedded inputs
+```python
+# Generate a mapping of your local file (nyc-skyline.jpg) to the input filename the model expects
+sources = {"nyc-skyline": {"image": "./images/nyc-skyline.jpg"}}
 
-Submit images and other larger inputs as embedded files to a model by providing a model ID, version number, and dictionary with one or more base64 encoded inputs
+# Submit the image to v1.0.1 of an Image-based Geolocation model
+job = mdz.jobs.submit_file("aevbu1h3yw", "1.0.1", sources)
+```
+### Embedded inputs
+Convert images and other large inputs to base64 embedded data and submit to a model by providing a model ID, version number, and dictionary with one or more base64 encoded inputs:
 ```python
 from modzy._util import file_to_bytes
 
-# Embeds input as a string in Base64
-image_bytes = file_to_bytes('images/tower-bridge.jpg')
-# Prepares the source dictionary
+# Embed input as a string in base64
+image_bytes = file_to_bytes('./images/tower-bridge.jpg')
+# Prepare the source dictionary
 sources = {"tower-bridge": {"image": image_bytes}}
 
-# Submits the image to v1.0.1 of an Imaged-based Geolocation model
+# Submit the image to v1.0.1 of an Imaged-based Geolocation model
 job = mdz.jobs.submit_embedded("aevbu1h3yw", "1.0.1", sources)
 ```
-
-#### Inputs from databases
-
-Submit data from a SQL database to a model by providing a model ID, version number, a SQL query, and database connection credentials.
+### Inputs from databases
+Submit data from a SQL database to a model by providing a model ID, version, a SQL query, and database connection credentials:
 ```python
-# Adds database connection and query information
+# Add database connection and query information
 db_url = "jdbc:postgresql://db.bit.io:5432/bitdotio"
 db_username = DB_USER_NAME
 db_password = DB_PASSWORD
 db_driver = "org.postgresql.Driver"
-# Selects as "input.txt" becase that is the required input name for this model
+# Select as "input.txt" becase that is the required input name for this model
 db_query = "SELECT \"mailaddr\" as \"input.txt\" FROM \"user/demo_repo\".\"atl_parcel_attr\" LIMIT 10;"
 
-# Submits the database query to v0.0.12 of a Named Entity Recognition model
+# Submit the database query to v0.0.12 of a Named Entity Recognition model
 job = client.jobs.submit_jdbc("a92fc413b5","0.0.12",db_url, db_username, db_password, db_driver, db_query)
 ```
-### Getting Results
+### Inputs from Cloud Storage
+Submit data directly from your cloud storage bucket (Amazon S3, Azure Blob, NetApp StorageGrid supported) by providing a model ID, version, and storage-blob-specific parameters.
 
-### Running Inferences at the Edge
+#### AWS S3
+```python
+# Define sources dictionary with bucket and key that points to the correct file in your s3 bucket
+sources = {
+  "first-amazon-review": {
+    "input.txt": {
+      "bucket": "s3-bucket-name",
+      "key": "key-to-file.txt"
+    }
+  }
+}
+
+AWS_ACCESS_KEY = "aws-acces-key"
+AWC_SECRET_ACCESS_KEY = "aws-secret-access-key"
+AWS_REGION = "us-east-1"
+
+# Submit s3 input to v1.0.1 of a Sentiment Analysis model
+job = mdz.jobs.submit_aws_s3("ed542963de", "1.0.1", sources, AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY, AWS_REGION)
+```
+
+#### Azure Blob
+```python
+# Define sources dictionary with container name and filepath that points to the correct file in your Azure Blob container
+sources = {
+  "first-amazon-review": {
+    "input.txt": {
+      "container": "azure-blob-container-name",
+      "filePath": "key-to-file.txt"
+    }
+  }
+}
+
+AZURE_STORAGE_ACCOUNT = "Azure-Storage-Account"
+AZURE_STORAGE_ACCOUNT_KEY = "cvx....ytw=="
+
+# Submit Azure Blob input to v1.0.1 of a Sentiment Analysis model
+job = mdz.jobs.submit_azure_blob("ed542963de", "1.0.1", sources, AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCOUNT_KEY)
+```
+
+#### NetApp StorageGRID
+```python
+# Define sources dictionary with bucket name and key that points to the correct file in your NetApp StorageGRID bucket
+sources = {
+  "first-amazon-review": {
+    "input.txt": {
+      "bucket": "bucket-name",
+      "key": "key-to-file.txt"
+    }
+  }
+}
+
+ACCESS_KEY = "access-key"
+SECRET_ACCESS_KEY = "secret-access-key"
+STORAGE_GRID_ENDPOINT = "https://endpoint.storage-grid.example"
+
+# Submit StorageGRID input to v1.0.1 of a Sentiment Analysis model
+job = mdz.jobs.submit_netapp_storage_grid("ed542963de", "1.0.1", sources, ACCESS_KEY, SECRET_ACCESS_KEY, STORAGE_GRID_ENDPOINT)
+```
+
+
+## Getting Results
+
+## Running Inferences at the Edge
 
 The SDK provides the support for Modzy Edge:
 
-### Deploying Models
+## Deploying Models
 Deploy a model to a your private model library in Modzy
 
 ```Python
-from modzy import ApiClient, error
+from modzy import ApiClient
 
 # Sets BASE_URL and API_KEY values
 # Best to set these as environment variables
@@ -117,8 +186,7 @@ To use **`mdz.models.deploy()`** there are 4 fields that are required:
 * `model_name`: The name of your model you would like to deploy
 * `model_version`: The version of your model you would like to deploy
 * `sample_input_file`: Filepath to a sample piece of data that your model is expected to process and perform inference against.
-
-### Trying Out Sample Code
+## Trying Out Sample Code
 
 Explor other code examples in our [samples](https://github.com/modzy/sdk-python/tree/main/samples) folder
 
@@ -133,17 +201,13 @@ Then you can run:
 ```bash
 $ python3 samples/job_with_text_input_sample.py
 ```
-## Documentation
+# Documentation
 
 Modzy's SDK is built on top of the [Modzy HTTP/REST API](https://docs.modzy.com/reference/introduction). For a full list of features and supported routes visit [Python SDK on docs.modzy.com](https://docs.modzy.com/docs/python)
-
-
-## Support
+# Support
 
 For support, email opensource@modzy.com or join our [Slack](https://www.modzy.com/slack).
-
-
-## Contributing
+# Contributing
 
 Contributions are always welcome!
 
