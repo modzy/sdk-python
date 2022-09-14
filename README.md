@@ -2,13 +2,13 @@
 
 ![Modzy Python SDK Banner](python-sdk-github-banner.png)
 
-![GitHub contributors](https://img.shields.io/github/contributors/modzy/sdk-python?logo=GitHub&style=flat-square)
-![GitHub last commit](https://img.shields.io/github/last-commit/modzy/sdk-python?logo=GitHub&style=flat-square)
-![GitHub issues](https://img.shields.io/github/issues-raw/modzy/sdk-python?logo=github&style=flat-square)
-![GitHub](https://img.shields.io/github/license/modzy/sdk-python?logo=apache&style=flat-square)
+![GitHub contributors](https://img.shields.io/github/contributors/modzy/sdk-python?logo=GitHub&style=flat)
+![GitHub last commit](https://img.shields.io/github/last-commit/modzy/sdk-python?logo=GitHub&style=flat)
+![GitHub issues](https://img.shields.io/github/issues-raw/modzy/sdk-python?logo=github&style=flat)
+![GitHub](https://img.shields.io/github/license/modzy/sdk-python?logo=apache&style=flat)
 
-![PyPI](https://img.shields.io/pypi/v/modzy-sdk?logo=pypi&style=flat-square)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/modzy-sdk?logo=pypi&style=flat-square)
+![PyPI](https://img.shields.io/pypi/v/modzy-sdk?logo=pypi&style=flat)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/modzy-sdk?logo=pypi&style=flat)
 
 **[Python SDK Documentation Page](https://docs.modzy.com)**
 
@@ -53,7 +53,7 @@ sources["first-phone-call"] = {
 # Submit the text to v1.0.1 of a Sentiment Analysis model, and to make the job explainable, change explain=True
 job = client.jobs.submit_text("ed542963de", "1.0.1", sources, explain=False)
 ```
-### File inputs
+### File Inputs
 Pass a file from your local directory to a model by providing the model ID, version, and the filepath of your sample data:
 
 ```python
@@ -63,7 +63,7 @@ sources = {"nyc-skyline": {"image": "./images/nyc-skyline.jpg"}}
 # Submit the image to v1.0.1 of an Image-based Geolocation model
 job = client.jobs.submit_file("aevbu1h3yw", "1.0.1", sources)
 ```
-### Embedded inputs
+### Embedded Inputs
 Convert images and other large inputs to base64 embedded data and submit to a model by providing a model ID, version number, and dictionary with one or more base64 encoded inputs:
 ```python
 from modzy._util import file_to_bytes
@@ -76,7 +76,7 @@ sources = {"tower-bridge": {"image": image_bytes}}
 # Submit the image to v1.0.1 of an Imaged-based Geolocation model
 job = client.jobs.submit_embedded("aevbu1h3yw", "1.0.1", sources)
 ```
-### Inputs from databases
+### Inputs from Databases
 Submit data from a SQL database to a model by providing a model ID, version, a SQL query, and database connection credentials:
 ```python
 # Add database connection and query information
@@ -113,7 +113,7 @@ AWS_REGION = "us-east-1"
 job = client.jobs.submit_aws_s3("ed542963de", "1.0.1", sources, AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY, AWS_REGION)
 ```
 
-#### Azure Blob
+#### Azure Blob Storage
 ```python
 # Define sources dictionary with container name and filepath that points to the correct file in your Azure Blob container
 sources = {
@@ -172,7 +172,11 @@ This method simply queries the results for a job at any point in time and return
 ```python
 #  Query results for a job at any point in time
 results = client.results.get(job)
+#  Print the inference results
+results_json = result.get_first_outputs()['results.json']
+print(results_json)
 ```
+
 ## Deploying Models
 Deploy a model to a your private model library in Modzy
 
@@ -202,9 +206,9 @@ model_data = client.models.deploy(
 print(model_data)
 ```
 To use **`client.models.deploy()`** there are 4 fields that are required:
-* `container_image (str)`: This parameter must represent a container image repository & tag name, or in other words, the string you would include after a docker pull command. For example, if you were to download this container image using docker pull modzy/grpc-echo-model:1.0.0, include just modzy/grpc-echo-model:1.0.0 for this parameter
-* `model_name`: The name of your model you would like to deploy
-* `model_version`: The version of your model you would like to deploy
+* `container_image (str)`: This parameter must represent a container image repository & tag name, or in other words, the string you would include after a docker pull command. For example, if you were to download this container image using docker pull modzy/grpc-echo-model:1.0.0, include just _`modzy/grpc-echo-model:1.0.0`_ for this parameter
+* `model_name`: The name of the model you would like to deploy
+* `model_version`: The version of the model you would like to deploy
 * `sample_input_file`: Filepath to a sample piece of data that your model is expected to process and perform inference against.
 
 ## Running Inferences at the Edge
@@ -216,12 +220,13 @@ The SDK provides support for running inferences on edge devices through Modzy's 
 ```python
 from modzy.edge.client import EdgeClient
 
-# initialize edge client
+# Initialize edge client
+# Use 'localhost' for local inferences, otherwise use the device's full IP address
 client = EdgeClient('localhost',55000)
 ```
 
 ### Submit Inference Job
-All input types defined above are supported on Modzy Edge.
+Modzy Edge supports `text`, `embedded`, and `aws-s3` input types.
 
 ```python
 # Submit text job to Sentiment Analysis model deployed on edge device by providing a model ID, version, and raw text data, wait for completion
@@ -268,11 +273,13 @@ Modzy's SDK is built on top of the [Modzy HTTP/REST API](https://docs.modzy.com/
 |Update processing engines|client.models.update_processing_engines()|[api/resource/models](https://docs.modzy.com/reference/update-a-version-1)|
 |Get minimum engines|client.models.get_minimum_engines()|[api/models/processing-engines](https://docs.modzy.com/reference/get-minimum-engines)|
 |List tags|client.tags.get_all()|[api/models/tags](https://docs.modzy.com/reference/list-tags)|
-|Submit a Job (Text)|client.jobs.submit_text()|[api/jobs](https://docs.modzy.com/reference/create-a-job-1)|
-|Submit a Job (Embedded)|client.jobs.submit_embedded()|[api/jobs](https://docs.modzy.com/reference/create-a-job-1)|
-|Submit a Job (File)|client.jobs.submit_file()|[api/jobs](https://docs.modzy.com/reference/create-a-job-1)|
-|Submit a Job (AWS S3)|client.jobs.submit_aws_s3()|[api/jobs](https://docs.modzy.com/reference/create-a-job-1)|
-|Submit a Job (JDBC)|client.jobs.submit_jdbc()|[api/jobs](https://docs.modzy.com/reference/create-a-job-1)|
+|Submit a Job (Text)|client.jobs.submit_text()|[api/jobs](https://docs.modzy.com/reference/create-a-job)|
+|Submit a Job (Embedded)|client.jobs.submit_embedded()|[api/jobs](https://docs.modzy.com/reference/create-a-job)|
+|Submit a Job (File)|client.jobs.submit_file()|[api/jobs](https://docs.modzy.com/reference/create-a-job)|
+|Submit a Job (AWS S3)|client.jobs.submit_aws_s3()|[api/jobs](https://docs.modzy.com/reference/create-a-job)|
+|Submit a Job (Azure Blob Storage)|client.jobs.submit_azureblob()|[api/jobs](https://docs.modzy.com/reference/create-a-job)|
+|Submit a Job (NetApp StorageGRID)|client.jobs.submit_storagegrid()|[api/jobs](https://docs.modzy.com/reference/create-a-job)|
+|Submit a Job (JDBC)|client.jobs.submit_jdbc()|[api/jobs](https://docs.modzy.com/reference/create-a-job)|
 |Cancel job|job.cancel()|[api/jobs/:job-id](https://docs.modzy.com/reference/cancel-a-job)  |
 |Hold until inference is complete|job.block_until_complete()|[api/jobs/:job-id](https://docs.modzy.com/reference/get-job-details)  |
 |Get job details|client.jobs.get()|[api/jobs/:job-id](https://docs.modzy.com/reference/get-job-details)  |
