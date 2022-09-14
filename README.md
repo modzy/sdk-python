@@ -1,6 +1,6 @@
 <div align="center">
 
-![Modzy Python SDK Banner](https://github.com/modzy/sdk-python/blob/main/python-sdk-github-banner.png)
+![Modzy Python SDK Banner](python-sdk-github-banner.png)
 
 ![GitHub contributors](https://img.shields.io/github/contributors/modzy/sdk-python?logo=GitHub&style=flat-square)
 ![GitHub last commit](https://img.shields.io/github/last-commit/modzy/sdk-python?logo=GitHub&style=flat-square)
