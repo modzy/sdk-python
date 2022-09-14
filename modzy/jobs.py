@@ -489,7 +489,7 @@ class Jobs:
         response = self._api_client.http.post(self._base_route, body)
         return Job(response, self._api_client)
 
-    def submit_azure_blob(self, model, version, sources, storage_account, storage_account_key, explain=False):
+    def submit_azureblob(self, model, version, sources, storage_account, storage_account_key, explain=False):
         """Submits data stored in Azure Blob container for a multiple source `Job`.
 
         Args:
@@ -511,7 +511,7 @@ class Jobs:
             Example:
                 .. code-block::
 
-                    job = client.jobs.submit_azure_blob('model-identifier', '1.2.3',
+                    job = client.jobs.submit_azureblob('model-identifier', '1.2.3',
                     {
                         'source-name-1': {
                             'model-input-name-1': {

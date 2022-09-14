@@ -129,7 +129,7 @@ AZURE_STORAGE_ACCOUNT = "Azure-Storage-Account"
 AZURE_STORAGE_ACCOUNT_KEY = "cvx....ytw=="
 
 # Submit Azure Blob input to v1.0.1 of a Sentiment Analysis model
-job = client.jobs.submit_azure_blob("ed542963de", "1.0.1", sources, AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCOUNT_KEY)
+job = client.jobs.submit_azureblob("ed542963de", "1.0.1", sources, AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCOUNT_KEY)
 ```
 
 #### NetApp StorageGRID
