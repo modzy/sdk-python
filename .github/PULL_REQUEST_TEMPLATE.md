@@ -1,6 +1,6 @@
 ## Description
 
-<!-- Add a paragraph with a description of what tihs PR is doing, updating or removing. -->
+<!-- Add a paragraph with a description of what this PR is doing, updating or removing. -->
 
 ## Related issues
 
@@ -13,5 +13,5 @@
 ## Checklist
 
 - [ ] I read the Contributing guide.
-- [ ] I update the documentation and if the case the README.md file.
+- [ ] I updated the documentation and, if relevant, the README.md file.
 - [ ] I am willing to follow-up on review comments in a timely manner.
