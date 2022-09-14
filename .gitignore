@@ -86,6 +86,7 @@ target/
 
 # files
 deploy-test.py
+new-job-routes-test.py
 
 # pyenv
 .python-version

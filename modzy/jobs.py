@@ -416,12 +416,12 @@ class Jobs:
             )
 
     def submit_aws_s3(self, model, version, sources, access_key_id, secret_access_key, region, explain=False):
-        """Submits AwS S3 hosted data for a multiple source `Job`.
+        """Submits data stored in AWS S3 bucket for a multiple source `Job`.
 
         Args:
             model (Union[str, Model]): The model identifier or a `Model` instance.
             version (str): The model version string.
-            sources (dict): A mapping of source names to text sources. Each source should be a
+            sources (dict): A mapping of source names to data sources. Each source should be a
                 mapping of model input filename to S3 bucket and key.
             access_key_id (str): The AWS Access Key ID.
             secret_access_key (str): The AWS Secret Access Key.
@@ -488,6 +488,157 @@ class Jobs:
 
         response = self._api_client.http.post(self._base_route, body)
         return Job(response, self._api_client)
+
+    def submit_azureblob(self, model, version, sources, storage_account, storage_account_key, explain=False):
+        """Submits data stored in Azure Blob container for a multiple source `Job`.
+
+        Args:
+            model (Union[str, Model]): The model identifier or a `Model` instance.
+            version (str): The model version string.
+            sources (dict): A mapping of source names to data sources. Each source should be a
+                mapping of model input filename to Azure Blob container name and filepath.
+            storage_account (str): Azure Storage Account name.
+            storage_account_key (str): Azure Storage Account name key.
+            explain (bool): indicates if you desire an explainable result for your model.`
+
+        Returns:
+            Job: The submitted `Job` instance.
+
+        Raises:
+            ApiError: A subclass of ApiError will be raised if the API returns an error status,
+                or the client is unable to connect.
+
+            Example:
+                .. code-block::
+
+                    job = client.jobs.submit_azureblob('model-identifier', '1.2.3',
+                    {
+                        'source-name-1': {
+                            'model-input-name-1': {
+                                'container': 'azure-blob-container-name',
+                                'filePath': 'key-to-file1.txt'
+                            },
+                            'model-input-name-2': {
+                                'container': 'azure-blob-container-name',
+                                'filePath': 'key-to-file2.txt'
+                            }
+                        },
+                        'source-name-2': {
+                            'model-input-name-1': {
+                                'container': 'azure-blob-container-name',
+                                'filePath': 'key-to-file3.txt'
+                            },
+                            'model-input-name-2': {
+                                'container': 'azure-blob-container-name',
+                                'filePath': 'key-to-file4.txt'
+                            }
+                        }
+                    },
+                        storage_account='AZURE_STORAGE_ACCOUNT',
+                        storage_account_key='AZURE_STORAGE_ACCOUNT_KEY',
+                    )
+        """
+        identifier = Model._coerce_identifier(model)
+        version = str(version)
+        storage_account = str(storage_account)
+
+        body = {
+            "model": {
+                "identifier": identifier,
+                "version": version
+            },
+            "explain": explain,
+            "input": {
+                "type": "azureblob",
+                "storageAccount": storage_account,
+                "storageAccountKey": storage_account_key,
+                "sources": self.__fix_single_source_job(sources)
+            }
+        }
+
+        response = self._api_client.http.post(self._base_route, body)
+        return Job(response, self._api_client)
+
+    def submit_storagegrid(self, model, version, sources, access_key_id, secret_access_key, endpoint, explain=False):
+        """Submits data stored in NetApp StorageGRID for a multiple source `Job`.
+
+        Args:
+            model (Union[str, Model]): The model identifier or a `Model` instance.
+            version (str): The model version string.
+            sources (dict): A mapping of source names to data sources. Each source should be a
+                mapping of model input filename to StorageGRID bucket name and key.
+            access_key_id (str): The StorageGRID Access Key ID.
+            secret_access_key (str): The StorageGRID Secret Access Key.
+            endpoint (str): URL of StorageGRID instance 
+            explain (bool): indicates if you desire an explainable result for your model.`
+
+        Returns:
+            Job: The submitted `Job` instance.
+
+        Raises:
+            ApiError: A subclass of ApiError will be raised if the API returns an error status,
+                or the client is unable to connect.
+
+            Example:
+                .. code-block::
+
+                    job = client.jobs.submit_storagegrid('model-identifier', '1.2.3',
+                    {
+                        'source-name-1': {
+                            'model-input-name-1': {
+                                'bucket': 'my-bucket',
+                                'key': '/my/data/file-1.dat'
+                            },
+                            'model-input-name-2': {
+                                'bucket': 'my-bucket',
+                                'key': '/my/data/file-2.dat'
+                            }
+                        },
+                        'source-name-2': {
+                            'model-input-name-1': {
+                                'bucket': 'my-bucket',
+                                'key': '/my/data/file-3.dat'
+                            },
+                            'model-input-name-2': {
+                                'bucket': 'my-bucket',
+                                'key': '/my/data/file-4.dat'
+                            }
+                        }
+                    },
+                        access_key_id='ACCESS_KEY',
+                        secret_access_key='SECRET_ACCESS_KEY',
+                        endpoint='https://endpoint.storage-grid.example',
+                    )
+        """
+        identifier = Model._coerce_identifier(model)
+        version = str(version)
+        access_key_id = str(access_key_id)
+        # storageGRID endpoint must begin with "https://", so this conducts a quick test
+        if not str(endpoint).startswith("https://") and not str(endpoint).startswith("http://"):
+            endpoint = "https://" + str(endpoint)
+        elif str(endpoint).startswith("http://"):
+            endpoint = "https://" + endpoint.split("http://")[-1]
+        else:
+            endpoint = str(endpoint)
+
+        body = {
+            "model": {
+                "identifier": identifier,
+                "version": version
+            },
+            "explain": explain,
+            "input": {
+                "type": "storage-grid",
+                "accessKeyID": access_key_id,
+                "secretAccessKey": secret_access_key,
+                "endpoint": endpoint,
+                "sources": self.__fix_single_source_job(sources)
+            }
+        }
+
+        response = self._api_client.http.post(self._base_route, body)
+        return Job(response, self._api_client)
+
 
     @deprecated(deprecated_in="0.5.6", removed_in="1.0", details="Use jobs.submit_aws_s3 function instead")
     def submit_aws_s3_bulk(self, model, version, sources, access_key_id, secret_access_key, region, explain=False):
