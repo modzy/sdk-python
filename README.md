@@ -8,6 +8,8 @@
 ![PyPI](https://img.shields.io/pypi/v/modzy-sdk?logo=pypi&style=flat-square)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/modzy-sdk?logo=pypi&style=flat-square)
 
+**[Python SDK Documentation Page](https://docs.modzy.com)**
+
 ![Modzy Python SDK Banner](https://github.com/modzy/sdk-python/blob/main/python-sdk-github-banner.png)
 
 </div>
@@ -35,7 +37,6 @@ API_KEY = "Valid Modzy API Key" # e.g., "JbFkWZMx4Ea3epIrxSgA.a2fR36fZi3sdFPoztA
 
 client = ApiClient(base_url=BASE_URL, api_key=API_KEY)
 ```
-
 ## Running Inferences
 ### Raw Text Inputs
 Submit an inference job to a text-based model by providing the model ID, version, and raw input text:
@@ -150,12 +151,11 @@ STORAGE_GRID_ENDPOINT = "https://endpoint.storage-grid.example"
 # Submit StorageGRID input to v1.0.1 of a Sentiment Analysis model
 job = client.jobs.submit_netapp_storage_grid("ed542963de", "1.0.1", sources, ACCESS_KEY, SECRET_ACCESS_KEY, STORAGE_GRID_ENDPOINT)
 ```
-
-
 ## Getting Results
-Modzy's inference APIs are asynchronous by nature, which means you can use the `results` API to query available results for all completed inference jobs at any point in time. There are two ways you might leverage this Python SDK to query results:
+Modzy's APIs are asynchronous by nature, which means you can use the `results` API to query available results for all completed inference jobs at any point in time. There are two ways you might leverage this Python SDK to query results:
 
-1. **Block Job until it completes**: this method provides a mechanism to mimic a sycnchronous API by using two different APIs subsequently and a utility function.
+### Block Job until it completes 
+This method provides a mechanism to mimic a sycnchronous API by using two different APIs subsequently and a utility function.
 
 ```python
 # Define sources dictionary with input data
@@ -166,17 +166,13 @@ job = client.jobs.submit_text("ed542963de", "1.0.1", sources, explain=False)
 results = client.results.block_until_complete(job, timeout=None, poll_interval=5)
 ```
 
-2. **Query a Job's Result**: this method simply queries the results for a job at any point in time and returns the status of the job, which includes the results if the job has completed.
+### Query a Job's Result 
+This method simply queries the results for a job at any point in time and returns the status of the job, which includes the results if the job has completed.
 
 ```python
 #  Query results for a job at any point in time
 results = client.results.get(job)
 ```
-
-## Running Inferences at the Edge
-
-The SDK provides the support for Modzy Edge:
-
 ## Deploying Models
 Deploy a model to a your private model library in Modzy
 
@@ -210,21 +206,48 @@ To use **`client.models.deploy()`** there are 4 fields that are required:
 * `model_name`: The name of your model you would like to deploy
 * `model_version`: The version of your model you would like to deploy
 * `sample_input_file`: Filepath to a sample piece of data that your model is expected to process and perform inference against.
-## Trying Out Sample Code
 
-Explor other code examples in our [samples](https://github.com/modzy/sdk-python/tree/main/samples) folder
+## Running Inferences at the Edge
 
-To run samples, set the ***`BASE_URL`*** and ***`API_KEY`*** in each sample file:
+The SDK provides support for running inferences on edge devices through Modzy's Edge Client. The inference workflow is almost identical to the previously outlined workflow:
+
+### Initialize *Edge* Client
 
 ```python
-client = ApiClient(base_url=BASE_URL, api_key=API_KEY)
+from modzy.edge.client import EdgeClient
+
+# initialize edge client
+client = EdgeClient('localhost',55000)
 ```
 
-Then you can run:
+### Submit Inference Job
+All input types defined above are supported on Modzy Edge.
 
-```bash
-$ python3 samples/job_with_text_input_sample.py
+```python
+# Submit text job to Sentiment Analysis model deployed on edge device by providing a model ID, version, and raw text data, wait for completion
+job = client.submit_text("ed542963de","1.0.27",{"input.txt": "this is awesome"})
+# Block until results are ready
+final_job_details = client.block_until_complete(job)
+results = client.get_results(job)
 ```
+
+### Query Details about Edge Jobs
+```python
+# get job details for a particular job
+job_details = client.get_job_details(job)
+
+# get job details for all jobs run on your Modzy Edge instance
+all_job_details = client.get_all_job_details()
+```
+
+# SDK Code Examples
+
+View examples of practical workflows:
+
+* [Image-Based Geolocation Inference Notebook](https://github.com/modzy/modzy-jupyter-notebook-samples/blob/main/python-sdk-inference/Submitting%20Jobs%20with%20Python%20SDK%20-%20Image-Based%20Geolocation.ipynb)
+* [Automobile Classification Inference Notebook with Explainability](https://github.com/modzy/modzy-jupyter-notebook-samples/blob/main/python-sdk-inference/Submitting%20Jobs%20with%20Python%20SDK%20-%20Automobile%20Classification.ipynb)
+* [Batch Inference with Sentiment Analysis](https://github.com/modzy/modzy-jupyter-notebook-samples/blob/main/python-sdk-inference/Submitting%20Batch%20Jobs%20with%20Python%20SDK%20-%20Sentiment%20Analysis.ipynb)
+
 # Documentation
 
 Modzy's SDK is built on top of the [Modzy HTTP/REST API](https://docs.modzy.com/reference/introduction). For a full list of features and supported routes visit [Python SDK on docs.modzy.com](https://docs.modzy.com/docs/python)
