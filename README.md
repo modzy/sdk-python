@@ -33,7 +33,7 @@ from modzy import ApiClient
 BASE_URL = "Valid Modzy URL" # e.g., "https://trial.modzy.com"
 API_KEY = "Valid Modzy API Key" # e.g., "JbFkWZMx4Ea3epIrxSgA.a2fR36fZi3sdFPoztAXT"
 
-mdz = ApiClient(base_url=BASE_URL, api_key=API_KEY)
+client = ApiClient(base_url=BASE_URL, api_key=API_KEY)
 ```
 
 ## Running Inferences
@@ -50,7 +50,7 @@ sources["first-phone-call"] = {
 }
 
 # Submit the text to v1.0.1 of a Sentiment Analysis model, and to make the job explainable, change explain=True
-job = mdz.jobs.submit_text("ed542963de", "1.0.1", sources, explain=False)
+job = client.jobs.submit_text("ed542963de", "1.0.1", sources, explain=False)
 ```
 ### File inputs
 Pass a file from your local directory to a model by providing the model ID, version, and the filepath of your sample data:
@@ -60,7 +60,7 @@ Pass a file from your local directory to a model by providing the model ID, vers
 sources = {"nyc-skyline": {"image": "./images/nyc-skyline.jpg"}}
 
 # Submit the image to v1.0.1 of an Image-based Geolocation model
-job = mdz.jobs.submit_file("aevbu1h3yw", "1.0.1", sources)
+job = client.jobs.submit_file("aevbu1h3yw", "1.0.1", sources)
 ```
 ### Embedded inputs
 Convert images and other large inputs to base64 embedded data and submit to a model by providing a model ID, version number, and dictionary with one or more base64 encoded inputs:
@@ -73,7 +73,7 @@ image_bytes = file_to_bytes('./images/tower-bridge.jpg')
 sources = {"tower-bridge": {"image": image_bytes}}
 
 # Submit the image to v1.0.1 of an Imaged-based Geolocation model
-job = mdz.jobs.submit_embedded("aevbu1h3yw", "1.0.1", sources)
+job = client.jobs.submit_embedded("aevbu1h3yw", "1.0.1", sources)
 ```
 ### Inputs from databases
 Submit data from a SQL database to a model by providing a model ID, version, a SQL query, and database connection credentials:
@@ -109,7 +109,7 @@ AWC_SECRET_ACCESS_KEY = "aws-secret-access-key"
 AWS_REGION = "us-east-1"
 
 # Submit s3 input to v1.0.1 of a Sentiment Analysis model
-job = mdz.jobs.submit_aws_s3("ed542963de", "1.0.1", sources, AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY, AWS_REGION)
+job = client.jobs.submit_aws_s3("ed542963de", "1.0.1", sources, AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY, AWS_REGION)
 ```
 
 #### Azure Blob
@@ -128,7 +128,7 @@ AZURE_STORAGE_ACCOUNT = "Azure-Storage-Account"
 AZURE_STORAGE_ACCOUNT_KEY = "cvx....ytw=="
 
 # Submit Azure Blob input to v1.0.1 of a Sentiment Analysis model
-job = mdz.jobs.submit_azure_blob("ed542963de", "1.0.1", sources, AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCOUNT_KEY)
+job = client.jobs.submit_azure_blob("ed542963de", "1.0.1", sources, AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCOUNT_KEY)
 ```
 
 #### NetApp StorageGRID
@@ -148,7 +148,7 @@ SECRET_ACCESS_KEY = "secret-access-key"
 STORAGE_GRID_ENDPOINT = "https://endpoint.storage-grid.example"
 
 # Submit StorageGRID input to v1.0.1 of a Sentiment Analysis model
-job = mdz.jobs.submit_netapp_storage_grid("ed542963de", "1.0.1", sources, ACCESS_KEY, SECRET_ACCESS_KEY, STORAGE_GRID_ENDPOINT)
+job = client.jobs.submit_netapp_storage_grid("ed542963de", "1.0.1", sources, ACCESS_KEY, SECRET_ACCESS_KEY, STORAGE_GRID_ENDPOINT)
 ```
 
 
@@ -161,16 +161,16 @@ Modzy's inference APIs are asynchronous by nature, which means you can use the `
 # Define sources dictionary with input data
 sources = {"my-input": {"input.txt": "Today is a beautiful day!"}}
 # Submit the text to v1.0.1 of a Sentiment Analysis model, and to make the job explainable, change explain=True
-job = mdz.jobs.submit_text("ed542963de", "1.0.1", sources, explain=False)
+job = client.jobs.submit_text("ed542963de", "1.0.1", sources, explain=False)
 # Use block until complete method to periodically ping the results API until job completes
-results = mdz.results.block_until_complete(job, timeout=None, poll_interval=5)
+results = client.results.block_until_complete(job, timeout=None, poll_interval=5)
 ```
 
 2. **Query a Job's Result**: this method simply queries the results for a job at any point in time and returns the status of the job, which includes the results if the job has completed.
 
 ```python
 #  Query results for a job at any point in time
-results = mdz.results.get(job)
+results = client.results.get(job)
 ```
 
 ## Running Inferences at the Edge
@@ -188,9 +188,9 @@ from modzy import ApiClient
 BASE_URL = "Valid Modzy URL" # e.g., "https://trial.modzy.com"
 API_KEY = "Valid Modzy API Key" # e.g., "JbFkWZMx4Ea3epIrxSgA.a2fR36fZi3sdFPoztAXT"
 
-mdz = ApiClient(base_url=BASE_URL, api_key=API_KEY)
+client = ApiClient(base_url=BASE_URL, api_key=API_KEY)
 
-model_data = mdz.models.deploy(
+model_data = client.models.deploy(
     container_image="modzy/grpc-echo-model:1.0.0",
     model_name="Echo Model",
     model_version="0.0.1",
@@ -205,7 +205,7 @@ model_data = mdz.models.deploy(
 
 print(model_data)
 ```
-To use **`mdz.models.deploy()`** there are 4 fields that are required:
+To use **`client.models.deploy()`** there are 4 fields that are required:
 * `container_image (str)`: This parameter must represent a container image repository & tag name, or in other words, the string you would include after a docker pull command. For example, if you were to download this container image using docker pull modzy/grpc-echo-model:1.0.0, include just modzy/grpc-echo-model:1.0.0 for this parameter
 * `model_name`: The name of your model you would like to deploy
 * `model_version`: The version of your model you would like to deploy
