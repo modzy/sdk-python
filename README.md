@@ -1,3 +1,5 @@
+<div align="center">
+
 ![GitHub contributors](https://img.shields.io/github/contributors/modzy/sdk-python?logo=GitHub&style=flat-square)
 ![GitHub last commit](https://img.shields.io/github/last-commit/modzy/sdk-python?logo=GitHub&style=flat-square)
 ![GitHub issues](https://img.shields.io/github/issues-raw/modzy/sdk-python?logo=github&style=flat-square)
@@ -7,6 +9,8 @@
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/modzy-sdk?logo=pypi&style=flat-square)
 
 ![Modzy Python SDK Banner](https://github.com/modzy/sdk-python/blob/main/python-sdk-github-banner.png)
+
+</div>
 # Installation
 
 Install Modzy's Python SDK with PIP
@@ -148,6 +152,25 @@ job = mdz.jobs.submit_netapp_storage_grid("ed542963de", "1.0.1", sources, ACCESS
 
 
 ## Getting Results
+Modzy's inference APIs are asynchronous by nature, which means you can use the `results` API to query available results for all completed inference jobs at any point in time. There are two ways you might leverage this Python SDK to query results:
+
+1. **Block Job until it completes**: this method provides a mechanism to mimic a sycnchronous API by using two different APIs subsequently and a utility function.
+
+```python
+# Define sources dictionary with input data
+sources = {"my-input": {"input.txt": "Today is a beautiful day!"}}
+# Submit the text to v1.0.1 of a Sentiment Analysis model, and to make the job explainable, change explain=True
+job = mdz.jobs.submit_text("ed542963de", "1.0.1", sources, explain=False)
+# Use block until complete method to periodically ping the results API until job completes
+results = mdz.results.block_until_complete(job, timeout=None, poll_interval=5)
+```
+
+2. **Query a Job's Result**: this method simply queries the results for a job at any point in time and returns the status of the job, which includes the results if the job has completed.
+
+```python
+#  Query results for a job at any point in time
+results = mdz.results.get(job)
+```
 
 ## Running Inferences at the Edge
 
@@ -161,8 +184,8 @@ from modzy import ApiClient
 
 # Sets BASE_URL and API_KEY values
 # Best to set these as environment variables
-BASE_URL = "Valid Modzy URL"
-API_KEY = "Valid Modzy API Key"
+BASE_URL = "Valid Modzy URL" # e.g., "https://trial.modzy.com"
+API_KEY = "Valid Modzy API Key" # e.g., "JbFkWZMx4Ea3epIrxSgA.a2fR36fZi3sdFPoztAXT"
 
 mdz = ApiClient(base_url=BASE_URL, api_key=API_KEY)
 
@@ -204,6 +227,34 @@ $ python3 samples/job_with_text_input_sample.py
 # Documentation
 
 Modzy's SDK is built on top of the [Modzy HTTP/REST API](https://docs.modzy.com/reference/introduction). For a full list of features and supported routes visit [Python SDK on docs.modzy.com](https://docs.modzy.com/docs/python)
+
+# API Reference
+
+| Feature | Code |Api route
+| ---     | ---  | ---
+|Deploy new model|client.models.deploy()|[api/models](https://docs.modzy.com/reference/model-deployment)
+|Get all models|client.models.get_all()|[api/models](https://docs.modzy.com/reference/get-all-models)|
+|List models|client.models.get_models()|[api/models](https://docs.modzy.com/reference/list-models)|
+|Get model details|client.models.get()|[api/models/:model-id](https://docs.modzy.com/reference/list-model-details)|
+|List models by name|client.models.get_by_name()|[api/models](https://docs.modzy.com/reference/list-models)|
+|List models by tag|client.tags.get_tags_and_models()|[api/models/tags/:tag-id](https://docs.modzy.com/reference/list-models-by-tag) |
+|Get related models|client.models.get_related()|[api/models/:model-id/related-models](https://docs.modzy.com/reference/get-related-models)|
+|List a model's versions|client.models.get_versions()|[api/models/:model-id/versions](https://docs.modzy.com/reference/list-versions)|
+|Get a version's details|client.models.get_version()|[api/models/:model-id/versions/:version-id](https://docs.modzy.com/reference/get-version-details)|
+|Update processing engines|client.models.update_processing_engines()|[api/resource/models](https://docs.modzy.com/reference/update-a-version-1)|
+|Get minimum engines|client.models.get_minimum_engines()|[api/models/processing-engines](https://docs.modzy.com/reference/get-minimum-engines)|
+|List tags|client.tags.get_all()|[api/models/tags](https://docs.modzy.com/reference/list-tags)|
+|Submit a Job (Text)|client.jobs.submit_text()|[api/jobs](https://docs.modzy.com/reference/create-a-job-1)|
+|Submit a Job (Embedded)|client.jobs.submit_embedded()|[api/jobs](https://docs.modzy.com/reference/create-a-job-1)|
+|Submit a Job (File)|client.jobs.submit_file()|[api/jobs](https://docs.modzy.com/reference/create-a-job-1)|
+|Submit a Job (AWS S3)|client.jobs.submit_aws_s3()|[api/jobs](https://docs.modzy.com/reference/create-a-job-1)|
+|Submit a Job (JDBC)|client.jobs.submit_jdbc()|[api/jobs](https://docs.modzy.com/reference/create-a-job-1)|
+|Cancel job|job.cancel()|[api/jobs/:job-id](https://docs.modzy.com/reference/cancel-a-job)  |
+|Hold until inference is complete|job.block_until_complete()|[api/jobs/:job-id](https://docs.modzy.com/reference/get-job-details)  |
+|Get job details|client.jobs.get()|[api/jobs/:job-id](https://docs.modzy.com/reference/get-job-details)  |
+|Get results|job.get_result()|[api/results/:job-id](https://docs.modzy.com/reference/get-results)  |
+|Get the job history|client.jobs.get_history()|[api/jobs/history](https://docs.modzy.com/reference/list-the-job-history)  |
+
 # Support
 
 For support, email opensource@modzy.com or join our [Slack](https://www.modzy.com/slack).
