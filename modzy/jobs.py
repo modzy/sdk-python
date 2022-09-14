@@ -613,7 +613,12 @@ class Jobs:
         identifier = Model._coerce_identifier(model)
         version = str(version)
         access_key_id = str(access_key_id)
-        endpoint = str(endpoint)
+        if not str(endpoint).startswith("https://") and not str(endpoint).startswith("http://"):
+            endpoint = "https://" + str(endpoint)
+        elif str(endpoint).startswith("http://"):
+            endpoint = "https://" + endpoint.split("http://")[-1]
+        else:
+            endpoint = str(endpoint)
 
         body = {
             "model": {
