@@ -11,6 +11,7 @@
 ![Modzy Python SDK Banner](https://github.com/modzy/sdk-python/blob/main/python-sdk-github-banner.png)
 
 </div>
+
 # Installation
 
 Install Modzy's Python SDK with PIP
