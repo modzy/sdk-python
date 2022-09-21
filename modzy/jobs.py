@@ -2,7 +2,9 @@
 """Classes for interacting with jobs."""
 
 import logging
+from multiprocessing.sharedctypes import Value
 import time
+import boto3
 from datetime import datetime
 from types import SimpleNamespace
 from urllib.parse import urlencode
@@ -10,7 +12,7 @@ from ._api_object import ApiObject
 from ._size import human_read_to_bytes
 from ._util import encode_data_uri, depth, file_to_chunks, bytes_to_chunks
 from .error import Timeout
-from .models import Model
+from .models import Model, Models
 from deprecation import deprecated
 
 
@@ -201,6 +203,34 @@ class Jobs:
         else:
             return sources
 
+    def check_storagegrid_endpoint(self, endpoint, bucket, access_key_id, secret_access_key):
+
+        # establish session with aws sdk
+        session = boto3.session.Session()
+        # try to connect to storagegrid endpoint
+        req_check=False
+        try:
+            s3 = session.resource(service_name='s3', endpoint_url=endpoint, verify=False, aws_access_key_id=access_key_id, aws_secret_access_key=secret_access_key)  
+            bucket_exists = s3.Bucket(bucket) in s3.buckets.all()
+            if not bucket_exists:
+                raise ValueError
+            req_check=True
+            new_endpoint=endpoint
+        except Exception as e:
+            if not str(endpoint).startswith("https://") and not str(endpoint).startswith("http://"):
+                new_endpoint = "https://" + str(endpoint)
+                self.check_storagegrid_endpoint(new_endpoint, bucket, access_key_id, secret_access_key)
+                req_check = True
+            elif str(endpoint).startswith("http://"):
+                new_endpoint = "https://" + endpoint.split("http://")[-1]
+                self.check_storagegrid_endpoint(new_endpoint, bucket, access_key_id, secret_access_key)
+                req_check = True
+        
+        if not req_check:
+            raise ValueError("Invalid endpoint or bucket name. The endpoint param should point to a valid endpoint associated with your StorageGRID account. Confirm both your endpoint and the bucket name in your input sources dictionary are correct and try again.")        
+        
+        return new_endpoint
+        
     def submit_text(self, model, version, sources, explain=False):
         """Submits text data for a multiple source `Job`.
 
@@ -613,14 +643,19 @@ class Jobs:
         identifier = Model._coerce_identifier(model)
         version = str(version)
         access_key_id = str(access_key_id)
-        # storageGRID endpoint must begin with "https://", so this conducts a quick test
-        if not str(endpoint).startswith("https://") and not str(endpoint).startswith("http://"):
-            endpoint = "https://" + str(endpoint)
-        elif str(endpoint).startswith("http://"):
-            endpoint = "https://" + endpoint.split("http://")[-1]
-        else:
-            endpoint = str(endpoint)
-
+        models = Models(self._api_client)
+        sample_input_key = list(models.get_version_input_sample(identifier, version)["input"]["sources"].keys())[0]
+        input_filename = list(models.get_version_input_sample(identifier, version)["input"]["sources"][sample_input_key].keys())[0]
+        # validate storageGRID endpoint 
+        try:
+            first_key = list(sources.keys())[0]
+            if first_key == input_filename:
+                bucket = sources[first_key]["bucket"]
+            else:
+                bucket = sources[first_key][input_filename]["bucket"]
+        except Exception:
+            raise ValueError("Invalid input sources file. Confirm your sources dictionary meets the required format (https://docs.modzy.com/docs/clientjobssubmit_netapp_storage_grid) and try again.")
+        endpoint = self.check_storagegrid_endpoint(endpoint, bucket, access_key_id, secret_access_key)
         body = {
             "model": {
                 "identifier": identifier,

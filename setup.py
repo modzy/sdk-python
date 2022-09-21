@@ -11,7 +11,7 @@ with open('README.md') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['requests', 'python-dotenv', 'deprecation', 'protobuf==3.19.4', 'grpcio', 'google-api-python-client']
+requirements = ['requests', 'python-dotenv', 'deprecation', 'protobuf==3.19.4', 'grpcio', 'google-api-python-client', 'boto3']
 
 # removed in 0.7.1 test_requirements = ['pytest']
 
@@ -40,6 +40,6 @@ setup(
     # removed in 0.7.1 test_suite='tests',
     # removed in 0.7.1 tests_require=test_requirements,
     url='https://github.com/modzy/sdk-python',
-    version='0.9.0.post',
+    version='0.9.1',
     zip_safe=False,
 )
