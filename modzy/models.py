@@ -383,7 +383,7 @@ class Models:
         return list(Model(json_obj, self._api_client) for json_obj in json_list)
 
     def deploy(
-        self, container_image, model_name, model_version, sample_input_file, credentials=None, 
+        self, container_image, model_name, model_version, sample_input_file=None, arm64=False, credentials=None, 
         model_id=None, run_timeout=None, status_timeout=None, short_description=None, tags=[], 
         gpu=False, long_description=None, technical_details=None, performance_summary=None,
         performance_metrics=None, input_details=None, output_details=None
@@ -394,6 +394,7 @@ class Models:
             container_image (str): Docker container image to be deployed. This string should represent what follows a `docker pull` command 
             model_name (str): Name of model to be deployed
             model_version (str): Version of model to be deployed
+            arm64 (bool): If True, deploy method will expedite the deployment process and bypass some Modzy tests that are only available for x86 compiled models. 
             sample_input_file (str): Path to local file to be used for sample inference
             credentials (dict): Dictionary containing credentials if the container image is private. The keys in this dictionary must be `["user", "pass"]`
             model_id (str): Model identifier if deploying a new version to a model that already exists
@@ -454,47 +455,68 @@ class Models:
         run_timeout_body = int(run_timeout)*1000 if run_timeout else 60000
         status_timeout_body = int(status_timeout)*1000 if status_timeout else 60000
 
-        model_metadata = {
-            "requirement": {"requirementId": -6 if gpu else 1},
-            "timeout": {
-                "run": run_timeout_body,
-                "status": status_timeout_body
-            },
-            "inputs": input_details or self.default_inputs,
-            "outputs": output_details or self.default_outputs,    
-            "statistics": performance_metrics or [],
-            "processing": {
-                "minimumParallelCapacity": 0,
-                "maximumParallelCapacity": 1
-            },
-            "longDescription": long_description or "",
-            "technicalDetails": technical_details or "",
-            "performanceSummary": performance_summary or ""
-        }
-        model_data = self._api_client.http.patch(f"{self._base_route}/{identifier}/versions/{version}", model_metadata)
-        self.logger.info(f"Model Data: {json.dumps(model_data)}")
+        '''
+        TESTING FOR ARM64 model
+        '''
+        if arm64:
+            model_metadata = {
+                "requirement": {"requirementId": -99},
+            }     
+            model_data = self._api_client.http.patch(f"{self._base_route}/{identifier}/versions/{version}", model_metadata)
+            self.logger.info(f"Model Data: {json.dumps(model_data)}")
 
-        # load model container
-        try:
-            load_model(self._api_client, self.logger, identifier, version)
-        except Exception as e:
-            raise ValueError("Loading model container failed. Make sure you passed through a valid Docker registry container image. \n\nSee full error below:\n{}".format(e))
-        # upload sample data for inference test
-        try:
-            upload_input_example(self._api_client, self.logger, identifier, version, model_data, sample_input_file)
-        except Exception as e:
-            raise ValueError("Uploading sample input failed. \n\nSee full error below:\n{}".format(e))
-        # run sample inference
-        try:
-            run_model(self._api_client, self.logger, identifier, version)
-        except Exception as e:
-            raise ValueError("Inference test failed. Make sure the provided input sample is valid and your model can process it for inference. \n\nSee full error below:\n{}".format(e))
-        # deploy model pending all tests have passed
-        try:
-            deploy_model(self._api_client, self.logger, identifier, version)
-        except Exception as e:
-            raise ValueError("Deployment failed. Check to make sure all of your parameters and assets are valid and try again. \n\nSee full error below:\n{}".format(e))
-        
+            # load model container
+            try:
+                load_model(self._api_client, self.logger, identifier, version)
+            except Exception as e:
+                raise ValueError("Loading model container failed. Make sure you passed through a valid Docker registry container image. \n\nSee full error below:\n{}".format(e))
+            # deploy model and skip tests (because model is compiled for arm64)
+            try:
+                deploy_model(self._api_client, self.logger, identifier, version)
+            except Exception as e:
+                raise ValueError("Deployment failed. Check to make sure all of your parameters and assets are valid and try again. \n\nSee full error below:\n{}".format(e))
+        else: 
+            model_metadata = {
+                "requirement": {"requirementId": -6 if gpu else 1},
+                "timeout": {
+                    "run": run_timeout_body,
+                    "status": status_timeout_body
+                },
+                "inputs": input_details or self.default_inputs,
+                "outputs": output_details or self.default_outputs,    
+                "statistics": performance_metrics or [],
+                "processing": {
+                    "minimumParallelCapacity": 0,
+                    "maximumParallelCapacity": 1
+                },
+                "longDescription": long_description or "",
+                "technicalDetails": technical_details or "",
+                "performanceSummary": performance_summary or ""
+            }
+            model_data = self._api_client.http.patch(f"{self._base_route}/{identifier}/versions/{version}", model_metadata)
+            self.logger.info(f"Model Data: {json.dumps(model_data)}")
+
+            # load model container
+            try:
+                load_model(self._api_client, self.logger, identifier, version)
+            except Exception as e:
+                raise ValueError("Loading model container failed. Make sure you passed through a valid Docker registry container image. \n\nSee full error below:\n{}".format(e))
+            # upload sample data for inference test
+            try:
+                upload_input_example(self._api_client, self.logger, identifier, version, model_data, sample_input_file)
+            except Exception as e:
+                raise ValueError("Uploading sample input failed. \n\nSee full error below:\n{}".format(e))
+            # run sample inference
+            try:
+                run_model(self._api_client, self.logger, identifier, version)
+            except Exception as e:
+                raise ValueError("Inference test failed. Make sure the provided input sample is valid and your model can process it for inference. \n\nSee full error below:\n{}".format(e))
+            # deploy model pending all tests have passed
+            try:
+                deploy_model(self._api_client, self.logger, identifier, version)
+            except Exception as e:
+                raise ValueError("Deployment failed. Check to make sure all of your parameters and assets are valid and try again. \n\nSee full error below:\n{}".format(e))
+            
         # get new model URL and return model data
         base_url = self._api_client.base_url.split("api")[0][:-1] 
         container_data = {
