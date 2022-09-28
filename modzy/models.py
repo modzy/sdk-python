@@ -448,7 +448,7 @@ class Models:
             container_image (str): Docker container image to be deployed. This string should represent what follows a `docker pull` command 
             model_name (str): Name of model to be deployed
             model_version (str): Version of model to be deployed
-            architecture (str): `{'amd64', 'arm64', 'arm'}` If set to `arm`, deploy method will expedite the deployment process and bypass some Modzy tests that are only available for x86 compiled models. 
+            architecture (str): `{'amd64', 'arm64', 'arm'}` If set to `arm64` or `arm`, deploy method will expedite the deployment process and bypass some Modzy tests that are only available for models compiled for amd64 chips. 
             sample_input_file (str): Path to local file to be used for sample inference
             credentials (dict): Dictionary containing credentials if the container image is private. The keys in this dictionary must be `["user", "pass"]`
             model_id (str): Model identifier if deploying a new version to a model that already exists
