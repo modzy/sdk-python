@@ -12,6 +12,10 @@ from time import time as t
 from time import sleep
 from ._util import load_model, upload_input_example, run_model, deploy_model
 
+# define constants used for model deployment method
+MODEL_HARDWARE_GPU_ID = -6
+MODEL_HARDWARE_ARM_ID = -99
+MODEL_HARDWARE_OTHER_ID = 1
 class Models:
     """The `Models` object.
 
@@ -416,10 +420,10 @@ class Models:
         model_metadata_patch = {
             "inputs": input_details, 
             "outputs": output_details,   
-            "statistics": performance_metrics or [],
-            "longDescription": long_description or "",
-            "technicalDetails": technical_details or "",
-            "performanceSummary": performance_summary or ""                
+            "statistics": performance_metrics,
+            "longDescription": long_description,
+            "technicalDetails": technical_details,
+            "performanceSummary": performance_summary                
         }
         model_data_patch = self._api_client.http.patch(f"{self._base_route}/{model_id}/versions/{model_version}", model_metadata_patch)
         self.logger.info(f"Patched Model Data: {json.dumps(model_data_patch)}")  
@@ -433,7 +437,7 @@ class Models:
         return container_data                 
     
     def deploy(
-        self, container_image, model_name, model_version, sample_input_file=None, arch="amd", credentials=None, 
+        self, container_image, model_name, model_version, sample_input_file=None, architecture="amd64", credentials=None, 
         model_id=None, run_timeout=None, status_timeout=None, short_description=None, tags=[], 
         gpu=False, long_description=None, technical_details=None, performance_summary=None,
         performance_metrics=None, input_details=None, output_details=None
@@ -444,7 +448,7 @@ class Models:
             container_image (str): Docker container image to be deployed. This string should represent what follows a `docker pull` command 
             model_name (str): Name of model to be deployed
             model_version (str): Version of model to be deployed
-            amd (str): `{'amd', 'arm'}` If set to `arm`, deploy method will expedite the deployment process and bypass some Modzy tests that are only available for x86 compiled models. 
+            architecture (str): `{'amd64', 'arm64', 'arm'}` If set to `arm`, deploy method will expedite the deployment process and bypass some Modzy tests that are only available for x86 compiled models. 
             sample_input_file (str): Path to local file to be used for sample inference
             credentials (dict): Dictionary containing credentials if the container image is private. The keys in this dictionary must be `["user", "pass"]`
             model_id (str): Model identifier if deploying a new version to a model that already exists
@@ -505,10 +509,10 @@ class Models:
         run_timeout_body = int(run_timeout)*1000 if run_timeout else 60000
         status_timeout_body = int(status_timeout)*1000 if status_timeout else 60000
 
-        if arch=="arm":
+        if architecture in ["arm64", "arm"]:
             # assign "ARM" hardware requirement to bypass validation tests
             model_metadata = {
-                "requirement": {"requirementId": -99},                
+                "requirement": {"requirementId": MODEL_HARDWARE_ARM_ID},                
             }     
             model_data = self._api_client.http.patch(f"{self._base_route}/{identifier}/versions/{version}", model_metadata)
             self.logger.info(f"Model Data: {json.dumps(model_data)}")
@@ -540,9 +544,9 @@ class Models:
                 deploy_model(self._api_client, self.logger, identifier, version)
             except Exception as e:
                 raise ValueError("Deployment failed. Check to make sure all of your parameters and assets are valid and try again. \n\nSee full error below:\n{}".format(e))
-        elif arch=="amd": 
+        elif architecture=="amd64": 
             model_metadata = {
-                "requirement": {"requirementId": -6 if gpu else 1},
+                "requirement": {"requirementId": MODEL_HARDWARE_GPU_ID if gpu else MODEL_HARDWARE_OTHER_ID},
                 "timeout": {
                     "run": run_timeout_body,
                     "status": status_timeout_body
@@ -582,7 +586,7 @@ class Models:
             except Exception as e:
                 raise ValueError("Deployment failed. Check to make sure all of your parameters and assets are valid and try again. \n\nSee full error below:\n{}".format(e))
         else:
-            raise ValueError("Invalid value for `arch` parameter. Choose option from array: {'amd', 'arm'}")
+            raise ValueError("Invalid value for `architecture` parameter. Choose option from array: {'amd', 'arm'}")
             
         # get new model URL and return model data
         base_url = self._api_client.base_url.split("api")[0][:-1] 
