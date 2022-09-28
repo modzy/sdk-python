@@ -12,6 +12,10 @@ from time import time as t
 from time import sleep
 from ._util import load_model, upload_input_example, run_model, deploy_model
 
+# define constants used for model deployment method
+MODEL_HARDWARE_GPU_ID = -6
+MODEL_HARDWARE_ARM_ID = -99
+MODEL_HARDWARE_OTHER_ID = 1
 class Models:
     """The `Models` object.
 
@@ -382,8 +386,58 @@ class Models:
         json_list = self._api_client.http.get('{}?{}'.format(self._base_route, urlencode(body)))
         return list(Model(json_obj, self._api_client) for json_obj in json_list)
 
+    def edit_model_metadata(self, model_id, model_version, long_description=None, technical_details=None, 
+                            performance_summary=None, performance_metrics=None, input_details=None, output_details=None):
+
+        '''
+        Edit a model's metadata after it is deployed
+
+        Args:
+            model_id (str): Model identifier of model to edit
+            model_version (str): Model version of model to edit
+            long_description (str): Description to appear on model biography page
+            technical_details (str): Technical details to appear on model biography page. Markdown is accepted
+            performance_summary (str): Description providing model performance to appear on model biography page
+            performance_metrics (List): List of arrays describing model performance statistics
+            input_details (List): List of dictionaries describing details of model inputs
+            output_details (List): List of dictionaries describing details of model outputs
+
+        Returns:
+            dict: Metadata of newly edited model information including formatted URL to newly deployed model page.
+        Raises:
+            ApiError: A subclass of ApiError will be raised if the API returns an error status,
+                or the client is unable to connect.        
+        '''
+
+        # validate model version exists    
+        try:
+            json_obj = self._api_client.http.get('{}/{}/versions/{}'.format(self._base_route, model_id, model_version))
+            _ = ModelVersion(json_obj, self._api_client)
+        except NotFoundError as e:
+            raise e
+
+        # update model metadata
+        model_metadata_patch = {
+            "inputs": input_details, 
+            "outputs": output_details,   
+            "statistics": performance_metrics,
+            "longDescription": long_description,
+            "technicalDetails": technical_details,
+            "performanceSummary": performance_summary                
+        }
+        model_data_patch = self._api_client.http.patch(f"{self._base_route}/{model_id}/versions/{model_version}", model_metadata_patch)
+        self.logger.info(f"Patched Model Data: {json.dumps(model_data_patch)}")  
+
+        # get edited model URL and return model data
+        base_url = self._api_client.base_url.split("api")[0][:-1] 
+        container_data = {
+            'model_data': json.dumps(model_data_patch),
+            'container_url': f"{base_url}{self._base_route}/{model_id}/{model_version}"
+        }
+        return container_data                 
+    
     def deploy(
-        self, container_image, model_name, model_version, sample_input_file, credentials=None, 
+        self, container_image, model_name, model_version, sample_input_file=None, architecture="amd64", credentials=None, 
         model_id=None, run_timeout=None, status_timeout=None, short_description=None, tags=[], 
         gpu=False, long_description=None, technical_details=None, performance_summary=None,
         performance_metrics=None, input_details=None, output_details=None
@@ -394,6 +448,7 @@ class Models:
             container_image (str): Docker container image to be deployed. This string should represent what follows a `docker pull` command 
             model_name (str): Name of model to be deployed
             model_version (str): Version of model to be deployed
+            architecture (str): `{'amd64', 'arm64', 'arm'}` If set to `arm64` or `arm`, deploy method will expedite the deployment process and bypass some Modzy tests that are only available for models compiled for amd64 chips. 
             sample_input_file (str): Path to local file to be used for sample inference
             credentials (dict): Dictionary containing credentials if the container image is private. The keys in this dictionary must be `["user", "pass"]`
             model_id (str): Model identifier if deploying a new version to a model that already exists
@@ -454,47 +509,85 @@ class Models:
         run_timeout_body = int(run_timeout)*1000 if run_timeout else 60000
         status_timeout_body = int(status_timeout)*1000 if status_timeout else 60000
 
-        model_metadata = {
-            "requirement": {"requirementId": -6 if gpu else 1},
-            "timeout": {
-                "run": run_timeout_body,
-                "status": status_timeout_body
-            },
-            "inputs": input_details or self.default_inputs,
-            "outputs": output_details or self.default_outputs,    
-            "statistics": performance_metrics or [],
-            "processing": {
-                "minimumParallelCapacity": 0,
-                "maximumParallelCapacity": 1
-            },
-            "longDescription": long_description or "",
-            "technicalDetails": technical_details or "",
-            "performanceSummary": performance_summary or ""
-        }
-        model_data = self._api_client.http.patch(f"{self._base_route}/{identifier}/versions/{version}", model_metadata)
-        self.logger.info(f"Model Data: {json.dumps(model_data)}")
+        if architecture in ["arm64", "arm"]:
+            # assign "ARM" hardware requirement to bypass validation tests
+            model_metadata = {
+                "requirement": {"requirementId": MODEL_HARDWARE_ARM_ID},                
+            }     
+            model_data = self._api_client.http.patch(f"{self._base_route}/{identifier}/versions/{version}", model_metadata)
+            self.logger.info(f"Model Data: {json.dumps(model_data)}")
 
-        # load model container
-        try:
-            load_model(self._api_client, self.logger, identifier, version)
-        except Exception as e:
-            raise ValueError("Loading model container failed. Make sure you passed through a valid Docker registry container image. \n\nSee full error below:\n{}".format(e))
-        # upload sample data for inference test
-        try:
-            upload_input_example(self._api_client, self.logger, identifier, version, model_data, sample_input_file)
-        except Exception as e:
-            raise ValueError("Uploading sample input failed. \n\nSee full error below:\n{}".format(e))
-        # run sample inference
-        try:
-            run_model(self._api_client, self.logger, identifier, version)
-        except Exception as e:
-            raise ValueError("Inference test failed. Make sure the provided input sample is valid and your model can process it for inference. \n\nSee full error below:\n{}".format(e))
-        # deploy model pending all tests have passed
-        try:
-            deploy_model(self._api_client, self.logger, identifier, version)
-        except Exception as e:
-            raise ValueError("Deployment failed. Check to make sure all of your parameters and assets are valid and try again. \n\nSee full error below:\n{}".format(e))
-        
+            # load model container
+            try:
+                load_model(self._api_client, self.logger, identifier, version)
+            except Exception as e:
+                raise ValueError("Loading model container failed. Make sure you passed through a valid Docker registry container image. \n\nSee full error below:\n{}".format(e))
+            
+            # update model metadata
+            model_metadata_patch = {
+                "inputs": input_details, 
+                "outputs": output_details,   
+                "statistics": performance_metrics or [],
+                "processing": {
+                    "minimumParallelCapacity": 0,
+                    "maximumParallelCapacity": 1
+                },
+                "longDescription": long_description or "",
+                "technicalDetails": technical_details or "",
+                "performanceSummary": performance_summary or ""                
+            }
+            model_data = self._api_client.http.patch(f"{self._base_route}/{identifier}/versions/{version}", model_metadata_patch)
+            self.logger.info(f"Patched Model Data: {json.dumps(model_data)}")            
+            
+            # deploy model and skip tests (because model is compiled for arm64)
+            try:
+                deploy_model(self._api_client, self.logger, identifier, version)
+            except Exception as e:
+                raise ValueError("Deployment failed. Check to make sure all of your parameters and assets are valid and try again. \n\nSee full error below:\n{}".format(e))
+        elif architecture=="amd64": 
+            model_metadata = {
+                "requirement": {"requirementId": MODEL_HARDWARE_GPU_ID if gpu else MODEL_HARDWARE_OTHER_ID},
+                "timeout": {
+                    "run": run_timeout_body,
+                    "status": status_timeout_body
+                },
+                "inputs": input_details or self.default_inputs,
+                "outputs": output_details or self.default_outputs,    
+                "statistics": performance_metrics or [],
+                "processing": {
+                    "minimumParallelCapacity": 0,
+                    "maximumParallelCapacity": 1
+                },
+                "longDescription": long_description or "",
+                "technicalDetails": technical_details or "",
+                "performanceSummary": performance_summary or ""
+            }
+            model_data = self._api_client.http.patch(f"{self._base_route}/{identifier}/versions/{version}", model_metadata)
+            self.logger.info(f"Model Data: {json.dumps(model_data)}")
+
+            # load model container
+            try:
+                load_model(self._api_client, self.logger, identifier, version)
+            except Exception as e:
+                raise ValueError("Loading model container failed. Make sure you passed through a valid Docker registry container image. \n\nSee full error below:\n{}".format(e))
+            # upload sample data for inference test
+            try:
+                upload_input_example(self._api_client, self.logger, identifier, version, model_data, sample_input_file)
+            except Exception as e:
+                raise ValueError("Uploading sample input failed. \n\nSee full error below:\n{}".format(e))
+            # run sample inference
+            try:
+                run_model(self._api_client, self.logger, identifier, version)
+            except Exception as e:
+                raise ValueError("Inference test failed. Make sure the provided input sample is valid and your model can process it for inference. \n\nSee full error below:\n{}".format(e))
+            # deploy model pending all tests have passed
+            try:
+                deploy_model(self._api_client, self.logger, identifier, version)
+            except Exception as e:
+                raise ValueError("Deployment failed. Check to make sure all of your parameters and assets are valid and try again. \n\nSee full error below:\n{}".format(e))
+        else:
+            raise ValueError("Invalid value for `architecture` parameter. Choose option from array: {'amd', 'arm'}")
+            
         # get new model URL and return model data
         base_url = self._api_client.base_url.split("api")[0][:-1] 
         container_data = {
