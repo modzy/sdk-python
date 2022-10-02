@@ -2,7 +2,7 @@
 import json
 import pathlib
 import time
-from .error import NetworkError
+from .error import NetworkError, InternalServerError
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 from base64 import b64encode
@@ -89,7 +89,9 @@ def load_model(client, logger, identifier, version):
             res = client.http.get(f"/models/{identifier}/versions/{version}/container-image")
             new_percentage = res.get("percentage")
         except NetworkError:
-            continue            
+            continue      
+        except InternalServerError:
+            continue      
 
         if new_percentage != percentage:
             logger.info(f'Loading model at {new_percentage}%')
@@ -107,7 +109,12 @@ def load_model(client, logger, identifier, version):
     adapter = HTTPAdapter(max_retries=retry_strategy)
     client.http.session.mount('https://', adapter)
 
-    res = client.http.post(f"/models/{identifier}/versions/{version}/load-process")
+    try:
+        res = client.http.post(f"/models/{identifier}/versions/{version}/load-process")
+    except NetworkError:
+        return      
+    except InternalServerError:
+        return          
 
     logger.info(f'Loading container image took [{1000*(time.time()-start)} ms]')
 

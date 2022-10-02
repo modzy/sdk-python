@@ -40,6 +40,6 @@ setup(
     # removed in 0.7.1 test_suite='tests',
     # removed in 0.7.1 tests_require=test_requirements,
     url='https://github.com/modzy/sdk-python',
-    version='0.10.0',
+    version='0.10.1',
     zip_safe=False,
 )
