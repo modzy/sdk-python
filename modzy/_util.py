@@ -150,6 +150,9 @@ def run_model(client, logger, identifier, version):
         time.sleep(1)
 
     test_output = res['result']
+    # perform validation check on test_output and raise error if error exists
+    if test_output["status"] == "FAILED":
+        raise ValueError(f'Sample inference test failed with error {test_output["error"]}. Check model container and try again.')
 
     sample_input = {'input': {'accessKeyID': '<accessKeyID>',
                                     'region': '<region>',
