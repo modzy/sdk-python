@@ -71,7 +71,7 @@ class Models:
         """
         model_id = Model._coerce_identifier(model)
 
-        endpoint = "/resources/processing/models"
+        endpoint = "/resources/processing/engines"
 
         result = self._api_client.http.get(endpoint)
 
