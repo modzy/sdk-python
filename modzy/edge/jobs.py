@@ -1,51 +1,65 @@
 import logging
+import time
 
-import grpc
+from google.protobuf.json_format import MessageToDict
+# NOTE: The following import line does work when the program runs
+# even though IntelliJ says it can't find "Struct" in the package.
+# This is due to the way that the Python files are generated from
+# the proto file in Protobuf 3.20.x+.
+from google.protobuf.struct_pb2 import Struct
+from grpc import Channel
+from grpc._channel import _InactiveRpcError
 
-from .inferences import EdgeInferenceClient
-from .jobs import EdgeJobsClient
+from .proto.common.v1.common_pb2 import ModelIdentifier
+from .proto.jobs.v1.jobs_pb2 import JobFilter, JobIdentifier, JobInput, JobSubmission
+from .proto.jobs.v1.jobs_pb2_grpc import JobServiceStub
+from .proto.results.v1.results_pb2_grpc import ResultsServiceStub
+from .._util import depth, encode_data_uri
+from ..error import ApiError, Timeout
 
 
-class EdgeClient:
-    """The Edge API client object.
+def _fix_single_source_job(sources, s3=False):
+    """Compatibility function to check and fix the sources parameter if is a single source dict
 
-    This class is used to interact with the Modzy Edge API.
+    Args:
+        sources (dict): a single of double source dict
 
-    Attributes:
-        host (str): The host for the Modzy Edge API.
-        port (int): The port on which Modzy Edge is listening.
+    Returns:
+        dict: a properly formatted sources dictionary
+
     """
+    dict_levels = depth(sources)
+    if dict_levels == (1 + s3):
+        return {'job': sources}
+    else:
+        return sources
 
-    def __init__(self, host, port):
-        """Creates an `ApiClient` instance.
 
-        Args:
-            host (str): The host for the API.
-            port (int): Port for the API.
-        """
+def _parse_inactive_rpc_error(inactive_rpc_error):
+    """Parse relevant info from _InactiveRpcError.
+
+    Args:
+        inactive_rpc_error (_InactiveRpcError): Error to be parsed.
+
+    Returns:
+        str: the error string.
+
+    """
+    lines = str(inactive_rpc_error).splitlines()
+    details_index = [lines.index(l) for l in lines if l.startswith('\tdetails')][0]
+    details_message = lines[details_index].split('=')[1].strip().replace('"', '')
+
+    return details_message
+
+
+class EdgeJobsClient:
+
+    def __init__(self, channel: Channel, origin=""):
         self.logger = logging.getLogger(__name__)
-        self.host = host
-        self.port = port
-        self.origin = '{}:{}'.format(self.host, self.port)
-        self._channel = None
-        self.jobs: EdgeJobsClient | None = None
-        self.inferences: EdgeInferenceClient | None = None
-
-    def connect(self):
-        if self._channel is None:
-            self._channel = grpc.insecure_channel(self.origin)
-            self.jobs = EdgeJobsClient(self._channel, origin=self.origin)
-            self.inferences = EdgeInferenceClient(self._channel, origin=self.origin)
-        return self
-
-    def close(self):
-        self._channel.close()
-
-    def __enter__(self):
-        return self.connect()
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        return self.close()
+        self.origin = origin
+        self._channel = channel
+        self._jobs_client = JobServiceStub(self._channel)
+        self._results_client = ResultsServiceStub(self._channel)
 
     def submit_embedded(self, identifier, version, sources, explain=False):
         """Submits a job containing embedded data.
@@ -80,9 +94,29 @@ class EdgeClient:
                     })
 
         """
-        self.logger.warning("Deprecated. Use EdgeClient.jobs.submit_embedded().")
-        self.connect()
-        return self.jobs.submit_embedded(identifier, version, sources, explain)
+
+        sources = {
+            source: {
+                key: encode_data_uri(value)
+                for key, value in inputs.items()
+            }
+            for source, inputs in _fix_single_source_job(sources).items()
+        }
+
+        sources_struct = Struct()
+        for k, v in sources.items():
+            sources_struct[k] = v
+
+        job_input = JobInput(type="embedded", sources=sources_struct)
+        model_identifier = ModelIdentifier(identifier=identifier, version=version)
+        job_submission = JobSubmission(model=model_identifier, input=job_input, explain=explain)
+
+        try:
+            job_receipt = self._jobs_client.SubmitJob(job_submission)
+        except _InactiveRpcError as e:
+            raise ApiError(_parse_inactive_rpc_error(e), self.origin) from e
+
+        return job_receipt.job_identifier
 
     def submit_text(self, identifier, version, sources, explain=False):
         """Submits text data for a multiple source `Job`.
@@ -117,9 +151,20 @@ class EdgeClient:
                     })
 
         """
-        self.logger.warning("Deprecated. Use EdgeClient.jobs.submit_text().")
-        self.connect()
-        return self.jobs.submit_text(identifier, version, sources, explain)
+        sources_struct = Struct()
+        for k, v in _fix_single_source_job(sources).items():
+            sources_struct[k] = v
+
+        job_input = JobInput(type="text", sources=sources_struct)
+        model_identifier = ModelIdentifier(identifier=identifier, version=version)
+        job_submission = JobSubmission(model=model_identifier, input=job_input, explain=explain)
+
+        try:
+            job_receipt = self._jobs_client.SubmitJob(job_submission)
+        except _InactiveRpcError as e:
+            raise ApiError(_parse_inactive_rpc_error(e), self.origin) from e
+
+        return job_receipt.job_identifier
 
     def submit_aws_s3(self, identifier, version, sources, access_key_id, secret_access_key, region, explain=False):
         """Submits AwS S3 hosted data for a multiple source `Job`.
@@ -172,9 +217,22 @@ class EdgeClient:
                         region='us-east-1',
                     )
         """
-        self.logger.warning("Deprecated. Use EdgeClient.jobs.submit_aws_s3().")
-        self.connect()
-        return self.jobs.submit_aws_s3(identifier, version, sources, access_key_id, secret_access_key, region, explain)
+        sources_struct = Struct()
+        for k, v in _fix_single_source_job(sources, s3=True).items():
+            sources_struct[k] = v
+
+        job_input = JobInput(type="aws-s3", accessKeyID=access_key_id, secretAccessKey=secret_access_key,
+                             region=region, sources=sources_struct)
+
+        model_identifier = ModelIdentifier(identifier=identifier, version=version)
+        job_submission = JobSubmission(model=model_identifier, input=job_input, explain=explain)
+
+        try:
+            job_receipt = self._jobs_client.SubmitJob(job_submission)
+        except _InactiveRpcError as e:
+            raise ApiError(_parse_inactive_rpc_error(e), self.origin) from e
+
+        return job_receipt.job_identifier
 
     def get_job_details(self, job_identifier):
         """Get job details.
@@ -189,9 +247,14 @@ class EdgeClient:
             ApiError: An ApiError will be raised if the API returns an error status,
                 or the client is unable to connect.
         """
-        self.logger.warning("Deprecated. Use EdgeClient.jobs.get_job_details().")
-        self.connect()
-        return self.jobs.get_job_details(job_identifier)
+        job_identifier = JobIdentifier(identifier=job_identifier)
+
+        try:
+            job_details = self._jobs_client.GetJob(job_identifier)
+        except _InactiveRpcError as e:
+            raise ApiError(_parse_inactive_rpc_error(e), self.origin) from e
+
+        return MessageToDict(job_details)
 
     def get_all_job_details(self, timeout=None):
         """Get job details for all jobs.
@@ -206,9 +269,12 @@ class EdgeClient:
             ApiError: An ApiError will be raised if the API returns an error status,
                 or the client is unable to connect.
         """
-        self.logger.warning("Deprecated. Use EdgeClient.jobs.get_all_job_details().")
-        self.connect()
-        return self.jobs.get_all_job_details(timeout)
+        try:
+            all_job_details = self._jobs_client.GetJobs(JobFilter(), timeout=timeout)
+        except _InactiveRpcError as e:
+            raise ApiError(_parse_inactive_rpc_error(e), self.origin) from e
+
+        return MessageToDict(all_job_details)
 
     def block_until_complete(self, job_identifier, poll_interval=0.01, timeout=30):
         """Block until job complete.
@@ -223,9 +289,14 @@ class EdgeClient:
             ApiError: An ApiError will be raised if the API returns an error status,
                 or the client is unable to connect.
         """
-        self.logger.warning("Deprecated. Use EdgeClient.jobs.block_until_complete().")
-        self.connect()
-        self.jobs.block_until_complete(job_identifier, poll_interval, timeout)
+        endby = time.time() + timeout if (timeout is not None) else None
+        while True:
+            job_details = self.get_job_details(job_identifier)
+            if job_details['status'] in {"COMPLETE", "CANCELLED", "FAILED"}:
+                return job_details
+            time.sleep(poll_interval)
+            if (endby is not None) and (time.time() > endby - poll_interval):
+                raise Timeout('timed out before completion')
 
     def get_results(self, job_identifier):
         """Block until job complete.
@@ -240,6 +311,10 @@ class EdgeClient:
             ApiError: An ApiError will be raised if the API returns an error status,
                 or the client is unable to connect.
         """
-        self.logger.warning("Deprecated. Use EdgeClient.jobs.get_results().")
-        self.connect()
-        return self.jobs.get_results(job_identifier)
+        job_identifier = JobIdentifier(identifier=job_identifier)
+        try:
+            results = self._results_client.GetResults(job_identifier)
+        except _InactiveRpcError as e:
+            raise ApiError(_parse_inactive_rpc_error(e), self.origin) from e
+
+        return MessageToDict(results)

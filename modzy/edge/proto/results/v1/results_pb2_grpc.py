@@ -2,8 +2,9 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from modzy.edge.proto.jobs.v1 import job_pb2 as jobs_dot_v1_dot_job__pb2
-from modzy.edge.proto.results.v1 import results_pb2 as results_dot_v1_dot_results__pb2
+from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
+from modzy.edge.proto.jobs.v1 import jobs_pb2 as protos_dot_modzy_dot_jobs_dot_v1_dot_jobs__pb2
+from modzy.edge.proto.results.v1 import results_pb2 as protos_dot_modzy_dot_results_dot_v1_dot_results__pb2
 
 
 class ResultsServiceStub(object):
@@ -17,8 +18,38 @@ class ResultsServiceStub(object):
         """
         self.GetResults = channel.unary_unary(
                 '/results.v1.ResultsService/GetResults',
-                request_serializer=jobs_dot_v1_dot_job__pb2.JobIdentifier.SerializeToString,
-                response_deserializer=results_dot_v1_dot_results__pb2.ResultsResponse.FromString,
+                request_serializer=protos_dot_modzy_dot_jobs_dot_v1_dot_jobs__pb2.JobIdentifier.SerializeToString,
+                response_deserializer=protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.Results.FromString,
+                )
+        self.GetResult = channel.unary_unary(
+                '/results.v1.ResultsService/GetResult',
+                request_serializer=protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.ResultIdentifier.SerializeToString,
+                response_deserializer=protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.Result.FromString,
+                )
+        self.GetResultOutput = channel.unary_unary(
+                '/results.v1.ResultsService/GetResultOutput',
+                request_serializer=protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.OutputIdentifier.SerializeToString,
+                response_deserializer=protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.ResultOutput.FromString,
+                )
+        self.UpVoteResult = channel.unary_unary(
+                '/results.v1.ResultsService/UpVoteResult',
+                request_serializer=protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.ResultIdentifier.SerializeToString,
+                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                )
+        self.DownVoteResult = channel.unary_unary(
+                '/results.v1.ResultsService/DownVoteResult',
+                request_serializer=protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.ResultIdentifier.SerializeToString,
+                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                )
+        self.ResetVotesForResult = channel.unary_unary(
+                '/results.v1.ResultsService/ResetVotesForResult',
+                request_serializer=protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.ResultIdentifier.SerializeToString,
+                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                )
+        self.GetVoteForResult = channel.unary_unary(
+                '/results.v1.ResultsService/GetVoteForResult',
+                request_serializer=protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.ResultIdentifier.SerializeToString,
+                response_deserializer=protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.ResultVote.FromString,
                 )
 
 
@@ -31,13 +62,79 @@ class ResultsServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetResult(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetResultOutput(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UpVoteResult(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DownVoteResult(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ResetVotesForResult(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetVoteForResult(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_ResultsServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'GetResults': grpc.unary_unary_rpc_method_handler(
                     servicer.GetResults,
-                    request_deserializer=jobs_dot_v1_dot_job__pb2.JobIdentifier.FromString,
-                    response_serializer=results_dot_v1_dot_results__pb2.ResultsResponse.SerializeToString,
+                    request_deserializer=protos_dot_modzy_dot_jobs_dot_v1_dot_jobs__pb2.JobIdentifier.FromString,
+                    response_serializer=protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.Results.SerializeToString,
+            ),
+            'GetResult': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetResult,
+                    request_deserializer=protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.ResultIdentifier.FromString,
+                    response_serializer=protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.Result.SerializeToString,
+            ),
+            'GetResultOutput': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetResultOutput,
+                    request_deserializer=protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.OutputIdentifier.FromString,
+                    response_serializer=protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.ResultOutput.SerializeToString,
+            ),
+            'UpVoteResult': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpVoteResult,
+                    request_deserializer=protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.ResultIdentifier.FromString,
+                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            ),
+            'DownVoteResult': grpc.unary_unary_rpc_method_handler(
+                    servicer.DownVoteResult,
+                    request_deserializer=protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.ResultIdentifier.FromString,
+                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            ),
+            'ResetVotesForResult': grpc.unary_unary_rpc_method_handler(
+                    servicer.ResetVotesForResult,
+                    request_deserializer=protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.ResultIdentifier.FromString,
+                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            ),
+            'GetVoteForResult': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetVoteForResult,
+                    request_deserializer=protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.ResultIdentifier.FromString,
+                    response_serializer=protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.ResultVote.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -61,7 +158,109 @@ class ResultsService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/results.v1.ResultsService/GetResults',
-            jobs_dot_v1_dot_job__pb2.JobIdentifier.SerializeToString,
-            results_dot_v1_dot_results__pb2.ResultsResponse.FromString,
+            protos_dot_modzy_dot_jobs_dot_v1_dot_jobs__pb2.JobIdentifier.SerializeToString,
+            protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.Results.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetResult(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/results.v1.ResultsService/GetResult',
+            protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.ResultIdentifier.SerializeToString,
+            protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.Result.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetResultOutput(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/results.v1.ResultsService/GetResultOutput',
+            protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.OutputIdentifier.SerializeToString,
+            protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.ResultOutput.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def UpVoteResult(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/results.v1.ResultsService/UpVoteResult',
+            protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.ResultIdentifier.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def DownVoteResult(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/results.v1.ResultsService/DownVoteResult',
+            protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.ResultIdentifier.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def ResetVotesForResult(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/results.v1.ResultsService/ResetVotesForResult',
+            protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.ResultIdentifier.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetVoteForResult(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/results.v1.ResultsService/GetVoteForResult',
+            protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.ResultIdentifier.SerializeToString,
+            protos_dot_modzy_dot_results_dot_v1_dot_results__pb2.ResultVote.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
