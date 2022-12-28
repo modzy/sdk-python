@@ -154,7 +154,7 @@ class Models:
                     return
                 model_details = self.get_model_processing_details(model_id, version)
                 if model_details is not None:  # This means the model with the id and version is now visible
-                    engines_ready = sum([engine["ready"] for engine in model_details["engines"]])
+                    engines_ready = model_details['ready']
                     if engines_ready >= min_engines:
                         self.logger.info(f"{engines_ready} engines are ready.")
                         return
@@ -440,7 +440,7 @@ class Models:
         self, container_image, model_name, model_version, sample_input_file=None, architecture="amd64", credentials=None, 
         model_id=None, run_timeout=None, status_timeout=None, short_description=None, tags=[], 
         gpu=False, long_description=None, technical_details=None, performance_summary=None,
-        performance_metrics=None, input_details=None, output_details=None
+        performance_metrics=None, input_details=None, output_details=None, model_picture=None
         ):
         """Deploys a new `Model` instance.
 
@@ -463,6 +463,7 @@ class Models:
             performance_metrics (List): List of arrays describing model performance statistics
             input_details (List): List of dictionaries describing details of model inputs
             output_details (List): List of dictionaries describing details of model outputs
+            model_picture (str): Filepath to image for model card page
 
         Returns:
             dict: Newly deployed model information including formatted URL to newly deployed model page.
@@ -507,7 +508,7 @@ class Models:
 
         # add model metadata
         run_timeout_body = int(run_timeout)*1000 if run_timeout else 60000
-        status_timeout_body = int(status_timeout)*1000 if status_timeout else 60000
+        status_timeout_body = int(status_timeout)*1000 if status_timeout else 60000      
 
         if architecture in ["arm64", "arm"]:
             # assign "ARM" hardware requirement to bypass validation tests
@@ -538,6 +539,12 @@ class Models:
             }
             model_data = self._api_client.http.patch(f"{self._base_route}/{identifier}/versions/{version}", model_metadata_patch)
             self.logger.info(f"Patched Model Data: {json.dumps(model_data)}")            
+            
+            # upload model picture
+            if model_picture:
+                files = {'file': open(model_picture, 'rb')}
+                params = {'description': "model card image"}
+                res = self._api_client.http.post(f"/models/{identifier}/image", params=params, file_data=files)               
             
             # deploy model and skip tests (because model is compiled for arm64)
             try:
@@ -580,6 +587,20 @@ class Models:
                 run_model(self._api_client, self.logger, identifier, version)
             except Exception as e:
                 raise ValueError("Inference test failed. Make sure the provided input sample is valid and your model can process it for inference. \n\nSee full error below:\n{}".format(e))
+            # make sure model metadata reflects user-specified fields
+            try:
+                model_data = self._api_client.http.patch(f"{self._base_route}/{identifier}/versions/{version}", model_metadata)
+                self.logger.info(f"Model Data: {json.dumps(model_data)}")
+            except Exception as e:
+                raise ValueError("Patching model metadata failed. See full error below:\n\n{}".format(e))
+            # upload model picture
+            try:
+                if model_picture:
+                    files = {'file': open(model_picture, 'rb')}
+                    params = {'description': "model card image"}
+                    res = self._api_client.http.post(f"/models/{identifier}/image", params=params, file_data=files)
+            except Exception as e:
+                self.logger("Uploading model image card failed. Continuing deployment")
             # deploy model pending all tests have passed
             try:
                 deploy_model(self._api_client, self.logger, identifier, version)
