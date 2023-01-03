@@ -1,0 +1,1 @@
+from modzy.edge.proto.inferences.api.v1.inferences_pb2 import InputSource

@@ -213,36 +213,103 @@ To use **`client.models.deploy()`** there are 4 fields that are required:
 
 ## Running Inferences at the Edge
 
-The SDK provides support for running inferences on edge devices through Modzy's Edge Client. The inference workflow is almost identical to the previously outlined workflow:
+The SDK provides support for running inferences on edge devices through Modzy's Edge Client. The inference workflow is almost identical to the previously outlined workflow, and provides functionality for interacting with both Job and Inferences APIs:
 
-### Initialize *Edge* Client
+### Initialize Edge Client
 
 ```python
-from modzy.edge.client import EdgeClient
+from modzy import EdgeClient
 
 # Initialize edge client
 # Use 'localhost' for local inferences, otherwise use the device's full IP address
 client = EdgeClient('localhost',55000)
 ```
 
-### Submit Inference Job
+### Submit Inference with *Job* API
 Modzy Edge supports `text`, `embedded`, and `aws-s3` input types.
 
 ```python
 # Submit text job to Sentiment Analysis model deployed on edge device by providing a model ID, version, and raw text data, wait for completion
-job = client.submit_text("ed542963de","1.0.27",{"input.txt": "this is awesome"})
+job = client.jobs.submit_text("ed542963de","1.0.27",{"input.txt": "this is awesome"})
 # Block until results are ready
-final_job_details = client.block_until_complete(job)
-results = client.get_results(job)
+final_job_details = client.jobs.block_until_complete(job)
+results = client.jobs.get_results(job)
 ```
 
-### Query Details about Edge Jobs
+### Query Details about Inference with *Job* API
 ```python
 # get job details for a particular job
-job_details = client.get_job_details(job)
+job_details = client.jobs.get_job_details(job)
 
 # get job details for all jobs run on your Modzy Edge instance
-all_job_details = client.get_all_job_details()
+all_job_details = client.jobs.get_all_job_details()
+```
+
+### Submit Inference with *Inference* API
+
+The SDK provides several methods for interacting with Modzy's Inference API:
+* **Synchronous**: This convenience method wraps two SDK methods and is optimal for use cases that require real-time or sequential results (i.e., a prediction results are needed to inform action before submitting a new inference)
+* **Asynchronous**: This method combines two SDK methods and is optimal for submitting large batches of data and querying results at a later time (i.e., real-time inference is not required)
+* **Streaming**: This method is a convenience method for running multiple synchronous inferences consecutively and allows users to submit iterable objects to be processed sequentially in real-time
+
+*Synchronous (image-based model example)*
+```python
+from modzy import EdgeClient
+from modzy.edge import InputSource
+
+image_bytes = open("image_path.jpg", "rb").read()
+input_object = InputSource(
+    key="image", # input filename defined by model author
+    data=image_bytes,
+) 
+
+with EdgeClient('localhost', 55000) as client:
+  inference = client.inferences.run("<model-id>", "<model-version>", input_object, explain=False, tags=None)
+results = inference.result.outputs
+```
+
+*Asynchronous (image-based model example - submit batch of images in folder)*
+```python
+import os
+from modzy import EdgeClient
+from modzy.edge import InputSource
+
+# submit inferences
+img_folder = "./images"
+inferences = []
+for img in os.listdir(img_folder):
+  input_object = InputSource(
+    key="image", # input filename defined by model author
+    data=open(os.path.join(img_folder, img), 'rb').read()
+  )
+  with EdgeClient('localhost', 55000) as client:
+    inference = client.inferences.perform_inference("<model-id>", "<model-version>", input_object, explain=False, tags=None)
+  inferences.append(inference)
+
+# query results 
+with EdgeClient('localhost', 55000) as client:
+  results = [client.inferences.block_until_complete(inference.identifier) for inferences in inferences]
+```
+
+*Stream*
+```python
+import os
+from modzy import EdgeClient
+from modzy.edge import InputSource
+
+# generate requests iterator to pass to stream method
+requests = []
+for img in os.listdir(img_folder):
+  input_object = InputSource(
+    key="image", # input filename defined by model author
+    data=open(os.path.join(img_folder, img), 'rb').read()
+  )
+  with EdgeClient('localhost', 55000) as client:
+    requests.append(client.inferences.build_inference_request("<model-id>", "<model-version>", input_object, explain=False, tags=None)) 
+
+# submit list of inference requests to streaming API
+with EdgeClient('localhost', 55000) as client:
+  streaming_results = client.inferences.stream(requests)
 ```
 
 # SDK Code Examples
@@ -285,6 +352,20 @@ Modzy's SDK is built on top of the [Modzy HTTP/REST API](https://docs.modzy.com/
 |Get job details|client.jobs.get()|[api/jobs/:job-id](https://docs.modzy.com/reference/get-job-details)  |
 |Get results|job.get_result()|[api/results/:job-id](https://docs.modzy.com/reference/get-results)  |
 |Get the job history|client.jobs.get_history()|[api/jobs/history](https://docs.modzy.com/reference/list-the-job-history)  |
+|Submit a Job with Edge Client (Embedded)|EdgeClient.jobs.submit_embedded()|[Python/edge/jobs](https://docs.modzy.com/docs/edgeclientjobssubmit_embedded) |
+|Submit a Job with Edge Client (Text)|EdgeClient.jobs.submit_text()|[Python/edge/jobs](https://docs.modzy.com/docs/edgeclientjobssubmit_text) |
+|Submit a Job with Edge Client (AWS S3)|EdgeClient.jobs.submit_aws_s3()|[Python/edge/jobs](https://docs.modzy.com/docs/edgeclientjobssubmit_aws_s3) |
+|Get job details with Edge Client|EdgeClient.jobs.get_job_details()|[Python/edge/jobs](https://docs.modzy.com/docs/edgeclientjobsget_job_details) |
+|Get all job details with Edge Client|EdgeClient.jobs.get_all_job_details()|[Python/edge/jobs](https://docs.modzy.com/docs/edgeclientjobsget_all_job_details) |
+|Hold until job is complete with Edge Client|EdgeClient.jobs.block_until_complete()|[Python/edge/jobs](https://docs.modzy.com/docs/edgeclientjobsblock_until_complete) |
+|Get results with Edge Client|EdgeClient.jobs.get_results()|[Python/edge/jobs](https://docs.modzy.com/docs/edgeclientjobsget_results) |
+|Build inference request with Edge Client|EdgeClient.inferences.build_inference_request()|[Python/edge/inferences](https://docs.modzy.com/docs/edgeclientinferencesbuild_inference_request) |
+|Perform inference with Edge Client|EdgeClient.inferences.perform_inference()|[Python/edge/inferences](https://docs.modzy.com/docs/edgeclientinferencesperform_inference) |
+|Get inference details with Edge Client|EdgeClient.inferences.get_inference_details()|[Python/edge/inferences](https://docs.modzy.com/docs/edgeclientinferencesget_inference_details) |
+|Run synchronous inferences with Edge Client|EdgeClient.inferences.run()|[Python/edge/inferences](https://docs.modzy.com/docs/edgeclientinferencesrun) |
+|Hold until inference completes with Edge Client|EdgeClient.inferences.block_until_complete()|[Python/edge/inferences](https://docs.modzy.com/docs/edgeclientinferencesblock_until_complete) |
+|Stream inferences with Edge Client|EdgeClient.inferences.stream()|[Python/edge/inferences](https://docs.modzy.com/docs/edgeclientinferencesstream) |
+
 
 # Support
 

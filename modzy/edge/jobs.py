@@ -281,6 +281,9 @@ class EdgeJobsClient:
 
         Args:
             job_identifier (str): The job identifier.
+            poll_interval (int): Time interval in seconds between polls. Defaults to 0.01.
+            timeout (int): Seconds amount to wait until timeout. `None` indicates waiting forever. Defaults to 30.
+             
 
         Returns:
             dict: Final job details.
