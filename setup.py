@@ -3,7 +3,7 @@
 
 """The setup script."""
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 with open('README.md') as readme_file:
     readme = readme_file.read()
@@ -11,7 +11,7 @@ with open('README.md') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['requests', 'python-dotenv', 'deprecation', 'protobuf==3.19.4', 'grpcio', 'google-api-python-client', 'boto3']
+requirements = ['requests', 'python-dotenv', 'deprecation', 'protobuf~=4.21.10', 'grpcio', 'google-api-python-client', 'boto3']
 
 # removed in 0.7.1 test_requirements = ['pytest']
 
@@ -29,7 +29,7 @@ setup(
         'Programming Language :: Python :: 3.7'
     ],
     description="Modzy's Python SDK queries and deploys models, submits inference jobs and returns results directly to your editor.",
-    python_requires='>=3.6',
+    python_requires='>=3.7',
     install_requires=requirements,
     long_description=readme,
     long_description_content_type='text/markdown',
