@@ -11,7 +11,7 @@ with open('README.md') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['requests', 'python-dotenv', 'deprecation', 'protobuf~=4.21.10', 'grpcio', 'google-api-python-client', 'boto3']
+requirements = ['requests', 'python-dotenv', 'deprecation', 'protobuf>=4.21.10,<3.20.0', 'grpcio', 'google-api-python-client', 'boto3']
 
 # removed in 0.7.1 test_requirements = ['pytest']
 
