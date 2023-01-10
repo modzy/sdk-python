@@ -3,8 +3,8 @@
 import grpc
 
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
-from modzy.edge.proto.jobs.v1 import jobs_pb2 as protos_dot_modzy_dot_jobs_dot_v1_dot_jobs__pb2
-from modzy.edge.proto.results.v1 import results_pb2 as protos_dot_modzy_dot_results_dot_v1_dot_results__pb2
+from ...jobs.v1 import jobs_pb2 as protos_dot_modzy_dot_jobs_dot_v1_dot_jobs__pb2
+from ..v1 import results_pb2 as protos_dot_modzy_dot_results_dot_v1_dot_results__pb2
 
 
 class ResultsServiceStub(object):

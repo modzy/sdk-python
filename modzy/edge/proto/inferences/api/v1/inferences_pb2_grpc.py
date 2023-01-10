@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from modzy.edge.proto.inferences.api.v1 import inferences_pb2 as protos_dot_modzy_dot_inferences_dot_api_dot_v1_dot_inferences__pb2
+from . import inferences_pb2 as protos_dot_modzy_dot_inferences_dot_api_dot_v1_dot_inferences__pb2
 
 
 class InferenceServiceStub(object):
