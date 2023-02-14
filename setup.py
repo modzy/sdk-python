@@ -37,6 +37,9 @@ setup(
     keywords='modzy, sdk',
     name='modzy-sdk',
     packages=find_packages(),
+    package_data={
+        "": ["*.pyi"]
+    },
     # removed in 0.7.1 test_suite='tests',
     # removed in 0.7.1 tests_require=test_requirements,
     url='https://github.com/modzy/sdk-python',
