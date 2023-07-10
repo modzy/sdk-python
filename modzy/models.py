@@ -5,6 +5,9 @@ import re
 import json
 import logging
 from datetime import datetime
+from operator import getitem
+from collections import OrderedDict
+from typing import Union
 from ._api_object import ApiObject
 from urllib.parse import urlencode
 from .error import NotFoundError, ResponseError, BadRequestError
@@ -53,7 +56,20 @@ class Models:
                 "maximumSize": 1000000,
                 "description": "Default output data"
             }    
-        ]        
+        ]
+
+        # extract available hardware resource
+        account_resources_endpoint = f"{self._base_route}/requirements/account"
+        resources_list = self._api_client.http.get(account_resources_endpoint)
+        self.hardware_config_options = [item for item in resources_list if item['status'] == "ACTIVE"]
+        self.hardware_config_options_lookup = {}
+        for item in self.hardware_config_options:
+            self.hardware_config_options_lookup[item['requirementId']] = {
+                "cpu": float(float(item['cpuAmount'].split('m')[0])/1000),    # converting Modzy value into unit expected by SDK
+                "memory": float(item['memoryAmount'].split('G')[0])           # converting Modzy value into float value to compare with SDK value
+            }
+         
+                
 
     def get_model_processing_details(self, model, version):
         """
@@ -438,7 +454,7 @@ class Models:
     
     def deploy(
         self, container_image, model_name, model_version, sample_input_file=None, architecture="amd64", credentials=None, 
-        model_id=None, run_timeout=None, status_timeout=None, short_description=None, tags=[], 
+        model_id=None, run_timeout=None, status_timeout=None, short_description=None, tags=[], cpu_count:Union[float, int]=None, memory:Union[float, int]=None,
         gpu=False, long_description=None, technical_details=None, performance_summary=None,
         performance_metrics=None, input_details=None, output_details=None, model_picture=None
         ):
@@ -456,6 +472,8 @@ class Models:
             status_timeout (str): Timeout threshold for container `status` route
             short_description (str): Short description to appear on model biography page
             tags (list): List of tags to make model more discoverable in model library
+            cpu_count (Union[float, int]): Number of CPU cores needed by model container
+            memory (Union[float, int]): RAM needed by model container in GB (e.g., 1 = 1GB, 0.5 = 500MB)
             gpu (bool): Flag for whether or not model requires GPU to run
             long_description (str): Description to appear on model biography page
             technical_details (str): Technical details to appear on model biography page. Markdown is accepted
@@ -551,9 +569,26 @@ class Models:
                 deploy_model(self._api_client, self.logger, identifier, version)
             except Exception as e:
                 raise ValueError("Deployment failed. Check to make sure all of your parameters and assets are valid and try again. \n\nSee full error below:\n{}".format(e))
-        elif architecture=="amd64": 
+        elif architecture=="amd64":  
+            # determine model hardare requirement ID based on CPU, GPU, and memory parameters
+            if gpu:
+                hardware_requirement_id = MODEL_HARDWARE_GPU_ID
+            elif cpu_count and not memory or memory and not cpu_count:
+                raise ValueError("You must provide valid values for BOTH memory and cpu_count parameters")
+            elif cpu_count and memory:
+                # filter config options based on user-specified parameters
+                hardware_keep = {k:v for k,v in self.hardware_config_options_lookup.items() if float(self.hardware_config_options_lookup[k]['cpu']) >= cpu_count and float(self.hardware_config_options_lookup[k]['memory']) >= memory}
+                hardware_keep_sorted = OrderedDict(sorted(hardware_keep.items(), key=lambda x:(getitem(x[1], 'cpu'), getitem(x[1], 'memory'))))
+                try:
+                    hardware_requirement_id = list(hardware_keep_sorted.keys())[0]
+                except IndexError:
+                    raise ValueError("Requested CPU count and memory values exceed available resource configuration options. The following resource options are available:\n\n{}\n\nPlease contact your Modzy administrator if you need a new resource configuration option.".format(self.hardware_config_options))
+            else:
+                hardware_requirement_id = MODEL_HARDWARE_OTHER_ID
+        
+            # patch model metadata
             model_metadata = {
-                "requirement": {"requirementId": MODEL_HARDWARE_GPU_ID if gpu else MODEL_HARDWARE_OTHER_ID},
+                "requirement": {"requirementId": hardware_requirement_id},
                 "timeout": {
                     "run": run_timeout_body,
                     "status": status_timeout_body
