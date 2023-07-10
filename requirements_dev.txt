@@ -22,7 +22,7 @@ deprecation==2.1.0
 grpcio-tools
 grpcio
 grpcio-reflection
-protobuf==3.19.4
+protobuf==3.19.5
 pyyaml
 six
 gcloud
