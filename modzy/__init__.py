@@ -5,6 +5,6 @@ import logging
 
 from .client import ApiClient  # noqa
 from .edge.client import EdgeClient
-__version__ = '0.11.4'
+__version__ = '0.11.5'
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
