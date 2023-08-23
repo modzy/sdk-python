@@ -40,7 +40,6 @@ class Models:
         self._api_client = api_client
         self.logger = logging.getLogger(__name__)
         # model deployment specific instance variables
-        self.container_registry_regex = "^((?:[A-Za-z0-9-_]+)(?:\.[A-Za-z0-9-_]+)+\/)?([^:]+)(?::(.+))?$"
         self.default_inputs = [
             {
                 "name": "input",
@@ -515,12 +514,8 @@ class Models:
         response = self._api_client.http.patch(f"{self._base_route}/{identifier}", tags_and_description)
 
         # upload container image
-        m = re.search(self.container_registry_regex, container_image)
-        domain = m.group(1) or "registry.hub.docker.com/"
-        repository = m.group(2)
-        tag = m.group(3) or "latest"        
-        image_url = "https://{}v2/{}/manifests/{}".format(domain, repository, tag)
-        registry = {'registry': {'url': image_url, 'username': credentials['user'], 'password': credentials['pass']}} if credentials else {'registry': {'url': image_url}}      
+
+        registry = {'registry': {'url': container_image, 'username': credentials['user'], 'password': credentials['pass']}} if credentials else {'registry': {'url': container_image}}      
         response = self._api_client.http.post(f"{self._base_route}/{identifier}/versions/{version}/container-image", registry)
         self.logger.info("Uploaded Container Image")
 
