@@ -197,7 +197,7 @@ class EdgeInferenceClient:
         inference_request = self.build_inference_request(model_identifier, model_version, input_sources, explain, tags)
         return self.client.PerformInference(inference_request)
 
-    def run(self, model_identifier: str, model_version: str, input_sources: List[InputSource], explain=False, tags=None) -> Inference:
+    def run(self, model_identifier: str, model_version: str, input_sources: List[InputSource], explain=False, tags=None, poll_interval=0.01, timeout=30) -> Inference:
         """
         Provides a synchronous way to run an inference. This is simply a convenience function that is equivalent to the `perform_inference` and `block_until_complete` methods run sequentially.
         
@@ -229,7 +229,7 @@ class EdgeInferenceClient:
         ```
         """
         inference = self.perform_inference(model_identifier, model_version, input_sources, explain, tags)
-        return self.block_until_complete(inference.identifier)
+        return self.block_until_complete(inference.identifier, poll_interval, timeout)
 
     def get_inference_details(self, inference_identifier: str) -> Inference:
         '''
